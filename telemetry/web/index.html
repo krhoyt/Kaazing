@@ -93,15 +93,20 @@ var DIRECTION_SHORT = 10;
 var PITCH_GAP = 80;
 
 var airspeed = null;
-var altitude = null;
+var altimeter = null;
 var attitude = null;
 var pitch = null;
 var rose = null;
 var situation = null;
 
-function setAltimeter( value )
+function setAirspeed( speed )
 {
-    altitude.innerHTML = value;
+    airspeed.innerHTML = speed;
+}
+
+function setAltimeter( altitude )
+{
+    altimeter.innerHTML = altitude;
 }
 
 function drawAttitude( angle )
@@ -188,7 +193,7 @@ function drawAttitude( angle )
     }
 }
 
-function drawDirection( heading )
+function setDirection( heading )
 {
     var canvas = null;
     var floorDeg = null;
@@ -197,8 +202,6 @@ function drawDirection( heading )
     var pxDeg = null;
     var startDeg = null;
     var startPx = null;
-
-    heading = 350;
 
     canvas = document.querySelector( ".rose" );
 
@@ -210,9 +213,9 @@ function drawDirection( heading )
 
     for( var d = floorDeg; d <= heading + halfDeg; d++ )
     {
-        // Vertical line
         if( d % 5 == 0 )
         {
+            // Vertical line
             rose.rect(
                 startPx + ( pxDeg * ( d - floorDeg ) ) - 1,
                 0,
@@ -233,6 +236,7 @@ function drawDirection( heading )
                 label = d / 10;
             }
 
+            // Heading label
             rose.text(
                 startPx + ( pxDeg * ( d - floorDeg ) ),
                 DIRECTION_LONG + 12,
@@ -250,13 +254,19 @@ function setupAirspeed()
     // Airspeed (left)
     airspeed = document.querySelector( ".airspeed" );
     airspeed.style.top = ( ( situation.clientHeight - airspeed.clientHeight ) / 2 ) + "px";
+
+    // Seed initial vaue
+    setAirspeed( 0 )
 }
 
 function setupAltimeter()
 {
     // Altitude (right)
-    altitude = document.querySelector( ".altimeter" );
-    altitude.style.top = ( ( situation.clientHeight - altitude.clientHeight ) / 2 ) + "px";
+    altimeter = document.querySelector( ".altimeter" );
+    altimeter.style.top = ( ( situation.clientHeight - altimeter.clientHeight ) / 2 ) + "px";
+
+    // Seed initial value
+    setAltimeter( 0 );
 }
 
 function setupAttitude()
@@ -319,7 +329,7 @@ function setupDirection()
     );
 
     // Plot initial heading
-    drawDirection( 173 );
+    setDirection( 0 );
 }
 
 function setupHud()
@@ -340,9 +350,6 @@ function setupHud()
         situation.clientHeight
     );
 
-    // Direction (compass)
-    setupDirection();
-
     // Airspeed
     setupAirspeed();
 
@@ -351,6 +358,9 @@ function setupHud()
 
     // Attitude (pitch)
     setupAttitude();
+
+    // Direction (compass)
+    setupDirection();
 }
 
 function doMapInitialize()
