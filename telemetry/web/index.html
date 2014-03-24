@@ -83,7 +83,7 @@ body {
 <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js" type="text/javascript"></script>
 
 <!-- Maps -->
-<script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+<!-- <script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script> -->
 
 <!-- Application -->
 <script type="text/javascript">
@@ -98,6 +98,11 @@ var attitude = null;
 var pitch = null;
 var rose = null;
 var situation = null;
+
+function setAltimeter( value )
+{
+    altitude.innerHTML = value;
+}
 
 function drawAttitude( angle )
 {
@@ -185,29 +190,58 @@ function drawAttitude( angle )
 
 function drawDirection( heading )
 {
-    // Draw rose
-    for( var d = -360; d < 360; d = d + 0.50 )
+    var canvas = null;
+    var floorDeg = null;
+    var halfDeg = null;
+    var pixel = null;
+    var pxDeg = null;
+    var startDeg = null;
+    var startPx = null;
+
+    heading = 350;
+
+    canvas = document.querySelector( ".rose" );
+
+    pxDeg = DIRECTION_GAP / 10;
+    halfDeg = ( canvas.clientWidth / 2 ) / pxDeg;
+    startDeg = heading - halfDeg;
+    floorDeg = Math.floor( startDeg );
+    startPx = ( floorDeg - startDeg ) * pxDeg;
+
+    for( var d = floorDeg; d <= heading + halfDeg; d++ )
     {
         // Vertical line
-        rose.rect(
-            d * DIRECTION_GAP,
-            0,
-            2,
-            Math.abs( d % 1 ) == 0 ? DIRECTION_LONG : DIRECTION_SHORT
-        ).attr( {
-            fill: "lime",
-            stroke: "none"
-        } );
+        if( d % 5 == 0 )
+        {
+            rose.rect(
+                startPx + ( pxDeg * ( d - floorDeg ) ) - 1,
+                0,
+                2,
+                ( d + 5 ) % 10 == 0 ? DIRECTION_SHORT : DIRECTION_LONG
+            ).attr( {
+                fill: "lime",
+                stroke: "none"
+            } );
 
-        // Label
-        rose.text(
-            d * DIRECTION_GAP + 1,
-            DIRECTION_LONG + 12,
-            Math.abs( d % 1 ) == 0 ? d : ""
-        ).attr( {
-            fill: "lime",
-            "font-size": "20px"
-        } );
+            // Wrap at 0 and 360
+            if( d >= 360 )
+            {
+                label = ( d - 360 ) / 10;
+            } else if( d < 0 ) {
+                label = ( 360 + d ) / 10;
+            } else {
+                label = d / 10;
+            }
+
+            rose.text(
+                startPx + ( pxDeg * ( d - floorDeg ) ),
+                DIRECTION_LONG + 12,
+                ( d + 5 ) % 10 == 0 ? "" : label
+            ).attr( {
+                fill: "lime",
+                "font-size": "20px"
+            } );
+        }
     }
 }
 
@@ -285,7 +319,7 @@ function setupDirection()
     );
 
     // Plot initial heading
-    drawDirection( 0 );
+    drawDirection( 173 );
 }
 
 function setupHud()
@@ -337,7 +371,7 @@ function doWindowLoad()
 
 // Start
 window.addEventListener( "load", doWindowLoad );
-google.maps.event.addDomListener( window, "load", doMapInitialize );
+// google.maps.event.addDomListener( window, "load", doMapInitialize );
 </script>
 
 </head>
