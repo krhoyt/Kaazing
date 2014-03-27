@@ -2,44 +2,30 @@
 <html>
 <head>
 
-<title>Aircraft Telemetry</title>
+<title>Black Box</title>
 
-<!-- Style -->
+<!-- Styles -->
+<!-- Mostly inline SVG -->
 <style type="text/css">
 body {
     margin: 0px;
-    overflow: hidden;
     padding: 0px;
 }
 
+.airspeed {
+    height: 75%;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 86px;
+}
+
 .altimeter {
-    right: 0px;
-}
-
-.attitude {
-    bottom: 0px;
-    left: 0px;
-    margin-left: 69px;
-    margin-right: 69px;
+    height: 75%;
     position: absolute;
-    top: 0px;
-    transform: rotate( 10deg );
-    -moz-transform: rotate( 10deg );
-    -webkit-transform: rotate( 10deg );
-    width: 262px;
-}
-
-.direction {
-    left: 0px;
-    position: absolute;
-    right: 0px;
-    top: 0px;
-}
-
-.indicator {
-    height: 14px;
-    float: left;
-    width: 100%;
+    right: 20px;
+    top: 20px;
+    width: 68px;
 }
 
 .map {
@@ -49,339 +35,100 @@ body {
     right: 0px;
     top: 0px;
 }
-
-.rose {
-    height: 40px;
-    float: left;
-    margin-top: 5px;
-    overflow: hidden;
-    width: 100%;
-}
-
-.situation {
-    height: 70%;
-    overflow: hidden;
-    position: absolute;
-    width: 400px;
-}
-
-.stationary {
-    border: 2px solid lime;
-    color: lime;
-    font-family: sans-serif;
-    font-size: 20px;
-    padding-bottom: 1px;
-    padding-right: 5px;
-    padding-top: 1px;
-    position: absolute;
-    text-align: right;
-    width: 60px;
-}
 </style>
+
+<!-- Animation -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.5/TweenLite.min.js" type="text/javascript"></script>
+
+<!-- Map -->
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
 
 <!-- SVG -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js" type="text/javascript"></script>
 
-<!-- Maps -->
-<!-- <script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script> -->
+<!-- Gauges -->
+<script src="Airspeed.js" type="text/javascript"></script>
+<script src="Altimeter.js" type="text/javascript"></script>
 
 <!-- Application -->
 <script type="text/javascript">
-var DIRECTION_GAP = 50;
-var DIRECTION_LONG = 20;
-var DIRECTION_SHORT = 10;
-var PITCH_GAP = 80;
+// Constants
+var KAAZING_LATITUDE = 37.4173652;
+var KAAZING_LONGITUDE = -121.9788182;
 
+// Global
 var airspeed = null;
 var altimeter = null;
-var attitude = null;
-var pitch = null;
-var rose = null;
-var situation = null;
+var interval = null;
+var map = null;
 
-function setAirspeed( speed )
+// Update the situational display
+function updateSituation( values )
 {
-    airspeed.innerHTML = speed;
+    var newAirspeed = Math.random() * 35;
+    var newAltitude = Math.round( Math.random() * 3000 );
+
+    airspeed.setAirspeed( newAirspeed );
+    altimeter.setAltitude( newAltitude );
 }
 
-function setAltimeter( altitude )
+// Setup map
+function doMapLoad()
 {
-    altimeter.innerHTML = altitude;
-}
+    var options = null;
 
-function drawAttitude( angle )
-{
-    var closest = null;
-    var difference = null;
-    var segments = null;
-    var verticalCenter = null;
-
-    /*
-    pitch = 18.25;
-
-    segments = attitude.clientHeight / PITCH_GAP;
-    verticalCenter = attitude.clientHeight / 2;
-    closest = Math.round( pitch / 5 ) * 5;
-
-    if( closest > pitch )
-    {
-        difference = closest - pitch;
-    } else {
-        difference = pitch - cloest;
-    }
-    */
-
-    segments = attitude.clientHeight / PITCH_GAP;
-
-    for( var s = 0; s < segments; s++ )
-    {
-        pitch.text(
-            27,
-            s * PITCH_GAP,
-            "99"
-        ).attr( {
-            fill: "lime",
-            "font-size": "20px",
-            "text-anchor": "end"
-        } );
-
-        pitch.rect(
-            32,
-            ( s * PITCH_GAP ) - 8,
-            2,
-            16
-        ).attr( {
-            fill: "lime",
-            stroke: "none"
-        } );
-
-        pitch.path(
-            "M 34 " + ( ( s * PITCH_GAP ) + 7 ) + " l 30 0"
-        ).attr( {
-            stroke: "lime",
-            "stroke-width": 2,
-            "stroke-dasharray": "-"
-        } );
-
-        pitch.text(
-            attitude.clientWidth - 5,
-            s * PITCH_GAP,
-            "99"
-        ).attr( {
-            fill: "lime",
-            "font-size": "20px",
-            "text-anchor": "end"
-        } );
-
-        pitch.rect(
-            attitude.clientWidth - 33,
-            ( s * PITCH_GAP ) - 8,
-            2,
-            16
-        ).attr( {
-            fill: "lime",
-            stroke: "none"
-        } );
-
-        pitch.path(
-            "M " + ( attitude.clientWidth - 33 ) + " " + ( ( s * PITCH_GAP ) + 7 ) + " l -30 0"
-        ).attr( {
-            stroke: "lime",
-            "stroke-width": 2,
-            "stroke-dasharray": "-"
-        } );
-    }
-}
-
-function setDirection( heading )
-{
-    var canvas = null;
-    var floorDeg = null;
-    var halfDeg = null;
-    var pixel = null;
-    var pxDeg = null;
-    var startDeg = null;
-    var startPx = null;
-
-    canvas = document.querySelector( ".rose" );
-
-    pxDeg = DIRECTION_GAP / 10;
-    halfDeg = ( canvas.clientWidth / 2 ) / pxDeg;
-    startDeg = heading - halfDeg;
-    floorDeg = Math.floor( startDeg );
-    startPx = ( floorDeg - startDeg ) * pxDeg;
-
-    for( var d = floorDeg; d <= heading + halfDeg; d++ )
-    {
-        if( d % 5 == 0 )
-        {
-            // Vertical line
-            rose.rect(
-                startPx + ( pxDeg * ( d - floorDeg ) ) - 1,
-                0,
-                2,
-                ( d + 5 ) % 10 == 0 ? DIRECTION_SHORT : DIRECTION_LONG
-            ).attr( {
-                fill: "lime",
-                stroke: "none"
-            } );
-
-            // Wrap at 0 and 360
-            if( d >= 360 )
-            {
-                label = ( d - 360 ) / 10;
-            } else if( d < 0 ) {
-                label = ( 360 + d ) / 10;
-            } else {
-                label = d / 10;
-            }
-
-            // Heading label
-            rose.text(
-                startPx + ( pxDeg * ( d - floorDeg ) ),
-                DIRECTION_LONG + 12,
-                ( d + 5 ) % 10 == 0 ? "" : label
-            ).attr( {
-                fill: "lime",
-                "font-size": "20px"
-            } );
+    // Center on Kaazing HQ
+    // Hide most default UI
+    // Disable dragging
+    options = {
+        center: new google.maps.LatLng( KAAZING_LATITUDE, KAAZING_LONGITUDE ),
+        zoom: 14,
+        disableDefaultUI: true,
+        draggable: false,
+        scaleControl: true,
+        zoomControl: true,
+        zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_TOP,
+            style: google.maps.ZoomControlStyle.LARGE
         }
-    }
-}
-
-function setupAirspeed()
-{
-    // Airspeed (left)
-    airspeed = document.querySelector( ".airspeed" );
-    airspeed.style.top = ( ( situation.clientHeight - airspeed.clientHeight ) / 2 ) + "px";
-
-    // Seed initial vaue
-    setAirspeed( 0 )
-}
-
-function setupAltimeter()
-{
-    // Altitude (right)
-    altimeter = document.querySelector( ".altimeter" );
-    altimeter.style.top = ( ( situation.clientHeight - altimeter.clientHeight ) / 2 ) + "px";
-
-    // Seed initial value
-    setAltimeter( 0 );
-}
-
-function setupAttitude()
-{
-    // Attitude (pitch)
-    attitude = document.querySelector( ".attitude" );
-
-    // Pitch chart
-    pitch = new Raphael(
-        attitude,
-        attitude.clientWidth,
-        attitude.clientHeight
-    );
-
-    // Plot initial pitch
-    drawAttitude( 0 );
-}
-
-function setupDirection()
-{
-    var canvas = null;
-    var indicator = null;
-
-    // HUD is centered
-    // Directional indicator floats above
-    canvas = document.querySelector( ".direction" );
-    canvas.style.width = situation.clientWidth + "px";
-    canvas.style.left = situation.style.left;
-    canvas.style.top = ( situation.offsetTop - canvas.clientHeight ) + "px";
-
-    // Heading indicator
-    canvas = document.querySelector( ".indicator" );
-
-    // SVG instance
-    indicator = new Raphael(
-        canvas,
-        canvas.clientWidth,
-        canvas.clientHeight
-    );
-
-    // Draw indicator
-    indicator.path(
-        "M " + ( Math.round( canvas.clientWidth / 2 ) - 5 ) + " 1 " +
-        "l 10 0 " +
-        "l -5 10 " +
-        "l -5 -10 z"
-    ).attr( {
-        stroke: "lime",
-        "stroke-width": 2
-    } );
-
-    // Compass rose
-    canvas = document.querySelector( ".rose" );
-
-    // SVG instance
-    rose = new Raphael(
-        canvas,
-        canvas.clientWidth,
-        canvas.clientHeight
-    );
-
-    // Plot initial heading
-    setDirection( 0 );
-}
-
-function setupHud()
-{
-    var hud = null;
-
-    // Canvas
-    situation = document.querySelector( ".situation" );
-
-    // Position
-    situation.style.left = Math.round( ( window.innerWidth - situation.clientWidth ) / 2 ) + "px";
-    situation.style.top = Math.round( ( window.innerHeight - situation.clientHeight ) / 2 ) + "px";
-
-    // SVG instance
-    hud = new Raphael(
-        situation,
-        situation.clientWidth,
-        situation.clientHeight
-    );
-
-    // Airspeed
-    setupAirspeed();
-
-    // Altitude
-    setupAltimeter();
-
-    // Attitude (pitch)
-    setupAttitude();
-
-    // Direction (compass)
-    setupDirection();
-}
-
-function doMapInitialize()
-{
-    var mapOptions = {
-        center: new google.maps.LatLng( -34.397, 150.644 ),
-        zoom: 8
     };
 
-    var map = new google.maps.Map( document.querySelector( ".map" ), mapOptions );
+    // Create map instance
+    map = new google.maps.Map( document.querySelector( ".map" ), options );
 }
 
+// Called when the window loads
+// Initializes DOM references
 function doWindowLoad()
 {
-    // HUD instance
-    setupHud();
+    // Airspeed
+    airspeed = new Airspeed( ".airspeed" );
+    // airspeed.setAirspeed( 24 );
+
+    // Altimeter
+    altimeter = new Altimeter( ".altimeter" );
+    // altimeter.setAltitude( 1234 );
+
+    // Fit to window
+    doWindowResize();
+
+    // Pretend values for testing
+    interval = setInterval( updateSituation, 2000 );
 }
 
-// Start
+// Called to layout user interface
+function doWindowResize()
+{
+    airspeed.container.style.top = Math.round( ( window.innerHeight - airspeed.container.clientHeight ) / 2 ) + "px";
+    altimeter.container.style.top = Math.round( ( window.innerHeight - altimeter.container.clientHeight ) / 2 ) + "px";
+}
+
+// Setup page load
 window.addEventListener( "load", doWindowLoad );
-// google.maps.event.addDomListener( window, "load", doMapInitialize );
+window.addEventListener( "resize", doWindowResize );
+
+// Setup map library load
+google.maps.event.addDomListener( window, "load", doMapLoad );
 </script>
 
 </head>
@@ -390,18 +137,11 @@ window.addEventListener( "load", doWindowLoad );
 <!-- Map -->
 <div class="map"></div>
 
-<!-- Compass direction -->
-<div class="direction">
-    <div class="indicator"></div>
-    <div class="rose"></div>
-</div>
+<!-- Airspeed -->
+<div class="airspeed"></div>
 
-<!-- Situational awareness -->
-<div class="situation">
-    <div class="attitude"></div>
-    <div class="stationary airspeed">292</div>
-    <div class="stationary altimeter">826</div>
-</div>
+<!-- Altimeter -->
+<div class="altimeter"></div>
 
 </body>
 </html>
