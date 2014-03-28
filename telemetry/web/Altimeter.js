@@ -2,7 +2,7 @@ function Altimeter( selector )
 {
     var FONT_FAMILY = "sans-serif";
     var FONT_SIZE = 18;
-    var MAX_ALTITUDE = 6000;
+    var MAX_ALTITUDE = 7000;
     var SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
     var clipping = null;
@@ -18,6 +18,7 @@ function Altimeter( selector )
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
     };
 
+    result.container.style.height = result.container.clientHeight + "px";
     result.container.style.top = Math.round( ( window.innerHeight - result.container.clientHeight ) / 2 ) + "px";
 
     result.document.setAttribute( "width", result.container.clientWidth );

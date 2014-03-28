@@ -4,11 +4,16 @@
 
 <title>Black Box</title>
 
+<!-- Big shout out to iHUD for the inspiration -->
+<!-- Check out their iOS application -->
+<!-- http://www.i-hud.com -->
+
 <!-- Styles -->
 <!-- Mostly inline SVG -->
 <style type="text/css">
 body {
     margin: 0px;
+    overflow: hidden;
     padding: 0px;
 }
 
@@ -28,12 +33,32 @@ body {
     width: 68px;
 }
 
+.heading {
+    height: 75%;
+    position: absolute;
+}
+
 .map {
     bottom: 0px;
     left: 0px;
     position: absolute;
     right: 0px;
     top: 0px;
+}
+
+.pitch {
+    position: absolute;
+    height: 75%;
+}
+
+.position {
+    position: absolute;
+    height: 75%;
+}
+
+.tilt {
+    position: absolute;
+    height: 75%;
 }
 </style>
 
@@ -46,6 +71,11 @@ body {
 <!-- Gauges -->
 <script src="Airspeed.js" type="text/javascript"></script>
 <script src="Altimeter.js" type="text/javascript"></script>
+<script src="Position.js" type="text/javascript"></script>
+<script src="Heading.js" type="text/javascript"></script>
+<script src="Pitch.js" type="text/javascript"></script>
+<script src="Position.js" type="text/javascript"></script>
+<script src="Tilt.js" type="text/javascript"></script>
 
 <!-- Application -->
 <script type="text/javascript">
@@ -56,17 +86,50 @@ var KAAZING_LONGITUDE = -121.9788182;
 // Global
 var airspeed = null;
 var altimeter = null;
+var attitude = null;
+var heading = null;
 var interval = null;
 var map = null;
+var pitch = null;
+var position = null;
+var touch = null;
 
 // Update the situational display
 function updateSituation( values )
 {
     var newAirspeed = Math.random() * 35;
-    var newAltitude = Math.round( Math.random() * 3000 );
+    var newAltitude = Math.random() * 3000;
+    var newHeading = Math.random() * 360;
+    var newPitch = Math.random() * 50;
+    var newTilt = Math.random() * 45;
+
+    if( Math.random() > 0.50 )
+    {
+        newPitch = 0 - newPitch;
+    }
+
+    if( Math.random() > 0.50 )
+    {
+        newTilt = 0 - newTilt;
+    }
 
     airspeed.setAirspeed( newAirspeed );
     altimeter.setAltitude( newAltitude );
+    pitch.setPitch( newPitch );
+    pitch.setTilt( newTilt );
+    tilt.setTilt( newTilt );
+    heading.setHeading( newHeading );
+}
+
+// Handle toggle of heading source
+function doHeadingClick()
+{
+    if( heading.getSource() == heading.SOURCE_COMPASS )
+    {
+        heading.setSource( heading.SOURCE_GPS );
+    } else {
+        heading.setSource( heading.SOURCE_COMPASS );
+    }
 }
 
 // Setup map
@@ -79,13 +142,13 @@ function doMapLoad()
     // Disable dragging
     options = {
         center: new google.maps.LatLng( KAAZING_LATITUDE, KAAZING_LONGITUDE ),
-        zoom: 14,
+        zoom: 18,
         disableDefaultUI: true,
         draggable: false,
         scaleControl: true,
-        zoomControl: true,
+        zoomControl: false,
         zoomControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_TOP,
+            position: google.maps.ControlPosition.BOTTOM_CENTER,
             style: google.maps.ZoomControlStyle.LARGE
         }
     };
@@ -98,26 +161,60 @@ function doMapLoad()
 // Initializes DOM references
 function doWindowLoad()
 {
+    touch = ( 'ontouchstart' in document.documentElement ) ? true : false;
+
     // Airspeed
     airspeed = new Airspeed( ".airspeed" );
-    // airspeed.setAirspeed( 24 );
+    // airspeed.setAirspeed( 12 );
 
     // Altimeter
     altimeter = new Altimeter( ".altimeter" );
     // altimeter.setAltitude( 1234 );
 
+    // Heading
+    heading = new Heading( ".heading" );
+    heading.source.addEventListener( touch ? "touchstart" : "mousedown", doHeadingClick );
+    // heading.setHeading( 123 );
+
+    // Position
+    position = new Position( ".position" );
+
+    // Pitch
+    pitch = new Pitch( ".pitch" );
+    // pitch.setPitch( 12 );
+    // pitch.setTilt( 34 );
+
+    // Tilt
+    tilt = new Tilt( ".tilt" );
+    // tilt.setTilt( 12 );
+
     // Fit to window
+    // Components only draw once
+    // Subsequent window resize only positions components
     doWindowResize();
 
     // Pretend values for testing
-    interval = setInterval( updateSituation, 2000 );
+    // interval = setInterval( updateSituation, 2000 );
 }
 
 // Called to layout user interface
 function doWindowResize()
 {
     airspeed.container.style.top = Math.round( ( window.innerHeight - airspeed.container.clientHeight ) / 2 ) + "px";
+
     altimeter.container.style.top = Math.round( ( window.innerHeight - altimeter.container.clientHeight ) / 2 ) + "px";
+
+    heading.container.style.top = ( Math.round( ( window.innerHeight - heading.container.clientHeight ) / 2 ) - 16 ) + "px";
+    heading.container.style.left = Math.round( ( window.innerWidth - heading.container.clientWidth ) / 2 ) + "px";
+
+    position.container.style.top = Math.round( ( window.innerHeight - position.container.clientHeight ) / 2 ) + "px";
+    position.container.style.left = Math.round( ( window.innerWidth - position.container.clientWidth ) / 2 ) + "px";
+
+    pitch.container.style.top = Math.round( ( window.innerHeight - pitch.container.clientHeight ) / 2 ) + "px";
+    pitch.container.style.left = Math.round( ( window.innerWidth - pitch.container.clientWidth ) / 2 ) + "px";
+
+    tilt.container.style.top = Math.round( ( window.innerHeight - tilt.container.clientHeight ) / 2 ) + "px";
+    tilt.container.style.left = Math.round( ( window.innerWidth - tilt.container.clientWidth ) / 2 ) + "px";
 }
 
 // Setup page load
@@ -137,8 +234,20 @@ google.maps.event.addDomListener( window, "load", doMapLoad );
 <!-- Airspeed -->
 <div class="airspeed"></div>
 
+<!-- Heading -->
+<div class="heading"></div>
+
 <!-- Altimeter -->
 <div class="altimeter"></div>
+
+<!-- Position -->
+<div class="position"></div>
+
+<!-- Pitch -->
+<div class="pitch"></div>
+
+<!-- Tilt -->
+<div class="tilt"></div>
 
 </body>
 </html>

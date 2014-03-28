@@ -21,6 +21,7 @@ function Airspeed( selector )
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
     };
 
+    result.container.style.height = result.container.clientHeight + "px";
     result.container.style.top = Math.round( ( window.innerHeight - result.container.clientHeight ) / 2 ) + "px";
 
     result.document.setAttribute( "width", result.container.clientWidth );
