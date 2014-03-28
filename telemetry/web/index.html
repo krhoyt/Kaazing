@@ -33,9 +33,18 @@ body {
     width: 68px;
 }
 
+.dial {
+    position: absolute;
+    width: 12%;
+}
+
 .heading {
     height: 75%;
     position: absolute;
+}
+
+.humidity {
+    left: 200px;
 }
 
 .map {
@@ -71,6 +80,7 @@ body {
 <!-- Gauges -->
 <script src="Airspeed.js" type="text/javascript"></script>
 <script src="Altimeter.js" type="text/javascript"></script>
+<script src="Dial.js" type="text/javascript"></script>
 <script src="Heading.js" type="text/javascript"></script>
 <script src="Pitch.js" type="text/javascript"></script>
 <script src="Position.js" type="text/javascript"></script>
@@ -91,6 +101,7 @@ var interval = null;
 var map = null;
 var pitch = null;
 var position = null;
+var temperature = null;
 var touch = null;
 
 // Update the situational display
@@ -101,6 +112,8 @@ function updateSituation( values )
     var newHeading = Math.random() * 360;
     var newPitch = Math.random() * 50;
     var newTilt = Math.random() * 45;
+    var newTemperature = temperature.minimum + ( Math.random() * 81 );
+    var newHumidity = humidity.minimum + ( Math.random() * 70 );
 
     if( Math.random() > 0.50 )
     {
@@ -112,12 +125,16 @@ function updateSituation( values )
         newTilt = 0 - newTilt;
     }
 
+    // TODO: Center map on new coordinates
+
     airspeed.setAirspeed( newAirspeed );
     altimeter.setAltitude( newAltitude );
     pitch.setPitch( newPitch );
     pitch.setTilt( newTilt );
     tilt.setTilt( newTilt );
     heading.setHeading( newHeading );
+    temperature.setValue( newTemperature );
+    humidity.setValue( newHumidity );
 }
 
 // Handle toggle of heading source
@@ -187,6 +204,14 @@ function doWindowLoad()
     tilt = new Tilt( ".tilt" );
     // tilt.setTilt( 12 );
 
+    // Temperature
+    temperature = new Dial( ".dial.temperature", "Temp (\u00B0F)", 41, 122 );
+    // temperature.setValue( 56.78 );
+
+    // Humidity
+    humidity = new Dial( ".dial.humidity", "RH (%)", 10, 90 );
+    // humidity.setValue( 12.34 );
+
     // Fit to window
     // Components only draw once
     // Subsequent window resize only positions components
@@ -214,6 +239,12 @@ function doWindowResize()
 
     tilt.container.style.top = Math.round( ( window.innerHeight - tilt.container.clientHeight ) / 2 ) + "px";
     tilt.container.style.left = Math.round( ( window.innerWidth - tilt.container.clientWidth ) / 2 ) + "px";
+
+    temperature.container.style.left = ( ( window.innerWidth / 4 ) - ( temperature.container.clientWidth / 2 ) ) + "px";
+    temperature.container.style.top = ( airspeed.container.offsetTop + airspeed.container.clientHeight - temperature.container.clientHeight ) + "px";
+
+    humidity.container.style.left = ( ( ( window.innerWidth / 4 ) * 3 ) - ( humidity.container.clientWidth / 2 ) ) + "px";
+    humidity.container.style.top = ( airspeed.container.offsetTop + airspeed.container.clientHeight - humidity.container.clientHeight ) + "px";
 }
 
 // Setup page load
@@ -239,14 +270,20 @@ google.maps.event.addDomListener( window, "load", doMapLoad );
 <!-- Altimeter -->
 <div class="altimeter"></div>
 
-<!-- Position -->
-<div class="position"></div>
-
 <!-- Pitch -->
 <div class="pitch"></div>
 
 <!-- Tilt -->
 <div class="tilt"></div>
+
+<!-- Position -->
+<div class="position"></div>
+
+<!-- Temperature -->
+<div class="dial temperature"></div>
+
+<!-- Humidity -->
+<div class="dial humidity"></div>
 
 </body>
 </html>
