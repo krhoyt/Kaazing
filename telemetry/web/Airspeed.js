@@ -1,4 +1,4 @@
-function Airspeed( selector )
+function Airspeed( selector, animate )
 {
     var FONT_FAMILY = "sans-serif";
     var FONT_SIZE = 18;
@@ -17,6 +17,7 @@ function Airspeed( selector )
 
     result = {
         airspeed: 0,
+        animate: animate,
         container: document.querySelector( selector ),
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
     };
@@ -202,10 +203,16 @@ function Airspeed( selector )
     // Set altitude
     // Kick off animation
     result.setAirspeed = function( airspeed ) {
-        TweenLite.to( this, 1, {
-            airspeed: airspeed,
-            onUpdate: this.updateAirspeed
-        } );
+        if( this.animate ) {
+            TweenLite.to( this, 1, {
+                airspeed: airspeed,
+                onUpdate: this.updateAirspeed
+            } );
+        } else {
+            this.airspeed = airspeed;
+            this.updateAirspeed();
+        }
+
     }
 
     return result;

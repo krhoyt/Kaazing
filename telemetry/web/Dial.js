@@ -1,4 +1,4 @@
-function Dial( selector, label, minimum, maximum )
+function Dial( selector, label, minimum, maximum, animate )
 {
     var FONT_FAMILY = "sans-serif";
     var FONT_SIZE = 18;
@@ -11,6 +11,7 @@ function Dial( selector, label, minimum, maximum )
     var result = null;
 
     result = {
+        animate: animate,
         maximum: maximum,
         minimum: minimum,
         value: minimum,
@@ -236,10 +237,16 @@ function Dial( selector, label, minimum, maximum )
             value = result.maximum;
         }
 
-        TweenLite.to( this, 1, {
-            value: value,
-            onUpdate: this.updateValue
-        } );
+        if( this.animate )
+        {
+            TweenLite.to( this, 1, {
+                value: value,
+                onUpdate: this.updateValue
+            } );
+        } else {
+            this.value = value;
+            this.updateValue();
+        }
     }
 
     return result;

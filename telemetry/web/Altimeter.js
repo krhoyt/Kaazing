@@ -1,4 +1,4 @@
-function Altimeter( selector )
+function Altimeter( selector, animate )
 {
     var FONT_FAMILY = "sans-serif";
     var FONT_SIZE = 18;
@@ -13,6 +13,7 @@ function Altimeter( selector )
     var result = null;
 
     result = {
+        animate: animate,
         altitude: 0,
         container: document.querySelector( selector ),
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
@@ -165,10 +166,16 @@ function Altimeter( selector )
     // Set altitude
     // Kick off animation
     result.setAltitude = function( altitude ) {
-        TweenLite.to( this, 1, {
-            altitude: altitude,
-            onUpdate: this.updateAltitude
-        } );
+        if( this.animate )
+        {
+            TweenLite.to( this, 1, {
+                altitude: altitude,
+                onUpdate: this.updateAltitude
+            } );
+        } else {
+            this.altitude = altitude;
+            this.updateAltitude();
+        }
     }
 
     return result;

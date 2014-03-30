@@ -1,4 +1,4 @@
-function Heading( selector )
+function Heading( selector, animate )
 {
     var FONT_FAMILY = "sans-serif";
     var FONT_SIZE = 18;
@@ -18,6 +18,7 @@ function Heading( selector )
     result = {
         SOURCE_COMPASS: "C",
         SOURCE_GPS: "G",
+        animate: animate,
         gaugeRadius: 0,
         heading: 0,
         container: document.querySelector( selector ),
@@ -217,10 +218,16 @@ function Heading( selector )
     // Set heading
     // Kick off animation
     result.setHeading = function( heading ) {
-        TweenLite.to( this, 1, {
-            heading: heading,
-            onUpdate: this.updateHeading
-        } );
+        if( this.animate )
+        {
+            TweenLite.to( this, 1, {
+                heading: heading,
+                onUpdate: this.updateHeading
+            } );
+        } else {
+            this.heading = heading;
+            this.updateHeading();
+        }
     }
 
     return result;

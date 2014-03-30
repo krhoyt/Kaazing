@@ -95,6 +95,7 @@ body {
 <!-- Application -->
 <script type="text/javascript">
 // User interface constants
+var ANIMATE = false;
 var KAAZING_LATITUDE = 37.4173652;
 var KAAZING_LONGITUDE = -121.9788182;
 
@@ -196,7 +197,21 @@ function doHeadingClick()
 // Parses data and updates user interface
 function doMessageArrived( message )
 {
+    var parts = null;
+
     console.log( "Arrived: " + message.getText() );
+
+    parts = message.getText().split( "," );
+
+    map.setCenter(
+        new google.maps.LatLng( parseFloat( parts[1] ), parseFloat( parts[2] ) )
+    );
+
+    airspeed.setAirspeed( parseFloat( parts[6] ) );
+    altimeter.setAltitude( parseFloat( parts[4] ) );
+    heading.setHeading( parseFloat( parts[7] ) );
+    temperature.setValue( parseFloat( parts[17] ));
+    humidity.setValue( parseFloat( parts[19] ) );
 }
 
 // Called when broker session started
@@ -241,15 +256,15 @@ function doWindowLoad()
     touch = ( 'ontouchstart' in document.documentElement ) ? true : false;
 
     // Airspeed
-    airspeed = new Airspeed( ".airspeed" );
+    airspeed = new Airspeed( ".airspeed", ANIMATE );
     // airspeed.setAirspeed( 12 );
 
     // Altimeter
-    altimeter = new Altimeter( ".altimeter" );
+    altimeter = new Altimeter( ".altimeter", ANIMATE );
     // altimeter.setAltitude( 1234 );
 
     // Heading
-    heading = new Heading( ".heading" );
+    heading = new Heading( ".heading", ANIMATE );
     heading.source.addEventListener( touch ? "touchstart" : "mousedown", doHeadingClick );
     // heading.setHeading( 123 );
 
@@ -266,11 +281,11 @@ function doWindowLoad()
     // tilt.setTilt( 12 );
 
     // Temperature
-    temperature = new Dial( ".dial.temperature", "Temp (\u00B0F)", 41, 122 );
+    temperature = new Dial( ".dial.temperature", "Temp (\u00B0F)", 41, 122, ANIMATE );
     // temperature.setValue( 56.78 );
 
     // Humidity
-    humidity = new Dial( ".dial.humidity", "RH (%)", 10, 90 );
+    humidity = new Dial( ".dial.humidity", "RH (%)", 10, 90, ANIMATE );
     // humidity.setValue( 12.34 );
 
     // Fit to window
