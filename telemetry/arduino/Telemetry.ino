@@ -1,3 +1,6 @@
+// EM-506 (GPS)
+// http://arduiniana.org/libraries/tinygpsplus/
+
 // HIH-6130 (Temperature and Humidity)
 // http://www.phanderson.com/arduino/hih6130.html
 
@@ -56,36 +59,55 @@ void setup()
 void loop()
 {
   // HIH
-  byte  state;
-  float meters;
-  float feet;
   float celcius;
-  float farenheit;
   float humidity;
-  float latitude;
-  float longitude;
 
+  /*
+  // Output
+  */
+  
+  Serial.print( "$KAAZING" );
+  Serial.print( "," );
+ 
   // GPS
-  while( ss.available() > 0 )
-  {
-    if( gps.encode( ss.read() ) )
-    {
-      if( gps.location.isValid() )
-      {
-        meters = gps.altitude.meters();
-        feet = meters * 3.2808;
-        latitude = gps.location.lat();
-        longitude = gps.location.lng();    
-      }
-    }
-  }
-
-  // Read the values from the sensor
-  // Takes local values to place sensor values
-  // Returns sensor state
-  state = getTemperatureHumidity( humidity, celcius );
-  farenheit = ( celcius *  9 ) / 5 + 32;
-
+  // Location
+  Serial.print( gps.location.lat(), 7 );
+  Serial.print( "," );        
+  Serial.print( gps.location.lng(), 7 );
+  Serial.print( "," );   
+  
+  // Altitude
+  Serial.print( gps.altitude.meters(), 2 );        
+  Serial.print( "," );
+  Serial.print( gps.altitude.feet(), 2 );
+  Serial.print( "," );
+  
+  // Speed
+  Serial.print( gps.speed.mps(), 2 );
+  Serial.print( "," );
+  Serial.print( gps.speed.mph(), 2 );
+  Serial.print( "," );
+  
+  // Heading
+  Serial.print( gps.course.deg(), 2 );
+  Serial.print( "," );
+  
+  // Date
+  Serial.print( gps.date.month() );
+  Serial.print( "," );        
+  Serial.print( gps.date.day() );
+  Serial.print( "," );                
+  Serial.print( gps.date.year() );
+  Serial.print( "," );                
+  
+  // Time
+  Serial.print( gps.time.hour() );
+  Serial.print( "," );     
+  Serial.print( gps.time.minute() );
+  Serial.print( "," );         
+  Serial.print( gps.time.second() );
+  Serial.print( "," );   
+  
   // ADXL
   // Raw read
   int xRead = analogRead( ADXL_X );
@@ -103,43 +125,37 @@ void loop()
   // Converting the radians to degrees
   double xDeg = RAD_TO_DEG * ( atan2( -yAng, -zAng ) + PI );
   double yDeg = RAD_TO_DEG * ( atan2( -xAng, -zAng ) + PI );
-  double zDeg = RAD_TO_DEG * ( atan2( -yAng, -xAng ) + PI );
-
-  // Output
-  Serial.print( latitude );
-  Serial.print( "," ); 
-  Serial.print( longitude );
+  double zDeg = RAD_TO_DEG * ( atan2( -yAng, -xAng ) + PI );  
+  
+  // X-Axis
+  Serial.print( xDeg, 2 );
+  Serial.print( "," );
+  
+  // Y-Axis
+  Serial.print( yDeg, 2 );
   Serial.print( "," );  
-  Serial.print( meters );
-  Serial.print( "," );    
-  Serial.print( feet );
-  Serial.print( "," );      
-  Serial.print( celcius );
+  
+  // Z-Axis
+  Serial.print( zDeg, 2 );
+  Serial.print( "," );  
+  
+  // HIH
+  byte state = getTemperatureHumidity( humidity, celcius );
+  float farenheit = ( celcius *  9 ) / 5 + 32;  
+  
+  // Temperature
+  Serial.print( farenheit, 2 );
   Serial.print( "," );
-  Serial.print( farenheit );
+  
+  Serial.print( celcius, 2 );
   Serial.print( "," );
-  Serial.print( humidity );
-  Serial.print( "," );
-  Serial.print( xRead );  
-  Serial.print( "," );
-  Serial.print( yRead );  
-  Serial.print( "," );
-  Serial.print( zRead );      
-  Serial.print( "," );
-  Serial.print( xAng );  
-  Serial.print( "," );
-  Serial.print( yAng );  
-  Serial.print( "," );
-  Serial.print( zAng );      
-  Serial.print( "," );
-  Serial.print( xDeg );  
-  Serial.print( "," );
-  Serial.print( yDeg );  
-  Serial.print( "," );
-  Serial.println( zDeg );    
+  
+  // Humidity
+  // Also prints newline
+  Serial.println( humidity, 2 );
 
-  // Wait for next round
-  delay( 100 );
+  // Feeds GPS data
+  smartDelay( 100 );
 }
 
 // Retrieve temperature and humidity values from HIH6130
@@ -186,5 +202,17 @@ byte getTemperatureHumidity( float &hdata, float &tdata )
 
   // Return the sensor state
   return state;
+}
+
+static void smartDelay( unsigned long ms )
+{
+  unsigned long start = millis();
+  
+  do {
+    while( ss.available() )
+    {
+      gps.encode( ss.read() );
+    }
+  } while( millis() - start < ms );
 }
 
