@@ -1,4 +1,4 @@
-function Tilt( selector )
+function Tilt( selector, animate )
 {
     var FONT_FAMILY = "sans-serif";
     var SVG_NAMESPACE = "http://www.w3.org/2000/svg";
@@ -10,6 +10,7 @@ function Tilt( selector )
     var result = null;
 
     result = {
+        animate: animate,
         pitch: 0,
         tilt: 0,
         container: document.querySelector( selector ),
@@ -229,10 +230,16 @@ function Tilt( selector )
     // Set tilt
     // Kick off animation
     result.setTilt = function( tilt ) {
-        TweenLite.to( this, 1, {
-            tilt: tilt,
-            onUpdate: this.updateTilt
-        } );
+        if( this.animate )
+        {
+            TweenLite.to( this, 1, {
+                tilt: tilt,
+                onUpdate: this.updateTilt
+            } );
+        } else {
+            this.tilt = tilt;
+            this.updateTilt();
+        }
     }
 
     return result;

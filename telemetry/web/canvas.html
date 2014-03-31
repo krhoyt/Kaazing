@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>Telemetry</title>
+<title>Telemetry (Canvas)</title>
 
 <!-- Big shout out to iHUD for the inspiration -->
 <!-- Check out their iOS application -->
@@ -12,12 +12,15 @@
 <!-- Mostly inline SVG -->
 <style type="text/css">
 body {
+    background-color: tan;
     margin: 0px;
     overflow: hidden;
     padding: 0px;
 }
 
 .airspeed {
+    background-color: rgba( 0, 0, 0, 0.30 );
+    border: 1px solid white;
     height: 75%;
     position: absolute;
     left: 20px;
@@ -25,72 +28,63 @@ body {
     width: 86px;
 }
 
-.altimeter {
-    height: 75%;
+.airspeed > div:first-of-type {
+    border-bottom: 1px solid white;
+    color: white;
+    font-family: source-sans-pro;
+    font-size: 18px;
+    height: 27px;
+    left: 0px;
+    line-height: 27px;
     position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 68px;
+    right: 0px;
+    text-align: center;
 }
 
-.dial {
-    position: absolute;
-    width: 12%;
-}
-
-.heading {
-    height: 75%;
-    position: absolute;
-}
-
-.humidity {
-    left: 200px;
-}
-
-.map {
+.airspeed > div:last-of-type {
+    border-top: 1px solid white;
     bottom: 0px;
+    color: white;
+    font-family: source-sans-pro;
+    font-size: 18px;
+    height: 27px;
+    left: 0px;
+    line-height: 27px;
+    position: absolute;
+    right: 0px;
+    text-align: center;
+}
+
+.airspeed > div:last-of-type span {
+    font-size: 12px;
+}
+
+.airspeed .gauge {
+    bottom: 27px;
     left: 0px;
     position: absolute;
     right: 0px;
-    top: 0px;
-}
-
-.pitch {
-    position: absolute;
-    height: 75%;
-}
-
-.position {
-    position: absolute;
-    height: 75%;
-}
-
-.tilt {
-    position: absolute;
-    height: 75%;
+    top: 28px;
 }
 </style>
 
-<!-- Emulation -->
-<script src="http://kevinhoyt.com/kaazing/4.0.4/WebSocket.js" type="text/javascript"></script>
-
-<!-- JMS -->
-<script src="http://kevinhoyt.com/kaazing/4.0.4/jms/JmsClient.js" type="text/javascript"></script>
-
-<!-- Animation -->
-<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.5/TweenLite.min.js" type="text/javascript"></script>
+<!-- Font -->
+<script src="http://use.edgefonts.net/source-sans-pro.js" type="text/javascript"></script>
 
 <!-- Map -->
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
 
 <!-- Gauges -->
-<script src="script/svg/Airspeed.js" type="text/javascript"></script>
+<script src="script/canvas/Airspeed.js" type="text/javascript"></script>
+
+<!--
 <script src="script/svg/Altimeter.js" type="text/javascript"></script>
 <script src="script/svg/Dial.js" type="text/javascript"></script>
 <script src="script/svg/Heading.js" type="text/javascript"></script>
 <script src="script/svg/Pitch.js" type="text/javascript"></script>
 <script src="script/svg/Position.js" type="text/javascript"></script>
 <script src="script/svg/Tilt.js" type="text/javascript"></script>
+-->
 
 <!-- Application -->
 <script type="text/javascript">
@@ -99,53 +93,49 @@ var ANIMATE = true;
 var KAAZING_LATITUDE = 37.4173652;
 var KAAZING_LONGITUDE = -121.9788182;
 
-// Data constants
-var TOPIC_NAME = "/topic/telemetry";
-var WEBSOCKET_URL = "ws://localhost:8001/jms";
-
 // Global user interface
 var airspeed = null;
 var altimeter = null;
 var attitude = null;
 var heading = null;
+var interval = null;
 var map = null;
 var pitch = null;
 var position = null;
 var temperature = null;
 var touch = null;
 
-// Global data
-var connection = null;
-var consumer = null;
-var future = null;
-var session = null;
-var topic = null;
-
-// Called when connected to server
-// Not yet connected to broker
-function doConnected()
+// Update the situational display
+function updateSituation( values )
 {
-    try {
-        // Connection
-        connection = future.getValue();
-        console.log( "Connection established." );
+    var newAirspeed = Math.random() * 35;
+    var newAltitude = Math.random() * 3000;
+    var newHeading = Math.random() * 360;
+    var newPitch = Math.random() * 50;
+    var newTilt = Math.random() * 45;
+    var newTemperature = temperature.minimum + ( Math.random() * 81 );
+    var newHumidity = humidity.minimum + ( Math.random() * 70 );
 
-        // Session
-        // Topic
-        session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
-        topic = session.createTopic( TOPIC_NAME );
-
-        // Consumer
-        // Set listener
-        consumer = session.createConsumer( topic );
-        consumer.setMessageListener( doMessageArrived );
-
-        // Start broker session
-        connection.start( doSessionStart );
-    } catch( e ) {
-        // Fail
-        console.log( "Exception: " + e );
+    if( Math.random() > 0.50 )
+    {
+        newPitch = 0 - newPitch;
     }
+
+    if( Math.random() > 0.50 )
+    {
+        newTilt = 0 - newTilt;
+    }
+
+    // TODO: Center map on new coordinates
+
+    airspeed.setAirspeed( newAirspeed );
+    altimeter.setAltitude( newAltitude );
+    pitch.setPitch( newPitch );
+    pitch.setTilt( newTilt );
+    tilt.setTilt( newTilt );
+    heading.setHeading( newHeading );
+    temperature.setValue( newTemperature );
+    humidity.setValue( newHumidity );
 }
 
 // Handle toggle of heading source
@@ -157,46 +147,6 @@ function doHeadingClick()
     } else {
         heading.setSource( heading.SOURCE_COMPASS );
     }
-}
-
-// Called when a message has arrived
-// Parses data and updates user interface
-function doMessageArrived( message )
-{
-    var parts = null;
-
-    console.log( "Arrived: " + message.getText() );
-
-    parts = message.getText().split( "," );
-
-    map.setCenter(
-        new google.maps.LatLng( parseFloat( parts[1] ), parseFloat( parts[2] ) )
-    );
-
-    airspeed.setAirspeed( parseFloat( parts[6] ) );
-    altimeter.setAltitude( parseFloat( parts[4] ) );
-
-
-    var newPitch = parseFloat( parts[16] );
-
-    if( newPitch > 180 )
-    {
-        newPitch = newPitch - 360;
-    }
-
-    pitch.setPitch( newPitch );
-    pitch.setTilt( parseFloat( parts[15] ) );
-    tilt.setTilt( parseFloat( parts[15] ) );
-    heading.setHeading( parseFloat( parts[14] ) );
-    temperature.setValue( parseFloat( parts[18] ));
-    humidity.setValue( parseFloat( parts[20] ) );
-}
-
-// Called when broker session started
-// Kick off periodic message send
-function doSessionStart()
-{
-    console.log( "JMS session created." );
 }
 
 // Setup map
@@ -234,9 +184,10 @@ function doWindowLoad()
     touch = ( 'ontouchstart' in document.documentElement ) ? true : false;
 
     // Airspeed
-    airspeed = new Airspeed( ".airspeed", ANIMATE );
+    airspeed = new Airspeed( ".airspeed", 40, ANIMATE );
     // airspeed.setAirspeed( 12 );
 
+    /*
     // Altimeter
     altimeter = new Altimeter( ".altimeter", ANIMATE );
     // altimeter.setAltitude( 1234 );
@@ -265,31 +216,23 @@ function doWindowLoad()
     // Humidity
     humidity = new Dial( ".dial.humidity", "RH (%)", 10, 90, ANIMATE );
     // humidity.setValue( 12.34 );
+    */
 
     // Fit to window
     // Components only draw once
     // Subsequent window resize only positions components
     doWindowResize();
 
-    // Debug
-    // Tracer.setTrace( true );
-
-    // Use JMS as broker
-    factory = new JmsConnectionFactory( WEBSOCKET_URL );
-
-    // Connect to server
-    future = factory.createConnection(
-        null,           // User name
-        null,           // Password
-        doConnected     // Callback
-    );
+    // Pretend values for testing
+    // interval = setInterval( updateSituation, 2000 );
 }
 
 // Called to layout user interface
 function doWindowResize()
 {
-    airspeed.container.style.top = Math.round( ( window.innerHeight - airspeed.container.clientHeight ) / 2 ) + "px";
+    // airspeed.container.style.top = Math.round( ( window.innerHeight - airspeed.container.clientHeight ) / 2 ) + "px";
 
+    /*
     altimeter.container.style.top = Math.round( ( window.innerHeight - altimeter.container.clientHeight ) / 2 ) + "px";
 
     heading.container.style.top = ( Math.round( ( window.innerHeight - heading.container.clientHeight ) / 2 ) - 16 ) + "px";
@@ -309,6 +252,7 @@ function doWindowResize()
 
     humidity.container.style.left = ( ( ( window.innerWidth / 4 ) * 3 ) - ( humidity.container.clientWidth / 2 ) ) + "px";
     humidity.container.style.top = ( airspeed.container.offsetTop + airspeed.container.clientHeight - humidity.container.clientHeight ) + "px";
+    */
 }
 
 // Setup page load
@@ -316,7 +260,7 @@ window.addEventListener( "load", doWindowLoad );
 window.addEventListener( "resize", doWindowResize );
 
 // Setup map library load
-google.maps.event.addDomListener( window, "load", doMapLoad );
+// google.maps.event.addDomListener( window, "load", doMapLoad );
 </script>
 
 </head>
@@ -326,28 +270,11 @@ google.maps.event.addDomListener( window, "load", doMapLoad );
 <div class="map"></div>
 
 <!-- Airspeed -->
-<div class="airspeed"></div>
-
-<!-- Heading -->
-<div class="heading"></div>
-
-<!-- Altimeter -->
-<div class="altimeter"></div>
-
-<!-- Pitch -->
-<div class="pitch"></div>
-
-<!-- Tilt -->
-<div class="tilt"></div>
-
-<!-- Position -->
-<div class="position"></div>
-
-<!-- Temperature -->
-<div class="dial temperature"></div>
-
-<!-- Humidity -->
-<div class="dial humidity"></div>
+<div class="airspeed">
+    <div>MPH</div>
+    <div class="gauge"></div>
+    <div>V<span>GPS</span></div>
+</div>
 
 </body>
 </html>

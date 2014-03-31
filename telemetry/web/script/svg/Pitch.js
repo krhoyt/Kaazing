@@ -1,4 +1,4 @@
-function Pitch( selector )
+function Pitch( selector, animate )
 {
     var FONT_FAMILY = "sans-serif";
     var FONT_SIZE = 14;
@@ -18,6 +18,7 @@ function Pitch( selector )
     var segment = null;
 
     result = {
+        animate: animate,
         pitch: 0,
         tilt: 0,
         container: document.querySelector( selector ),
@@ -162,10 +163,16 @@ function Pitch( selector )
     // Set tilt
     // Kick off animation
     result.setTilt = function( tilt ) {
-        TweenLite.to( this, 1, {
-            tilt: tilt,
-            onUpdate: this.updateTilt
-        } );
+        if( this.animate )
+        {
+            TweenLite.to( this, 1, {
+                tilt: tilt,
+                onUpdate: this.updateTilt
+            } );
+        } else {
+            this.tilt = tilt;
+            this.updateTilt();
+        }
     }
 
     // Twenty-five (25) pixels per five (5) degrees
@@ -177,10 +184,16 @@ function Pitch( selector )
     // Set pitch
     // Kick off animation
     result.setPitch = function( pitch ) {
-        TweenLite.to( this, 1, {
-            pitch: pitch,
-            onUpdate: this.updatePitch
-        } );
+        if( this.animate )
+        {
+            TweenLite.to( this, 1, {
+                pitch: pitch,
+                onUpdate: this.updatePitch
+            } );
+        } else {
+            this.pitch = pitch;
+            this.updatePitch();
+        }
     }
 
     return result;
