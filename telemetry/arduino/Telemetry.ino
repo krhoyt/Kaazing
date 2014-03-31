@@ -4,22 +4,21 @@
 // HIH-6130 (Temperature and Humidity)
 // http://www.phanderson.com/arduino/hih6130.html
 
-// ADXL335 (Accelerometer)
-// http://bildr.org/2011/04/sensing-orientation-with-the-adxl335-arduino/
+// LSM303 (Accelerometer and Compass)
+// https://github.com/pololu/lsm303-arduino
 
-// For HIH
+// HIH
+// LSM
 #include <Wire.h>
+
+// LSM
+#include <LSM303.h>
 
 // For GPS
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 
 // Constants
-#define ADXL_MIN     260
-#define ADXL_MAX     411
-#define ADXL_X       0
-#define ADXL_Y       1
-#define ADXL_Z       2
 #define GPS_BAUD     4800
 #define GPS_RX       2
 #define GPS_TX       3
@@ -31,6 +30,9 @@
 TinyGPSPlus gps;
 SoftwareSerial ss( GPS_RX, GPS_TX );
 
+// LSM
+LSM303 compass;
+
 // Setup Arduino
 // Setup HIH
 // Serial output
@@ -41,6 +43,12 @@ void setup()
   
   // I2C
   Wire.begin();
+
+  // LSM
+  compass.init();
+  compass.enableDefault();
+  compass.m_min = ( LSM303::vector<int16_t> ) {-648, -667, -654};
+  compass.m_max = ( LSM303::vector<int16_t> ) {+477, +496, +488};  
    
   // Turn on the HIH6130 sensor 
   pinMode( HIH_DATA, OUTPUT );
@@ -108,17 +116,14 @@ void loop()
   Serial.print( gps.time.second() );
   Serial.print( "," );   
   
-  // ADXL
-  // Raw read
-  int xRead = analogRead( ADXL_X );
-  int yRead = analogRead( ADXL_Y );
-  int zRead = analogRead( ADXL_Z );
-
+  // LSM
+  compass.read();
+  
   // Convert read values to degrees -90 to 90
   // Needed for atan2
-  int xAng = map( xRead, ADXL_MIN, ADXL_MAX, -90, 90 );
-  int yAng = map( yRead, ADXL_MIN, ADXL_MAX, -90, 90 );
-  int zAng = map( zRead, ADXL_MIN, ADXL_MAX, -90, 90 );
+  int xAng = map( compass.m.x, 497, -685, -90, 90 );
+  int yAng = map( compass.m.y, 471, -682, -90, 90 );
+  int zAng = map( compass.m.z, 470, -656, -90, 90 );
 
   // Caculate 360 degree values like so: atan2( -yAng, -zAng )
   // Outputs the value of -π to π (radians)
@@ -126,18 +131,18 @@ void loop()
   double xDeg = RAD_TO_DEG * ( atan2( -yAng, -zAng ) + PI );
   double yDeg = RAD_TO_DEG * ( atan2( -xAng, -zAng ) + PI );
   double zDeg = RAD_TO_DEG * ( atan2( -yAng, -xAng ) + PI );  
-  
-  // X-Axis
-  Serial.print( xDeg, 2 );
+
+  // Heading
+  Serial.print( compass.heading(), 2 );
   Serial.print( "," );
   
-  // Y-Axis
-  Serial.print( yDeg, 2 );
+  // Tilt and pitch
+  Serial.print( xDeg );
+  Serial.print( "," );
+  Serial.print( yDeg );
   Serial.print( "," );  
-  
-  // Z-Axis
-  Serial.print( zDeg, 2 );
-  Serial.print( "," );  
+  Serial.print( zDeg );
+  Serial.print( "," );    
   
   // HIH
   byte state = getTemperatureHumidity( humidity, celcius );
