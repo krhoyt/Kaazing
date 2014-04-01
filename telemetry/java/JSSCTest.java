@@ -6,7 +6,7 @@ import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
-public class SerialTest
+public class JSSCTest
 {
 	static SerialPort arduino = null;	
 	

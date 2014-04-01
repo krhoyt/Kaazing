@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.jms.Connection;
@@ -12,32 +15,136 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import jssc.SerialPort;
-import jssc.SerialPortEvent;
-import jssc.SerialPortEventListener;
-import jssc.SerialPortException;
-import jssc.SerialPortList;
+import gnu.io.CommPortIdentifier; 
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent; 
+import gnu.io.SerialPortEventListener; 
 
-public class Telemetry
+public class Telemetry implements SerialPortEventListener 
 {
+	// Gateway constants
 	public static final String CONNECTION_FACTORY = "ConnectionFactory";
 	public static final String KAAZING_FACTORY = "com.kaazing.gateway.jms.client.JmsInitialContextFactory";
 	public static final String PROVIDER_URL = "ws://localhost:8001/jms";
 	public static final String TOPIC = "/topic/telemetry";	
 	
+	// Desired ports
+	private static final String PORT_NAMES[] = { 
+		"/dev/tty.usbserial-A6007to5", // Mac OS X
+		"/dev/ttyACM0", // Raspberry Pi
+		"/dev/ttyUSB0", // Linux
+		"COM3", // Windows
+	};
+	
+	// How long to wait for the port to open
+	private static final int TIME_OUT = 2000;
+	
+	// Data bit rate from device
+	private static final int DATA_RATE = 9600;	
+	
+	// Bytes to characters
+	private BufferedReader input = null;
+	
 	static Connection		connection = null;	
 	static MessageProducer	producer = null;
-	static SerialPort 		arduino = null;			
-	static Session			session = null;
+	static Session			session = null;	
 	static Topic			topic = null;	
+	
+	SerialPort serialPort = null;		
+	
+	public void initialize() 
+	{
+		// For Raspberry Pi 
+		// http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
+		// System.setProperty( "gnu.io.rxtx.SerialPorts", "/dev/ttyACM0" );
+
+		CommPortIdentifier portId = null;
+		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+
+		// Find serial port
+		while (portEnum.hasMoreElements()) 
+		{
+			CommPortIdentifier currPortId = (CommPortIdentifier)portEnum.nextElement();
+			
+			// Debug
+			// System.out.println( currPortId.getName() );
+			
+			for( String portName:PORT_NAMES ) 
+			{
+				if( currPortId.getName().equals( portName ) ) 
+				{
+					portId = currPortId;
+					break;
+				}
+			}
+		}
+		
+		if( portId == null ) 
+		{
+			System.out.println( "Could not find desired port." );
+			return;
+		}
+
+		try {
+			// Open serial port
+			serialPort = ( SerialPort )portId.open( this.getClass().getName(), TIME_OUT );
+
+			// Set port parameters
+			serialPort.setSerialPortParams( DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
+
+			// Open input stream
+			input = new BufferedReader( new InputStreamReader( serialPort.getInputStream() ) );
+
+			// Add event listeners
+			serialPort.addEventListener( this );
+			serialPort.notifyOnDataAvailable( true );
+		} catch( Exception e ) {
+			System.err.println( e.toString() );
+		}
+	}
+
+	// Close port when finished
+	public synchronized void close() 
+	{
+		if( serialPort != null ) 
+		{
+			serialPort.removeEventListener();
+			serialPort.close();
+		}
+	}	
+	
+	// Serial port event
+	public synchronized void serialEvent( SerialPortEvent oEvent ) 
+	{
+		TextMessage	message = null;		
+		
+		if( oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE ) 
+		{
+			try {
+				String inputLine = input.readLine();
+				
+				// Debug
+				// System.out.println( "Line: " + inputLine );
+			
+                try {
+            	 	producer = session.createProducer( topic );
+                    message = session.createTextMessage( inputLine );
+                    producer.send( message );	 	                                        	
+                } catch( JMSException jmse ) {
+                	System.out.println( jmse.getStackTrace() );
+                }
+            } catch( Exception e ) {
+				System.err.println( e.toString() );
+			}
+		}
+	}	
 	
 	public static void main( String[] args ) throws JMSException, NamingException
 	{
 		ConnectionFactory	factory = null;
 		InitialContext		context = null;
 		Properties			properties = null;
-		SerialReader		reader = null;
-		String[]			ports = null;
+		Telemetry 			main = null;
 		
 		// Connect to gateway
 		properties = new Properties();
@@ -64,71 +171,24 @@ public class Telemetry
 	 	// Start the connection
 	 	connection.start();	 		 	
 	 	
-		// Get port names
-		// Assume only Arduino connected
-		ports = SerialPortList.getPortNames();
-		arduino = new SerialPort( ports[0] );
+	 	// Initialize serial port
+	 	main = new Telemetry();
+		main.initialize();	 	
+	 	
+		Thread t = new Thread() 
+		{
+			public void run() 
+			{
+				// Keep alive
+				try {
+					Thread.sleep( 1000000 );
+				} catch( InterruptedException ie ) {}
+			}
+		};
 		
-		// Open the serial port
-		try {
-			arduino.openPort();
-			arduino.setParams( 9600, 8, 1, 0 );
-			
-			// Listen for incoming data
-			reader = new SerialReader();
-			arduino.addEventListener( reader );
-		} catch( SerialPortException spe ) {
-			System.out.println( "Cannot open port: " + ports[0] );
-		}
+		t.start();
+		
+		// Debug
+		System.out.println( "Started" );
 	}
-	
-	static class SerialReader implements SerialPortEventListener
-	{
-		byte[] 		buffer = null;
-		String 		incoming = null;
-		TextMessage	message = null;
-		
-        public void serialEvent( SerialPortEvent event )
-        {
-        	// Data available
-            if( event.isRXCHAR() )
-            {
-            	// Read some bytes
-            	// Display resulting string
-                try {
-                    buffer = arduino.readBytes( event.getEventValue() );
-                    
-                    // Create new string if empty
-                    if( incoming == null )
-                    {
-                        incoming = new String( buffer );
-                    } else {
-                        // Append data until full line                    	
-                        incoming = incoming + new String( buffer );                    	
-                    }
-
-                    // Make sure we have a complete line
-                    if( incoming.indexOf( '$' ) >= 0 && incoming.indexOf( '\n' ) >= 0 )
-                    {
-                    	// Debug
-                    	System.out.print( incoming );
-                    	
-                    	// Send message to KAAZING Gateway
-                        try {
-                    	 	producer = session.createProducer( topic );
-                            message = session.createTextMessage( incoming );
-                            producer.send( message );	 	                                        	
-                        } catch( JMSException jmse ) {
-                        	System.out.println( jmse.getStackTrace() );
-                        }
-                        
-                        // Reset message holder
-                        incoming = null;
-                    }
-                } catch ( SerialPortException spe ) {
-                    System.out.println( spe );
-                }
-            }
-        }
-    }		
 }
