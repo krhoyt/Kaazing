@@ -20,6 +20,14 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent; 
 import gnu.io.SerialPortEventListener; 
 
+/*
+ * RXTX uses a lock directory
+ * This will need to be created to work
+ * ---
+ * sudo mkdir /var/lock 
+ * sudo chmod 777 /var/lock
+ */
+
 public class Telemetry implements SerialPortEventListener 
 {
 	// Gateway constants
@@ -43,14 +51,14 @@ public class Telemetry implements SerialPortEventListener
 	private static final int DATA_RATE = 9600;	
 	
 	// Bytes to characters
-	private BufferedReader input = null;
+	private BufferedReader  input = null;
 	
 	static Connection		connection = null;	
 	static MessageProducer	producer = null;
 	static Session			session = null;	
 	static Topic			topic = null;	
 	
-	SerialPort serialPort = null;		
+	SerialPort 				arduino = null;		
 	
 	public void initialize() 
 	{
@@ -58,28 +66,29 @@ public class Telemetry implements SerialPortEventListener
 		// http://www.raspberrypi.org/phpBB3/viewtopic.php?f=81&t=32186
 		// System.setProperty( "gnu.io.rxtx.SerialPorts", "/dev/ttyACM0" );
 
-		CommPortIdentifier portId = null;
-		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+		CommPortIdentifier  current = null;		
+		CommPortIdentifier	usb = null;
+		Enumeration 		ports = CommPortIdentifier.getPortIdentifiers();
 
 		// Find serial port
-		while (portEnum.hasMoreElements()) 
+		while( ports.hasMoreElements() ) 
 		{
-			CommPortIdentifier currPortId = (CommPortIdentifier)portEnum.nextElement();
+			current = ( CommPortIdentifier )ports.nextElement();
 			
 			// Debug
 			// System.out.println( currPortId.getName() );
 			
 			for( String portName:PORT_NAMES ) 
 			{
-				if( currPortId.getName().equals( portName ) ) 
+				if( current.getName().equals( portName ) ) 
 				{
-					portId = currPortId;
+					usb = current;
 					break;
 				}
 			}
 		}
 		
-		if( portId == null ) 
+		if( usb == null ) 
 		{
 			System.out.println( "Could not find desired port." );
 			return;
@@ -87,17 +96,17 @@ public class Telemetry implements SerialPortEventListener
 
 		try {
 			// Open serial port
-			serialPort = ( SerialPort )portId.open( this.getClass().getName(), TIME_OUT );
+			arduino = ( SerialPort )usb.open( this.getClass().getName(), TIME_OUT );
 
 			// Set port parameters
-			serialPort.setSerialPortParams( DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
+			arduino.setSerialPortParams( DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
 
 			// Open input stream
-			input = new BufferedReader( new InputStreamReader( serialPort.getInputStream() ) );
+			input = new BufferedReader( new InputStreamReader( arduino.getInputStream() ) );
 
 			// Add event listeners
-			serialPort.addEventListener( this );
-			serialPort.notifyOnDataAvailable( true );
+			arduino.addEventListener( this );
+			arduino.notifyOnDataAvailable( true );
 		} catch( Exception e ) {
 			System.err.println( e.toString() );
 		}
@@ -106,29 +115,30 @@ public class Telemetry implements SerialPortEventListener
 	// Close port when finished
 	public synchronized void close() 
 	{
-		if( serialPort != null ) 
+		if( arduino != null ) 
 		{
-			serialPort.removeEventListener();
-			serialPort.close();
+			arduino.removeEventListener();
+			arduino.close();
 		}
 	}	
 	
 	// Serial port event
 	public synchronized void serialEvent( SerialPortEvent oEvent ) 
 	{
+		String		incoming = null;
 		TextMessage	message = null;		
 		
 		if( oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE ) 
 		{
 			try {
-				String inputLine = input.readLine();
+				incoming = input.readLine();
 				
 				// Debug
 				// System.out.println( "Line: " + inputLine );
 			
                 try {
             	 	producer = session.createProducer( topic );
-                    message = session.createTextMessage( inputLine );
+                    message = session.createTextMessage( incoming );
                     producer.send( message );	 	                                        	
                 } catch( JMSException jmse ) {
                 	System.out.println( jmse.getStackTrace() );
@@ -144,7 +154,7 @@ public class Telemetry implements SerialPortEventListener
 		ConnectionFactory	factory = null;
 		InitialContext		context = null;
 		Properties			properties = null;
-		Telemetry 			main = null;
+		Telemetry 			telemetry = null;
 		
 		// Connect to gateway
 		properties = new Properties();
@@ -172,8 +182,8 @@ public class Telemetry implements SerialPortEventListener
 	 	connection.start();	 		 	
 	 	
 	 	// Initialize serial port
-	 	main = new Telemetry();
-		main.initialize();	 	
+	 	telemetry = new Telemetry();
+		telemetry.initialize();	 	
 	 	
 		Thread t = new Thread() 
 		{
@@ -189,6 +199,6 @@ public class Telemetry implements SerialPortEventListener
 		t.start();
 		
 		// Debug
-		System.out.println( "Started" );
+		// System.out.println( "Started" );
 	}
 }
