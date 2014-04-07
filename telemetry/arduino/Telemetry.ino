@@ -14,6 +14,9 @@
 // LSM
 #include <LSM303.h>
 
+// NeoPixel
+#include <Adafruit_NeoPixel.h>
+
 // For GPS
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
@@ -25,6 +28,17 @@
 #define HIH_ADDRESS  0x27
 #define HIH_DATA     4
 #define HIH_CLOCK    5
+#define X_CALIBRATE  20
+#define NEO_PIXEL    7
+#define NEO_CYCLES   2
+#define NEO_OFF      48
+#define NEO_ON       49
+
+// NeoPixel
+Adafruit_NeoPixel pixel = Adafruit_NeoPixel( 1, NEO_PIXEL, NEO_RGB + NEO_KHZ800 );
+boolean lightOn = false;
+boolean isRed = false;
+int     cycles = 0;
 
 // GPS
 TinyGPSPlus gps;
@@ -38,6 +52,10 @@ LSM303 compass;
 // Serial output
 void setup()
 {
+  // NeoPixel
+  pixel.begin();
+  pixel.show(); 
+  
   // GPS
   ss.begin( GPS_BAUD );  
   
@@ -47,8 +65,8 @@ void setup()
   // LSM
   compass.init();
   compass.enableDefault();
-  compass.m_min = ( LSM303::vector<int16_t> ) {-648, -667, -654};
-  compass.m_max = ( LSM303::vector<int16_t> ) {+477, +496, +488};  
+  compass.m_min = ( LSM303::vector<int16_t> ) {-618, -679, -589};
+  compass.m_max = ( LSM303::vector<int16_t> ) {+514, +501, +539};  
    
   // Turn on the HIH6130 sensor 
   pinMode( HIH_DATA, OUTPUT );
@@ -119,18 +137,23 @@ void loop()
   // LSM
   compass.read();
   
-  // Convert read values to degrees -90 to 90
-  // Needed for atan2
-  int xAng = map( compass.m.x, 497, -685, -90, 90 );
-  int yAng = map( compass.m.y, 471, -682, -90, 90 );
-  int zAng = map( compass.m.z, 470, -656, -90, 90 );
+  // Convert read values to degrees
+  int xAng = map( compass.m.x, -618, 514, -90, 90 );
+  int yAng = map( compass.m.y, -679, 501, -90, 90 );
+  int zAng = map( compass.m.z, -589, 539, -90, 90 );
 
-  // Caculate 360 degree values like so: atan2( -yAng, -zAng )
-  // Outputs the value of -π to π (radians)
-  // Converting the radians to degrees
-  double xDeg = RAD_TO_DEG * ( atan2( -yAng, -zAng ) + PI );
-  double yDeg = RAD_TO_DEG * ( atan2( -xAng, -zAng ) + PI );
-  double zDeg = RAD_TO_DEG * ( atan2( -yAng, -xAng ) + PI );  
+  // Caculate 360 degree values
+  double xDeg = RAD_TO_DEG * ( atan2( yAng, zAng ) + PI );
+  double yDeg = RAD_TO_DEG * ( atan2( xAng, zAng ) + PI );
+  double zDeg = RAD_TO_DEG * ( atan2( yAng, xAng ) + PI );  
+
+  // Calibrate x-axis
+  if( xDeg > X_CALIBRATE )
+  {
+    xDeg = xDeg - X_CALIBRATE;
+  } else {
+    xDeg = 360 + ( xDeg - X_CALIBRATE );
+  }
 
   // Heading
   Serial.print( compass.heading(), 2 );
@@ -158,6 +181,61 @@ void loop()
   // Humidity
   // Also prints newline
   Serial.println( humidity, 2 );
+
+  /*
+  // NeoPixel
+  */
+  
+  // Check for serial data
+  if( Serial.available() )
+  {
+    // Read available serial data
+    int incoming = Serial.read();
+    
+    // Turn on or off based on incoming value
+    if( incoming == NEO_OFF )
+    {
+      // Logical off
+      lightOn = false;
+      cycles = 0;
+      
+      // Actual off by set to black
+      pixel.setPixelColor( 0, pixel.Color( 0, 0, 0 ) );      
+      pixel.show();       
+    } else if( incoming == NEO_ON ) {
+      // On
+      lightOn = true;
+    }
+  }    
+
+  // Should flash light
+  if( lightOn == true )
+  {
+    // Increment cycles since change
+    cycles = cycles + 1;     
+    
+    // Alternate between colors
+    if( cycles % NEO_CYCLES == 0 )
+    {
+      if( isRed == true )
+      {
+        // Set blue
+        pixel.setPixelColor( 0, pixel.Color( 0, 0, 255 ) );
+        pixel.show();
+        
+        isRed = false;
+      } else {
+        // Set red
+        pixel.setPixelColor( 0, pixel.Color( 0, 255, 0 ) );
+        pixel.show(); 
+ 
+         isRed = true;       
+      }
+      
+      // Reset counter
+      cycles = 0;  
+    }
+  }
 
   // Feeds GPS data
   smartDelay( 100 );
