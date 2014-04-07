@@ -5,7 +5,8 @@
 #include <LSM303.h>
 
 // Constant
-#define X_CALIBRATE 20
+#define X_CALIBRATE 25
+#define Y_CALIBRATE 25
 
 // Compass
 LSM303 compass;
@@ -37,18 +38,13 @@ void loop()
   int zAng = map( compass.m.z, -589, 539, -90, 90 );
 
   // Caculate 360 degree values
-  double xDeg = RAD_TO_DEG * ( atan2( yAng, zAng ) + PI );
-  double yDeg = RAD_TO_DEG * ( atan2( xAng, zAng ) + PI );
-  double zDeg = RAD_TO_DEG * ( atan2( yAng, xAng ) + PI );  
+  double xDeg = RAD_TO_DEG * ( atan2( -yAng, -zAng ) + PI );
+  double yDeg = RAD_TO_DEG * ( atan2( -xAng, -zAng ) + PI );
+  double zDeg = RAD_TO_DEG * ( atan2( -yAng, -xAng ) + PI );  
 
   // Calibrate x-axis
-  if( xDeg > X_CALIBRATE )
-  {
-    xDeg = xDeg - X_CALIBRATE;
-  } else {
-    xDeg = 360 + ( xDeg - X_CALIBRATE );
-  }
-
+  xDeg = xDeg + X_CALIBRATE;
+  
   // Display values
   Serial.print( compass.heading(), 2 );
   Serial.print( "," );

@@ -1,0 +1,58 @@
+body {
+    margin: 0px;
+    overflow: hidden;
+    padding: 0px;
+}
+
+.airspeed {
+    height: 75%;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 86px;
+}
+
+.altimeter {
+    height: 75%;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 68px;
+}
+
+.dial {
+    position: absolute;
+    width: 12%;
+}
+
+.heading {
+    height: 75%;
+    position: absolute;
+}
+
+.humidity {
+    left: 200px;
+}
+
+.map {
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.pitch {
+    position: absolute;
+    height: 75%;
+}
+
+.position {
+    position: absolute;
+    height: 75%;
+}
+
+.tilt {
+    position: absolute;
+    height: 75%;
+}

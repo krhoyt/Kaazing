@@ -28,7 +28,8 @@
 #define HIH_ADDRESS  0x27
 #define HIH_DATA     4
 #define HIH_CLOCK    5
-#define X_CALIBRATE  20
+#define X_CALIBRATE  -6
+#define Y_CALIBRATE  -2
 #define NEO_PIXEL    7
 #define NEO_CYCLES   2
 #define NEO_OFF      48
@@ -138,9 +139,9 @@ void loop()
   compass.read();
   
   // Convert read values to degrees
-  int xAng = map( compass.m.x, -618, 514, -90, 90 );
-  int yAng = map( compass.m.y, -679, 501, -90, 90 );
-  int zAng = map( compass.m.z, -589, 539, -90, 90 );
+  int xAng = map( compass.a.x, -18400, 15968, -90, 90 );
+  int yAng = map( compass.a.y, -26528, 20480, -90, 90 );
+  int zAng = map( compass.a.z, -20752, 18608, -90, 90 );
 
   // Caculate 360 degree values
   double xDeg = RAD_TO_DEG * ( atan2( yAng, zAng ) + PI );
@@ -148,12 +149,8 @@ void loop()
   double zDeg = RAD_TO_DEG * ( atan2( yAng, xAng ) + PI );  
 
   // Calibrate x-axis
-  if( xDeg > X_CALIBRATE )
-  {
-    xDeg = xDeg - X_CALIBRATE;
-  } else {
-    xDeg = 360 + ( xDeg - X_CALIBRATE );
-  }
+  xDeg = xDeg + X_CALIBRATE;
+  yDeg = yDeg + Y_CALIBRATE;
 
   // Heading
   Serial.print( compass.heading(), 2 );

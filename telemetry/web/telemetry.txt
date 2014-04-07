@@ -1,0 +1,38 @@
+Sensors:
+---
+GPS - Speed
+GPS - Altitude
+GPS - Latitude
+GPS - Longitude
+GPS - Heading
+GPS - UTC
+LSM - Heading
+LSM - X-Axis
+LSM - Y-Axis
+LSM - Z-Axis
+HIH - Temperature
+HIH - Humidity
+
+Output:
+---
+0: Aircraft
+1: Latitude
+2: Longitude
+3: Altitude (meters)
+4: Altitude (feet)
+5: Speed (mps)
+6: Speed (mph)
+7: Heading (deg)
+8: Month
+9: Day
+10: Year
+11: Hour
+12: Minute
+13: Second
+14: Compass (deg)
+15: X-Axis (deg)
+16: Y-Axis (deg)
+17: Z-Axis (deg)
+18: Farenheit
+19: Celcius
+20: Humidity
