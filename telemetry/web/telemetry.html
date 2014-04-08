@@ -43,9 +43,12 @@
 var ANIMATE = true;
 var KAAZING_LATITUDE = 37.4173652;
 var KAAZING_LONGITUDE = -121.9788182;
+var LIGHT_ON = "on";
+var LIGHT_OFF = "off";
 
 // Data constants
-var TOPIC_NAME = "/topic/telemetry";
+var TOPIC_COMMAND = "/topic/telemetry/command";
+var TOPIC_DATA = "/topic/telemetry/data";
 var WEBSOCKET_URL = "ws://localhost:8001/jms";
 
 // Global user interface
@@ -63,27 +66,38 @@ var touch = null;
 var connection = null;
 var consumer = null;
 var future = null;
+var producer = null;
 var session = null;
-var topic = null;
+var topicIn = null;
+var topicOut = null;
 
 // Called when connected to server
 // Not yet connected to broker
 function doConnected()
 {
+    var lights = null;
+
+    lights = document.querySelector( ".lights" );
+    lights.addEventListener( touch ? "touchstart" : "mousedown", doLightsClick );
+
     try {
         // Connection
         connection = future.getValue();
         console.log( "Connection established." );
 
         // Session
-        // Topic
+        // Topics
         session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
-        topic = session.createTopic( TOPIC_NAME );
+        topicIn = session.createTopic( TOPIC_DATA );
+        topicOut = session.createTopic( TOPIC_COMMAND );
 
         // Consumer
         // Set listener
-        consumer = session.createConsumer( topic );
+        consumer = session.createConsumer( topicIn );
         consumer.setMessageListener( doMessageArrived );
+
+        // Producer
+        producer = session.createProducer( topicOut );
 
         // Start broker session
         connection.start( doSessionStart );
@@ -110,6 +124,35 @@ function doHeadingLoad()
 {
     // heading.source.addEventListener( touch ? "touchstart" : "mousedown", doHeadingClick );
     alert( "Load" );
+}
+
+// Called to toggle lights
+function doLightsClick()
+{
+    var message = null;
+
+    // Toggle stage
+    if( this.innerHTML == "OFF" )
+    {
+        this.innerHTML = "ON";
+        message = session.createTextMessage( LIGHT_ON );
+    } else if( this.innerHTML == "ON" ) {
+        this.innerHTML = "OFF";
+        message = session.createTextMessage( LIGHT_OFF );
+    }
+
+    // Send message
+    try {
+        producer.send( message, doMessageSent );
+    } catch( e ) {
+        console.log( "Exception: " + e );
+    }
+}
+
+// Message finished sending
+function doMessageSent()
+{
+    console.log( "Message sent." );
 }
 
 // Called when a message has arrived
@@ -344,6 +387,9 @@ google.maps.event.addDomListener( window, "load", doMapLoad );
 
 <!-- Humidity -->
 <div class="dial humidity"></div>
+
+<!-- Lights -->
+<div class="lights">OFF</div>
 
 </body>
 </html>

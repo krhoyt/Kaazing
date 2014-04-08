@@ -1,19 +1,23 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.Enumeration;
-import java.util.Properties;
 
 import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import com.kaazing.gateway.jms.client.JmsConnectionFactory;
 
 import gnu.io.CommPortIdentifier; 
 import gnu.io.SerialPort;
@@ -31,14 +35,17 @@ import gnu.io.SerialPortEventListener;
 public class Telemetry implements SerialPortEventListener 
 {
 	// Gateway constants
-	public static final String CONNECTION_FACTORY = "ConnectionFactory";
-	public static final String KAAZING_FACTORY = "com.kaazing.gateway.jms.client.JmsInitialContextFactory";
 	public static final String PROVIDER_URL = "ws://localhost:8001/jms";
-	public static final String TOPIC = "/topic/telemetry";	
+	public static final String TOPIC_COMMAND = "/topic/telemetry/command";	
+	public static final String TOPIC_DATA = "/topic/telemetry/data";
+	
+	// Device constants
+	public static final String LIGHT_ON = "on";
+	public static final String LIGHT_OFF = "off";
 	
 	// Desired ports
 	private static final String PORT_NAMES[] = { 
-		"/dev/tty.usbserial-A6007to5", // Mac OS X
+		"/dev/tty.usbmodem1421", // Mac OS X
 		"/dev/ttyACM0", // Raspberry Pi
 		"/dev/ttyUSB0", // Linux
 		"COM3", // Windows
@@ -54,11 +61,14 @@ public class Telemetry implements SerialPortEventListener
 	private BufferedReader  input = null;
 	
 	static Connection		connection = null;	
+	static OutputStream	    output = null;		
 	static MessageProducer	producer = null;
+	static MessageConsumer  consumer = null;
 	static Session			session = null;	
-	static Topic			topic = null;	
+	static Topic			topicIn = null;	
+	static Topic			topicOut = null;		
 	
-	SerialPort 				arduino = null;		
+	private SerialPort      arduino = null;		
 	
 	public void initialize() 
 	{
@@ -101,9 +111,12 @@ public class Telemetry implements SerialPortEventListener
 			// Set port parameters
 			arduino.setSerialPortParams( DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
 
-			// Open input stream
+			// Input stream
 			input = new BufferedReader( new InputStreamReader( arduino.getInputStream() ) );
 
+			// Output stream
+			output = arduino.getOutputStream();
+			
 			// Add event listeners
 			arduino.addEventListener( this );
 			arduino.notifyOnDataAvailable( true );
@@ -137,7 +150,7 @@ public class Telemetry implements SerialPortEventListener
 				// System.out.println( "Line: " + inputLine );
 			
                 try {
-            	 	producer = session.createProducer( topic );
+            	 	producer = session.createProducer( topicOut );
                     message = session.createTextMessage( incoming );
                     producer.send( message );	 	                                        	
                 } catch( JMSException jmse ) {
@@ -151,33 +164,61 @@ public class Telemetry implements SerialPortEventListener
 	
 	public static void main( String[] args ) throws JMSException, NamingException
 	{
-		ConnectionFactory	factory = null;
-		InitialContext		context = null;
-		Properties			properties = null;
-		Telemetry 			telemetry = null;
-		
-		// Connect to gateway
-		properties = new Properties();
-		properties.put( InitialContext.INITIAL_CONTEXT_FACTORY, KAAZING_FACTORY );		
+		JmsConnectionFactory	factory = null;
+		Telemetry 			    telemetry = null;
 	
-		properties.put( Context.PROVIDER_URL, PROVIDER_URL );
-	 	context = new InitialContext( properties );	
-	 	
-	 	factory = ( ConnectionFactory )context.lookup( CONNECTION_FACTORY );	 	
-	 	connection = factory.createConnection( null, null );	 	
+		// Connect to Gateway
+		factory = JmsConnectionFactory.createConnectionFactory( URI.create( PROVIDER_URL ) );
+	
+		connection = factory.createConnection();
 	 	connection.setExceptionListener( new ExceptionListener() {
 	 	    @Override
 	 	    public void onException( JMSException jmse ) { 
 	 	    	jmse.printStackTrace(); 
 	 	    }
-	 	} );	 	
-	 	
+	 	} );	 			
+		
 	 	// Session
 	 	session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
 	 	
-	 	// Topic
-	 	topic  = ( Topic )context.lookup( TOPIC );		
-		
+	 	// Topics
+	 	topicOut = session.createTopic( TOPIC_DATA );
+	 	topicIn = session.createTopic( TOPIC_COMMAND );
+	 	
+	 	// Consumer
+	 	consumer = session.createConsumer( topicIn );
+	 	consumer.setMessageListener( new MessageListener() {
+            @Override
+            public void onMessage( Message message ) {
+            	String		messageData = null;
+            	TextMessage textMessage = null;
+            	
+                try {
+                    textMessage = ( TextMessage )message;
+                    messageData = textMessage.getText();
+                    
+                    // Debug
+                    // System.out.println( messageData );
+                    
+                    // Control light on device
+                    try {
+                        if( messageData.equals( LIGHT_ON ) ) 
+                        {
+                        	// Turn on
+                        	output.write( "1".getBytes() );
+                        } else if( messageData.equals( LIGHT_OFF ) ) {
+                        	// Turn off
+                        	output.write( "0".getBytes() );
+                        }                    	
+                    } catch( IOException ioe ) {
+                    	ioe.printStackTrace();
+                    }
+                } catch( JMSException jmse ) {
+                    jmse.printStackTrace();
+                }
+            }
+        } );
+	 
 	 	// Start the connection
 	 	connection.start();	 		 	
 	 	

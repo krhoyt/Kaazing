@@ -34,6 +34,13 @@ body {
     left: 200px;
 }
 
+.lights {
+    cursor: default;
+    left: 100px;
+    position: absolute;
+    top: 10px;
+}
+
 .map {
     bottom: 0px;
     left: 0px;

@@ -212,18 +212,19 @@ void loop()
     cycles = cycles + 1;     
     
     // Alternate between colors
+    // Colors in G, R, B order
     if( cycles % NEO_CYCLES == 0 )
     {
       if( isRed == true )
       {
         // Set blue
-        pixel.setPixelColor( 0, pixel.Color( 0, 0, 255 ) );
+        pixel.setPixelColor( 0, pixel.Color( 136, 73, 179 ) );
         pixel.show();
         
         isRed = false;
       } else {
-        // Set red
-        pixel.setPixelColor( 0, pixel.Color( 0, 255, 0 ) );
+        // Set orange
+        pixel.setPixelColor( 0, pixel.Color( 124, 245, 30 ) );
         pixel.show(); 
  
          isRed = true;       
