@@ -36,9 +36,9 @@ body {
 
 .lights {
     cursor: default;
-    left: 100px;
     position: absolute;
-    top: 10px;
+    bottom: 10px;
+    width: 160px;
 }
 
 .map {
