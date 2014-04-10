@@ -89,6 +89,9 @@ void setup()
   pinMode( HIH_DATA, OUTPUT );
   digitalWrite( HIH_DATA, HIGH );   
   
+  // UUID
+  TrueRandom.uuid( uuid );  
+  
   // Serial output
   Serial.begin( 9600 );
   
@@ -196,7 +199,6 @@ void loop()
   Serial.print( "," );  
 
   // UUID
-  TrueRandom.uuid( uuid );
   printUuid( uuid );
   Serial.println();
   
