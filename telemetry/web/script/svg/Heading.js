@@ -174,7 +174,7 @@ function Heading( selector, animate )
     segment.appendChild( element );
 
     result.source = document.createElementNS( SVG_NAMESPACE, "text" );
-    result.source.textContent = result.SOURCE_GPS;
+    result.source.textContent = result.SOURCE_COMPASS;
     result.source.setAttribute( "x", 6.5 );
     result.source.setAttribute( "y", 11 );
     result.source.setAttribute( "text-anchor", "middle" );
@@ -187,9 +187,9 @@ function Heading( selector, animate )
 
     // Manage source display
     result.getSource = function() {
-        var source = result.SOURCE_COMPASS;
+        var source = this.SOURCE_COMPASS;
 
-        if( result.source.textContent != result.SOURCE_COMPASS )
+        if( this.source.textContent != this.SOURCE_COMPASS )
         {
             source = result.SOURCE_GPS;
         }
@@ -198,7 +198,7 @@ function Heading( selector, animate )
     }
 
     result.setSource = function( source ) {
-        result.source.textContent = source;
+        this.source.textContent = source;
     }
 
     // Degrees
