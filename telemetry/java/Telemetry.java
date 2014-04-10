@@ -68,7 +68,8 @@ public class Telemetry implements SerialPortEventListener
 	static Topic			topicIn = null;	
 	static Topic			topicOut = null;		
 	
-	private SerialPort      arduino = null;		
+	private SerialPort      arduino = null;
+	private boolean			oldBuffer = true;
 	
 	public void initialize() 
 	{
@@ -146,16 +147,27 @@ public class Telemetry implements SerialPortEventListener
 			try {
 				incoming = input.readLine();
 				
-				// Debug
-				// System.out.println( "Line: " + inputLine );
-			
-                try {
-            	 	producer = session.createProducer( topicOut );
-                    message = session.createTextMessage( incoming );
-                    producer.send( message );	 	                                        	
-                } catch( JMSException jmse ) {
-                	System.out.println( jmse.getStackTrace() );
-                }
+				// Only act on full records
+				// Represents minimal full record
+				if( incoming.length() > 100 )
+				{
+					// Discard old buffer					
+					if( !oldBuffer )
+					{
+						// Debug
+						// System.out.println( incoming );
+					
+		                try {
+		            	 	producer = session.createProducer( topicOut );
+		                    message = session.createTextMessage( incoming );
+		                    producer.send( message );	 	                                        	
+		                } catch( JMSException jmse ) {
+		                	System.out.println( jmse.getStackTrace() );
+		                }
+					} else {
+						oldBuffer = false;
+					}
+				}
             } catch( Exception e ) {
 				System.err.println( e.toString() );
 			}
@@ -191,22 +203,24 @@ public class Telemetry implements SerialPortEventListener
             @Override
             public void onMessage( Message message ) {
             	String		messageData = null;
+            	String[]	parts = null;
             	TextMessage textMessage = null;
             	
                 try {
                     textMessage = ( TextMessage )message;
                     messageData = textMessage.getText();
+                    parts = messageData.split( "," );
                     
                     // Debug
                     // System.out.println( messageData );
                     
                     // Control light on device
                     try {
-                        if( messageData.equals( LIGHT_ON ) ) 
+                        if( parts[1].equals( LIGHT_ON ) ) 
                         {
                         	// Turn on
                         	output.write( "1".getBytes() );
-                        } else if( messageData.equals( LIGHT_OFF ) ) {
+                        } else if( parts[1].equals( LIGHT_OFF ) ) {
                         	// Turn off
                         	output.write( "0".getBytes() );
                         }                    	

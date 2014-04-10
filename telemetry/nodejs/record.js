@@ -10,8 +10,8 @@ var monk = require( "monk" );
 var BROKER_IP = "127.0.0.1";
 var BROKER_PORT = 61613;
 var MONGO_DB = "localhost:27017/telemetry";
-var MONGO_COLLECTION = "usercollection";
-var TOPIC = "/topic/telemetry";
+var MONGO_COLLECTION = "sensorcollection";
+var TOPIC = "/topic/telemetry/data";
 
 // Connect to the database
 var db = monk( MONGO_DB );
@@ -59,7 +59,8 @@ client.connect( function( sessionId )
             zaxis: parseFloat( parts[17] ),
             farenheit: parseFloat( parts[18] ),
             celcius: parseFloat( parts[19] ),
-            humidity: parseFloat( parts[20] )
+            humidity: parseFloat( parts[20] ),
+            flight: parts[21]
         }, function( err, doc ) {
             if( err )
             {

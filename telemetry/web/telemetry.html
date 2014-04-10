@@ -67,6 +67,7 @@ var touch = null;
 // Global data
 var connection = null;
 var consumer = null;
+var flight = null;
 var future = null;
 var producer = null;
 var session = null;
@@ -130,10 +131,10 @@ function doLightsClick()
     if( lights.enabled )
     {
         lights.setEnabled( false );
-        message = session.createTextMessage( LIGHT_OFF );
+        message = session.createTextMessage( flight + "," + LIGHT_OFF );
     } else {
         lights.setEnabled( true );
-        message = session.createTextMessage( LIGHT_ON );
+        message = session.createTextMessage( flight + "," + LIGHT_ON );
     }
 
     // Send message
@@ -194,7 +195,7 @@ function doMessageArrived( message )
 
     // Pitch (up and down)
     // Translate accelerometer 180 to flat (0)
-    newPitch = parseFloat( parts[15] ) - 180;
+    newPitch = parseFloat( parts[16] ) - 180;
 
     if( newPitch > 0 )
     {
@@ -207,7 +208,7 @@ function doMessageArrived( message )
 
     // Tilt (left and right)
     // Translate accelerometer 180 to flat (0)
-    newTilt = parseFloat( parts[16] ) - 180;
+    newTilt = parseFloat( parts[17] ) - 180;
 
     if( newTilt > 0 )
     {
@@ -224,16 +225,19 @@ function doMessageArrived( message )
     // Using compass or GPS
     if( heading.getSource() == heading.SOURCE_COMPASS )
     {
-        heading.setHeading( parseFloat( parts[14] ) );
+        heading.setHeading( parseFloat( parts[15] ) );
     } else if( heading.getSource() == heading.SOURCE_GPS ) {
         heading.setHeading( parseFloat( parts[7] ) );
     }
 
     // Temperature
-    temperature.setValue( parseFloat( parts[18] ));
+    temperature.setValue( parseFloat( parts[19] ));
 
     // Humidity
-    humidity.setValue( parseFloat( parts[20] ) );
+    humidity.setValue( parseFloat( parts[21] ) );
+
+    // Flight
+    flight = parts[22].trim();
 }
 
 // Message finished sending

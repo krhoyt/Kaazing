@@ -153,6 +153,8 @@ void loop()
   Serial.print( "," );         
   Serial.print( gps.time.second() );
   Serial.print( "," );   
+  Serial.print( gps.time.centisecond() );
+  Serial.print( "," );     
   
   // LSM
   compass.read();

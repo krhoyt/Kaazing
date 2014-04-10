@@ -30,11 +30,12 @@ Output:
 11: Hour
 12: Minute
 13: Second
-14: Compass (deg)
-15: X-Axis (deg)
-16: Y-Axis (deg)
-17: Z-Axis (deg)
-18: Farenheit
-19: Celcius
-20: Humidity
-21: Flight # (UUID)
+14: Centisecond
+15: Compass (deg)
+16: X-Axis (deg)
+17: Y-Axis (deg)
+18: Z-Axis (deg)
+19: Farenheit
+20: Celcius
+21: Humidity
+22: Flight # (UUID)
