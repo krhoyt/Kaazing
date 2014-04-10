@@ -1,14 +1,24 @@
 // EM-506 (GPS)
 // http://arduiniana.org/libraries/tinygpsplus/
+// https://www.sparkfun.com/products/12751
 
 // HIH-6130 (Temperature and Humidity)
 // http://www.phanderson.com/arduino/hih6130.html
+// https://www.sparkfun.com/products/11295
 
 // LSM303 (Accelerometer and Compass)
 // https://github.com/pololu/lsm303-arduino
+// https://www.sparkfun.com/products/10888
 
-// HIH
-// LSM
+// NeoPixel
+// https://github.com/adafruit/Adafruit_NeoPixel
+// https://www.adafruit.com/products/1312
+
+// TrueRandom
+// UUID generation
+// https://code.google.com/p/tinkerit/wiki/TrueRandom
+
+// I2C
 #include <Wire.h>
 
 // LSM
@@ -17,9 +27,12 @@
 // NeoPixel
 #include <Adafruit_NeoPixel.h>
 
-// For GPS
+// GPS
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
+
+// UUID
+#include <TrueRandom.h>
 
 // Constants
 #define GPS_BAUD     4800
@@ -47,6 +60,9 @@ SoftwareSerial ss( GPS_RX, GPS_TX );
 
 // LSM
 LSM303 compass;
+
+// UUID
+byte uuid[16];
 
 // Setup Arduino
 // Setup HIH
@@ -176,9 +192,14 @@ void loop()
   Serial.print( "," );
   
   // Humidity
-  // Also prints newline
-  Serial.println( humidity, 2 );
+  Serial.print( humidity, 2 );
+  Serial.print( "," );  
 
+  // UUID
+  TrueRandom.uuid( uuid );
+  printUuid( uuid );
+  Serial.println();
+  
   /*
   // NeoPixel
   */
@@ -295,5 +316,31 @@ static void smartDelay( unsigned long ms )
       gps.encode( ss.read() );
     }
   } while( millis() - start < ms );
+}
+
+void printHex( byte number ) 
+{
+  int topDigit = number >> 4;
+  int bottomDigit = number & 0x0f;
+
+  // Print high hex digit
+  Serial.print( "0123456789ABCDEF"[topDigit] );
+
+  // Low hex digit
+  Serial.print( "0123456789ABCDEF"[bottomDigit] );
+}
+
+void printUuid( byte* uuidNumber ) 
+{
+  int i;
+  
+  for( i = 0; i < 16; i++ ) 
+  {
+    if( i == 4 ) Serial.print( "-" );
+    if( i == 6 ) Serial.print( "-" );
+    if( i == 8 ) Serial.print( "-" );
+    if( i == 10 ) Serial.print( "-" );
+    printHex(uuidNumber[i] );
+  }
 }
 
