@@ -1,4 +1,6 @@
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -43,9 +45,13 @@ public class Telemetry implements SerialPortEventListener
 	public static final String LIGHT_ON = "on";
 	public static final String LIGHT_OFF = "off";
 	
+	// "/dev/tty.usbmodem1421", // Mac OS X
+	// "/dev/tty.usbserial-A6007to5" // XBee Explorer
+	
 	// Desired ports
-	private static final String PORT_NAMES[] = { 
-		"/dev/tty.usbmodem1421", // Mac OS X
+	private static final String PORT_NAMES[] = {
+		"/dev/tty.usbserial-A6007to5", // XBee Explorer
+		"/dev/tty.usbmodem1421", // Mac OS X		
 		"/dev/ttyACM0", // Raspberry Pi
 		"/dev/ttyUSB0", // Linux
 		"COM3", // Windows
@@ -56,6 +62,9 @@ public class Telemetry implements SerialPortEventListener
 	
 	// Data bit rate from device
 	private static final int DATA_RATE = 9600;	
+	
+	// File path for log
+	public static final String LOG_FILE = "/Users/Kevin/Desktop/telemetry.txt";	
 	
 	// Bytes to characters
 	private BufferedReader  input = null;
@@ -139,6 +148,8 @@ public class Telemetry implements SerialPortEventListener
 	// Serial port event
 	public synchronized void serialEvent( SerialPortEvent oEvent ) 
 	{
+		File		dump = null;
+		FileWriter	writer = null;
 		String		incoming = null;
 		TextMessage	message = null;		
 		
@@ -146,6 +157,18 @@ public class Telemetry implements SerialPortEventListener
 		{
 			try {
 				incoming = input.readLine();
+				
+				// Dump serial data to text file
+				// Regardless of content
+				try {
+					dump = new File( LOG_FILE );
+					
+				    writer = new FileWriter( dump, true );
+				    writer.write( incoming + "\n" );
+				    writer.close();
+				} catch( IOException ioe ) {
+					ioe.printStackTrace();
+				}										
 				
 				// Only act on full records
 				// Represents minimal full record
@@ -157,6 +180,7 @@ public class Telemetry implements SerialPortEventListener
 						// Debug
 						// System.out.println( incoming );
 					
+						// Send message across Gateway
 		                try {
 		            	 	producer = session.createProducer( topicOut );
 		                    message = session.createTextMessage( incoming );
