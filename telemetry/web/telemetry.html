@@ -46,6 +46,7 @@ var KAAZING_LATITUDE = 37.4173652;
 var KAAZING_LONGITUDE = -121.9788182;
 var LIGHT_ON = "on";
 var LIGHT_OFF = "off";
+var PITCH_TILT_REVERSE = true;
 
 // Data constants
 var TOPIC_COMMAND = "/topic/telemetry/command";
@@ -189,11 +190,11 @@ function doMessageArrived( message )
     if( parseFloat( parts[1] ) == 0 )
     {
         map.setCenter(
-                new google.maps.LatLng( KAAZING_LATITUDE, KAAZING_LONGITUDE )
+            new google.maps.LatLng( KAAZING_LATITUDE, KAAZING_LONGITUDE )
         );
     } else {
         map.setCenter(
-                new google.maps.LatLng( parseFloat( parts[1] ), parseFloat( parts[2] ) )
+            new google.maps.LatLng( parseFloat( parts[1] ), parseFloat( parts[2] ) )
         );
     }
 
@@ -203,7 +204,7 @@ function doMessageArrived( message )
 
     // Pitch (up and down)
     // Translate accelerometer 180 to flat (0)
-    newPitch = parseFloat( parts[16] ) - 180;
+    newPitch = parseFloat( PITCH_TILT_REVERSE == true ? parts[17] : parts[16] ) - 180;
 
     if( newPitch > 0 )
     {
@@ -216,7 +217,7 @@ function doMessageArrived( message )
 
     // Tilt (left and right)
     // Translate accelerometer 180 to flat (0)
-    newTilt = parseFloat( parts[17] ) - 180;
+    newTilt = parseFloat( PITCH_TILT_REVERSE == true ? parts[16] : parts[17] ) - 180;
 
     if( newTilt > 0 )
     {
