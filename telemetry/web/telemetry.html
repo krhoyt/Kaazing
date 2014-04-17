@@ -185,9 +185,17 @@ function doMessageArrived( message )
     parts = message.getText().split( "," );
 
     // Center on location
-    map.setCenter(
-        new google.maps.LatLng( parseFloat( parts[1] ), parseFloat( parts[2] ) )
-    );
+    // Use Kaazing HQ if indoors (no GPS)
+    if( parseFloat( parts[1] ) == 0 )
+    {
+        map.setCenter(
+                new google.maps.LatLng( KAAZING_LATITUDE, KAAZING_LONGITUDE )
+        );
+    } else {
+        map.setCenter(
+                new google.maps.LatLng( parseFloat( parts[1] ), parseFloat( parts[2] ) )
+        );
+    }
 
     // Airspeed
     airspeed.setAirspeed( parseFloat( parts[6] ) );
