@@ -27,6 +27,12 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener; 
 
 /*
+ * RXTX needs to be available to Java
+ * Files placed in /Library/Java/Extensions
+ * ---
+ * sudo cp RXTXcomm.jar /Library/Java/Extensions
+ * sudo cp librxtxSerial.jnilib /Library/Java/Extensions
+ * ---
  * RXTX uses a lock directory
  * This will need to be created to work
  * ---
@@ -45,16 +51,13 @@ public class Telemetry implements SerialPortEventListener
 	public static final String LIGHT_ON = "on";
 	public static final String LIGHT_OFF = "off";
 	
-	// "/dev/tty.usbmodem1421", // Mac OS X
-	// "/dev/tty.usbserial-A6007to5" // XBee Explorer
-	
 	// Desired ports
 	private static final String PORT_NAMES[] = {
 		"/dev/tty.usbserial-A6007to5", // XBee Explorer
-		"/dev/tty.usbmodem1421", // Mac OS X		
-		"/dev/ttyACM0", // Raspberry Pi
-		"/dev/ttyUSB0", // Linux
-		"COM3", // Windows
+		"/dev/tty.usbmodem1421",       // Mac OS X		
+		"/dev/ttyACM0",                // Raspberry Pi
+		"/dev/ttyUSB0",                // Linux
+		"COM3",                        // Windows
 	};
 	
 	// How long to wait for the port to open
