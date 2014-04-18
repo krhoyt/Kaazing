@@ -38,6 +38,10 @@
 <script src="script/svg/Switch.js" type="text/javascript"></script>
 <script src="script/svg/Tilt.js" type="text/javascript"></script>
 
+<!-- URL utils -->
+<script src="script/UrlUtils.js" type="text/javascript"></script>
+
+
 <!-- Application -->
 <script type="text/javascript">
 // User interface constants
@@ -51,7 +55,9 @@ var PITCH_TILT_REVERSE = true;
 // Data constants
 var TOPIC_COMMAND = "/topic/telemetry/command";
 var TOPIC_DATA = "/topic/telemetry/data";
-var WEBSOCKET_URL = "ws://localhost:8001/jms";
+//var WEBSOCKET_URL = "ws://localhost:8001/jms";
+var WEBSOCKET_URL = makeURL("jms", "ws");
+
 
 // Global user interface
 var airspeed = null;
