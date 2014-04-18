@@ -55,9 +55,6 @@ var PITCH_TILT_REVERSE = true;
 // Data constants
 var TOPIC_COMMAND = "/topic/telemetry/command";
 var TOPIC_DATA = "/topic/telemetry/data";
-//var WEBSOCKET_URL = "ws://localhost:8001/jms";
-var WEBSOCKET_URL = makeURL("jms", "ws");
-
 
 // Global user interface
 var airspeed = null;
@@ -323,7 +320,7 @@ function doWindowLoad()
     // Tracer.setTrace( true );
 
     // Use JMS as broker
-    factory = new JmsConnectionFactory( WEBSOCKET_URL );
+    factory = new JmsConnectionFactory( makeURL( "jms", "ws" ) );
 
     // Connect to server
     future = factory.createConnection(
