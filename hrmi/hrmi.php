@@ -3,17 +3,23 @@
 // Library
 require_once( "Stomp.php" );
 
+// Broker URI
+$BROKER_URI = "tcp://ec2-54-211-72-62.compute-1.amazonaws.com:61613";
+$TOPIC = "/topic/heart";
+
 // Connection
-$con = new Stomp( "tcp://ec2-54-211-72-62.compute-1.amazonaws.com:61613" );
+$conn = new Stomp( $BROKER_URI );
 
 // Connect
-$con->connect();
+$conn -> connect();
 
 // Send a message
-$con -> send( "/topic/heart", $argv[1] );
-echo "Sent message.\n";
+$conn -> send( $TOPIC, $argv[1] );
+
+// Debug
+// echo "Sent message.\n";
 
 // Disconnect
-$con -> disconnect();
+$conn -> disconnect();
 
 ?>
