@@ -4,6 +4,42 @@
 
 <title>Heart Rate</title>
 
+<!-- Styles -->
+<style type="text/css">
+body {
+    background-color: white;
+    font-family: "Source Sans Pro", sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
+
+.current {
+    color: #B72E2E;
+    font-size: 15em;
+    font-weight: 300;
+}
+
+.value {
+    font-size: 5em;
+}
+
+.time {
+    color: darkgray;
+    text-align: center;
+}
+
+.time > span {
+    font-weight: 700;
+    padding-left: 20px;
+}
+</style>
+
+<!-- Google Web Fonts -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700" rel="stylesheet" type="text/css">
+
+<!-- Date formatting -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js" type="text/javascript"></script>
+
 <!-- Emulation -->
 <script src="http://kevinhoyt.com/kaazing/4.0.4/WebSocket.js" type="text/javascript"></script>
 
@@ -17,6 +53,7 @@ var TOPIC = "/topic/heart";
 var KAAZING_GATEWAY = "ws://ec2-54-211-72-62.compute-1.amazonaws.com:8001/jms";
 
 // Global application
+var hrmi = null;
 var touch = false;
 
 // Global data
@@ -57,8 +94,79 @@ function doConnected()
 // Parses data and updates user interface
 function doMessageArrived( message )
 {
+    var average = null;
+    var element = null;
+
     // Debug
-    console.log( "Arrived: " + message.getText() );
+    // console.log( "Arrived: " + message.getText() );
+
+    // Heart rate
+    hrmi.current = parseInt( message.getText() );
+
+    // Low
+    if( hrmi.low == null )
+    {
+        hrmi.low = hrmi.current;
+    } else {
+        if( hrmi.current < hrmi.low )
+        {
+            hrmi.low = hrmi.current;
+        }
+    }
+
+    // High
+    if( hrmi.high == null )
+    {
+        hrmi.high = hrmi.current;
+    } else {
+        if( hrmi.current > hrmi.high )
+        {
+            hrmi.high = hrmi.current;
+        }
+    }
+
+    // Record history
+    if( hrmi.history == null )
+    {
+        hrmi.history = new Array();
+    }
+
+    hrmi.history.push( hrmi.current );
+
+    // Average
+    average = 0;
+
+    for( var hr = 0; hr < hrmi.history.length; hr++ )
+    {
+        average = average + hrmi.history[hr];
+    }
+
+    hrmi.average = average / hrmi.history.length;
+
+    // Display
+    // Time
+    element = document.querySelector( ".time" );
+    element.innerHTML = moment().format( "MM.DD.YYYY" );
+
+    element = document.createElement( "span" );
+    element.innerHTML = moment().format( "HH:mm" );
+    document.querySelector( ".time").appendChild( element );
+
+    // Current
+    element = document.querySelector( ".current" );
+    element.innerHTML = hrmi.current;
+
+    // Low
+    element = document.querySelector( ".low" );
+    element.innerHTML = hrmi.low;
+
+    // High
+    element = document.querySelector( ".high" );
+    element.innerHTML = hrmi.high;
+
+    // Average
+    element = document.querySelector( ".average" );
+    element.innerHTML = Math.round( hrmi.average );
 }
 
 // Called when broker session started
@@ -73,6 +181,9 @@ function doSessionStart()
 function doWindowLoad()
 {
     var factory = null;
+
+    // Heart rate statistics
+    hrmi = {};
 
     // Click or touch
     touch = ( 'ontouchstart' in document.documentElement ) ? true : false;
@@ -97,6 +208,28 @@ window.addEventListener( "load", doWindowLoad );
 
 </head>
 <body>
+
+<div style="position: absolute; left: 0px; top: 0px;">
+    <div class="time" style="position: absolute; left: 0px; right: 0px; top: 20px; text-align: center;">01.02.2014 <span>15:36</span></div>
+    <div class="current" style="position: absolute; width: 350px; text-align: right;">999</div>
+    <div style="position: absolute; left: 370px; top: 54px; font-size: 5em; color: #B72E2E;">&hearts;</div>
+    <div style="position: absolute; left: 370px; top: 143px; font-size: 5em; color: #B72E2E;">bpm</div>
+</div>
+
+<div class="statistics" style="position: absolute; left: 0px; right: 0px; bottom: 0px; height: 168px; background-color: #B72E2E; color: white; padding-top: 32px;">
+    <div style="float: left; text-align: center; margin-left: 100px; margin-right: 100px;">
+        <div class="low value">88</div>
+        <div>Low</div>
+    </div>
+    <div style="float: left; text-align: center; margin-left: 100px; margin-right: 100px;">
+        <div class="high value">88</div>
+        <div>High</div>
+    </div>
+    <div style="float: left; text-align: center; margin-left: 100px; margin-right: 100px;">
+        <div class="average value">88</div>
+        <div>Average</div>
+    </div>
+</div>
 
 </body>
 </html>
