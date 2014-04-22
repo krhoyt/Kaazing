@@ -13,24 +13,82 @@ body {
     padding: 0px;
 }
 
+.chart {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 273px;
+    background-color: #B72E2E;
+}
+
 .current {
+    opacity: 0;
+    position: absolute; 
+    left: 0px; 
+    top: 50px;
     color: #B72E2E;
-    font-size: 15em;
     font-weight: 300;
 }
 
-.value {
-    font-size: 5em;
-}
-
-.time {
+.current .time {
     color: darkgray;
+    position: absolute; 
+    left: 0px; 
+    right: 0px; 
+    top: 20px; 
     text-align: center;
 }
 
-.time > span {
+.current .time > span {
     font-weight: 700;
     padding-left: 20px;
+}
+
+.current .unit {
+    float: left;
+    margin-top: 61px;
+    line-height: 1.1em;
+    margin-left: 15px;
+    font-size: 5em; 
+    color: #B72E2E;    
+}
+
+.current .value {
+    text-align: right;
+    font-size: 15em;
+    float: left;
+}
+
+.history {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 10px;
+    height: 168px;
+    color: white;
+    font-weight: 300;
+}
+
+.history .value {
+    opacity: 0;
+    float: left;
+    text-align: center;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.history .value > div:nth-of-type( 1 )
+{
+    color: white;
+    font-size: 5em;
+    text-align: center;
+}
+
+.history .value > div:nth-of-type( 2 )
+{
+    color: white;
+    text-align: center;
 }
 </style>
 
@@ -97,6 +155,18 @@ function doMessageArrived( message )
     var average = null;
     var element = null;
 
+    if( hrmi.current == undefined )
+    {
+        document.querySelector( ".current" ).style.opacity = 1;
+
+        element = document.querySelectorAll( ".history .value" );
+
+        for( var e = 0; e < element.length; e++ )
+        {
+            element[e].style.opacity = 1;
+        }
+    }
+
     // Debug
     // console.log( "Arrived: " + message.getText() );
 
@@ -145,28 +215,31 @@ function doMessageArrived( message )
 
     // Display
     // Time
-    element = document.querySelector( ".time" );
+    element = document.querySelector( ".current .time" );
     element.innerHTML = moment().format( "MM.DD.YYYY" );
 
     element = document.createElement( "span" );
-    element.innerHTML = moment().format( "HH:mm" );
-    document.querySelector( ".time").appendChild( element );
+    element.innerHTML = moment().format( "HH:mm:ss" );
+    document.querySelector( ".current .time" ).appendChild( element );
 
-    // Current
-    element = document.querySelector( ".current" );
+    // Value
+    element = document.querySelector( ".current .value" );
     element.innerHTML = hrmi.current;
 
     // Low
-    element = document.querySelector( ".low" );
+    element = document.querySelector( ".history .value:nth-of-type( 1 ) > div:nth-of-type( 1 )" );
     element.innerHTML = hrmi.low;
 
     // High
-    element = document.querySelector( ".high" );
+    element = document.querySelector( ".history .value:nth-of-type( 2 ) > div:nth-of-type( 1 )" );
     element.innerHTML = hrmi.high;
 
     // Average
-    element = document.querySelector( ".average" );
+    element = document.querySelector( ".history .value:nth-of-type( 3 ) > div:nth-of-type( 1 )" );
     element.innerHTML = Math.round( hrmi.average );
+
+    // Layout new values
+    doWindowResize();
 }
 
 // Called when broker session started
@@ -188,6 +261,9 @@ function doWindowLoad()
     // Click or touch
     touch = ( 'ontouchstart' in document.documentElement ) ? true : false;
 
+    // Layout
+    doWindowResize();
+
     // Debug
     // Tracer.setTrace( true );
 
@@ -202,31 +278,47 @@ function doWindowLoad()
     );
 }
 
+function doWindowResize()
+{
+    var element = null;
+    var history = null;
+
+    element = document.querySelectorAll( ".history .value" );
+
+    history = document.querySelector( ".history" );
+    history.style.paddingLeft = Math.round( ( window.innerWidth - element[0].clientWidth - element[1].clientWidth - element[2].clientWidth ) / 2 ) + "px";
+
+    element = document.querySelector( ".current" );
+    element.style.left = Math.round( ( window.innerWidth - element.clientWidth ) / 2 ) + "px";
+}
+
 // Setup page load
 window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "resize", doWindowResize );
 </script>
 
 </head>
 <body>
 
-<div style="position: absolute; left: 0px; top: 0px;">
-    <div class="time" style="position: absolute; left: 0px; right: 0px; top: 20px; text-align: center;">01.02.2014 <span>15:36</span></div>
-    <div class="current" style="position: absolute; width: 350px; text-align: right;">999</div>
-    <div style="position: absolute; left: 370px; top: 54px; font-size: 5em; color: #B72E2E;">&hearts;</div>
-    <div style="position: absolute; left: 370px; top: 143px; font-size: 5em; color: #B72E2E;">bpm</div>
+<div class="current">
+    <div class="time">01.02.2014 <span>15:36</span></div>
+    <div class="value">999</div>
+    <div class="unit">&hearts;<br>bpm</div>
 </div>
 
-<div class="statistics" style="position: absolute; left: 0px; right: 0px; bottom: 0px; height: 168px; background-color: #B72E2E; color: white; padding-top: 32px;">
-    <div style="float: left; text-align: center; margin-left: 100px; margin-right: 100px;">
-        <div class="low value">88</div>
+<div class="chart"></div>
+
+<div class="history">
+    <div class="value">
+        <div>999</div>
         <div>Low</div>
     </div>
-    <div style="float: left; text-align: center; margin-left: 100px; margin-right: 100px;">
-        <div class="high value">88</div>
+    <div class="value">
+        <div>999</div>
         <div>High</div>
     </div>
-    <div style="float: left; text-align: center; margin-left: 100px; margin-right: 100px;">
-        <div class="average value">88</div>
+    <div class="value">
+        <div>999</div>
         <div>Average</div>
     </div>
 </div>
