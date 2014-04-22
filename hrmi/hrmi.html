@@ -10,7 +10,15 @@ body {
     background-color: white;
     font-family: "Source Sans Pro", sans-serif;
     margin: 0px;
+    overflow: hidden;
     padding: 0px;
+}
+
+.beat {
+    position: absolute;
+    width: 60px;
+    height: 200px;
+    background-color: white;
 }
 
 .chart {
@@ -98,6 +106,9 @@ body {
 <!-- Date formatting -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js" type="text/javascript"></script>
 
+<!-- Animation -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.6/TweenMax.min.js" type="text/javascript"></script>
+
 <!-- Emulation -->
 <script src="http://kevinhoyt.com/kaazing/4.0.4/WebSocket.js" type="text/javascript"></script>
 
@@ -107,6 +118,8 @@ body {
 <!-- Application -->
 <script type="text/javascript">
 // Data constants
+var BEAT_MAX = 100;
+var PULSE_MAX = 200;
 var TOPIC = "/topic/heart";
 var KAAZING_GATEWAY = "ws://ec2-54-211-72-62.compute-1.amazonaws.com:8001/jms";
 
@@ -120,6 +133,68 @@ var consumer = null;
 var future = null;
 var session = null;
 var topic = null;
+
+// Called to generate a heart beat graphic
+// Graphic is sized relative to incoming data
+// Animates graphic across screen
+function heartbeat()
+{
+    var rate = null;
+    var ratio = null;
+    var div = null;
+    var svg = null;
+    var path = null;
+
+    // Sizing of graphic
+    rate = hrmi.current;
+    ratio = BEAT_MAX / PULSE_MAX;
+
+    // Build holder
+    div = document.createElement( "div" );
+    div.style.bottom = ( 273 - BEAT_MAX ) + "px";
+    div.style.left = window.innerWidth + "px";
+    div.classList.add( "beat" );
+
+    // SVG surface
+    svg = document.createElementNS( "http://www.w3.org/2000/svg", "svg" );
+    div.appendChild( svg );
+
+    // Heart beat wave
+    path = document.createElementNS( "http://www.w3.org/2000/svg", "path" );
+    path.setAttribute( "d",
+        "M0,100 l20," +
+        ( 0 - ( rate * ratio ) ) +
+        " l20," +
+        ( rate * ratio * 2 ) +
+        " l20," +
+        ( 0 - ( rate * ratio ) ) +
+        " l0,100 l-100,0 Z"
+    );
+    path.setAttribute( "stroke", "none" );
+    path.setAttribute( "fill", "#B72E2E" );
+    svg.appendChild( path );
+
+    // Add to document
+    document.body.appendChild( div );
+
+    // Animate
+    TweenMax.to(
+        div,
+        5,
+        {
+            left: -100,
+            ease: SlowMo.ease,
+            onComplete: doBeatComplete
+        }
+    );
+}
+
+// Called when beat animation is complete
+// Removes old beats from display
+function doBeatComplete()
+{
+    document.body.removeChild( this.target );
+}
 
 // Called when connected to server
 // Not yet connected to broker
@@ -240,6 +315,9 @@ function doMessageArrived( message )
 
     // Layout new values
     doWindowResize();
+
+    // Show beat wave
+    heartbeat();
 }
 
 // Called when broker session started
