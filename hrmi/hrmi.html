@@ -176,6 +176,7 @@ function heartbeat()
 
     // Add to document
     document.body.appendChild( div );
+    document.title = "Heart Rate (" + hrmi.current + ")";
 
     // Animate
     TweenMax.to(
@@ -356,6 +357,7 @@ function doWindowLoad()
     );
 }
 
+// Called to layout the user interface
 function doWindowResize()
 {
     var element = null;
@@ -363,9 +365,11 @@ function doWindowResize()
 
     element = document.querySelectorAll( ".history .value" );
 
+    // History region
     history = document.querySelector( ".history" );
     history.style.paddingLeft = Math.round( ( window.innerWidth - element[0].clientWidth - element[1].clientWidth - element[2].clientWidth ) / 2 ) + "px";
 
+    // Current region
     element = document.querySelector( ".current" );
     element.style.left = Math.round( ( window.innerWidth - element.clientWidth ) / 2 ) + "px";
 }

@@ -88,7 +88,7 @@ int getHeartRate()
   writeRegister( HRMI_I2C_ADDR,  0x47, 0x1 );
 
   // Got data back from HRMI
-  if( hrmiGetData(127, 3, i2cRspArray ) ) 
+  if( hrmiGetData( 127, 3, i2cRspArray ) ) 
   {
     // Return value
     return i2cRspArray[2];
