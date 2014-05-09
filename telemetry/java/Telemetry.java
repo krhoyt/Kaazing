@@ -53,6 +53,7 @@ public class Telemetry implements SerialPortEventListener
 	
 	// Desired ports
 	private static final String PORT_NAMES[] = {
+		"/dev/tty.KaaBlue-RNI-SPP",    // Bluetooth
 		"/dev/tty.usbserial-A6007to5", // XBee Explorer
 		"/dev/tty.usbmodem1421",       // Mac OS X		
 		"/dev/ttyACM0",                // Raspberry Pi
