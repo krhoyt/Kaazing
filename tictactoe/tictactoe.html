@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Tic Tac Toe</title>
+
+<!-- Emulation -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">
+// Constants
+var TOPIC_NAME = "/topic/tictactoe";
+var WEBSOCKET_URL = "ws://kaazing.kevinhoyt.com:8001/jms";
+
+// Global
+var connection = null;
+var future = null;
+var producer = null;
+var session = null;
+var topic = null;
+
+// Called when connected to server
+// Not yet connected to broker
+function doConnected()
+{
+    try {
+        // Connection
+        connection = future.getValue();
+        console.log( "Connection established." );
+
+        // Session
+        // Topic
+        session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+        topic = session.createTopic( TOPIC_NAME );
+
+        // Producer
+        producer = session.createProducer( topic );
+
+        // Start broker session
+        connection.start( doSessionStart );
+    } catch( e ) {
+        // Fail
+        console.log( "Exception: " + e );
+    }
+}
+
+// Called when a message has been sent
+// Verification of send
+function doMessageSent()
+{
+    console.log( "Message sent." );
+}
+
+// Called when broker session started
+// Sends test message to broker
+function doSessionStart()
+{
+    console.log( "JMS session created." );
+
+    // Send message
+    producer.send(
+        session.createTextMessage( "1,255,0,0" ),
+        doMessageSent
+    );
+}
+
+// Called when page loads
+// Connects to server
+function doWindowLoad()
+{
+    var factory = null;
+
+    // Debug
+    // Tracer.setTrace( true );
+
+    // Use JMS as broker
+    factory = new JmsConnectionFactory( WEBSOCKET_URL );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+}
+
+// Listen for page to load
+window.addEventListener( "load", doWindowLoad );
+</script>
+
+</head>
+<body>
+
+</body>
+</html>
