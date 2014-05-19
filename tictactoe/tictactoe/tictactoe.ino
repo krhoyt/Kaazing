@@ -1,6 +1,10 @@
 // Libraries
 #include <Bridge.h>
+#include <Adafruit_NeoPixel.h>
 #include <YunClient.h>
+
+// Defines
+#define NEOPIXEL_PIN 8
 
 // Constants for STOMP
 const int DISCONNECTED = 0;
@@ -13,6 +17,9 @@ const int SUBSCRIBED = 5;
 // Constants for application
 const String TOPIC = "/topic/tictactoe";
 
+// NeoPixel
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel( 9, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800 );
+
 // Global
 int       state;
 String    session;
@@ -23,6 +30,10 @@ void setup()
 {
   // Initially disconnected
   state = DISCONNECTED;
+  
+  // Turn off pixels
+  pixels.begin();
+  pixels.show();
   
   // Serial for debugging
   Serial.begin( 9600 );
