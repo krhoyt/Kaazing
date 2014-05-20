@@ -301,20 +301,28 @@ function doWindowResize()
     enclosure = document.querySelector( ".enclosure" );
 
     // Adaptive layout
+    // Addresses width sizing
     if( window.innerWidth < window.innerHeight )
     {
         minimum = window.innerWidth;
         inset = BOX_INSET_PORTRAIT;
-        top = BOX_TOP_PORTRAIT;
     } else {
         minimum = window.innerHeight;
         inset = BOX_INSET_LANDSCAPE;
-        top = Math.round( ( window.innerHeight - enclosure.clientHeight ) / 2 );
     }
 
     enclosure.style.height = ( minimum - inset ) + "px";
     enclosure.style.width = ( minimum - inset ) + "px";
     enclosure.style.left = ( ( window.innerWidth - enclosure.clientWidth ) / 2 ) + "px";
+
+    // Adaptive top placement
+    if( window.innerWidth < window.innerHeight )
+    {
+        top = BOX_TOP_PORTRAIT;
+    } else {
+        top = Math.round( ( window.innerHeight - enclosure.clientHeight ) / 2 );
+    }
+
     enclosure.style.top = top + "px";
 
     // Inside squares
