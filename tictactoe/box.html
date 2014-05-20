@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Tic Tac Toe</title>
+
+<!-- Styling -->
+<style type="text/css">
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+canvas {
+    display: none;
+    position: absolute;
+}
+
+.enclosure {
+    border: solid 1px black;
+    position: absolute;
+}
+
+.logo {
+    background-color: #F47D31;
+    bottom: 10px;
+    height: 75px;
+    left: 10px;
+    position: absolute;
+    width: 75px;
+}
+
+.square {
+    border: solid 1px black;
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+</style>
+
+<!-- Application -->
+<script type="text/javascript">
+// Constants
+var BOX_INSET = 100;
+var COLUMN_COUNT = 3;
+var LINE_COUNT = 8;
+var SQUARE_INSET = 20;
+
+// Global
+var canvas = null;
+var context = null;
+var selected = null;
+var touch = null;
+
+// Shout out to @robtarr for gradient approach
+// http://seesparkbox.com/foundry/how_i_built_a_canvas_color_picker
+// Builds gradient color picker on canvas element
+function picker()
+{
+    var gradient = null;
+
+    gradient = context.createLinearGradient( 0, 0, canvas.width, 0 );
+
+    // Create color gradient
+    gradient.addColorStop( 0,    "rgb(255,   0,   0)" );
+    gradient.addColorStop( 0.15, "rgb(255,   0, 255)" );
+    gradient.addColorStop( 0.33, "rgb(0,     0, 255)" );
+    gradient.addColorStop( 0.49, "rgb(0,   255, 255)" );
+    gradient.addColorStop( 0.67, "rgb(0,   255,   0)" );
+    gradient.addColorStop( 0.84, "rgb(255, 255,   0)" );
+    gradient.addColorStop( 1,    "rgb(255,   0,   0)" );
+
+    // Apply gradient to canvas
+    context.fillStyle = gradient;
+    context.fillRect( 0, 0, canvas.width, canvas.height );
+
+    // Create semi transparent gradient (white -> trans. -> black)
+    gradient = context.createLinearGradient( 0, 0, 0, canvas.height );
+    gradient.addColorStop( 0,   "rgba(255, 255, 255, 1)" );
+    gradient.addColorStop( 0.5, "rgba(255, 255, 255, 0)" );
+    gradient.addColorStop( 0.5, "rgba(0,     0,   0, 0)" );
+    gradient.addColorStop( 1,   "rgba(0,     0,   0, 1)" );
+
+    context.fillStyle = gradient;
+    context.fillRect( 0, 0, canvas.width, canvas.height );
+}
+
+// Called when a color is selected from the picker
+// Sets color on selected square
+function doCanvasDown( event )
+{
+    var index = null;
+    var pixel = null;
+
+    // Physical pixel in box
+    index = selected.getAttribute( "data-index");
+
+    // Color values for pixel indicated by user interaction
+    pixel = context.getImageData( event.offsetX, event.offsetY, 1, 1 );
+
+    // Change selected square color in user interface
+    selected.style.backgroundColor = "rgb(" + pixel.data[0] + ", " + pixel.data[1] + ", " + pixel.data[2] + ")";
+    selected = null;
+
+    // Hide color picker
+    canvas.style.display = "none";
+}
+
+// Called when an inner square is selected
+// Displays the color picker
+function doSquareDown( event )
+{
+    var offsets = null;
+
+    // Store selected square for reference
+    selected = event.target;
+
+    // Get location on page
+    offsets = selected.getBoundingClientRect();
+
+    // Position color picker at that location
+    canvas.style.left = ( offsets.left + 1 ) + "px";
+    canvas.style.top = ( offsets.top + 1 ) + "px";
+    canvas.style.display = "inline";
+}
+
+// Called when page loads
+// Configures main event listeners
+function doWindowLoad()
+{
+    var squares = null;
+
+    // Handle mouse or touch interaction
+    touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+
+    // Get reference to canvas color picker
+    // Handle event for color selection
+    canvas = document.querySelector( ".picker" );
+    canvas.addEventListener( touch ? "touchstart" : "mousedown", doCanvasDown );
+    context = canvas.getContext( "2d" );
+
+    // Put event listeners on inner squares
+    squares = document.querySelectorAll( ".square" );
+
+    for( var s = 0; s < squares.length; s++ )
+    {
+        squares[s].addEventListener( touch ? "touchstart" : "mousedown", doSquareDown );
+    }
+
+    // Initial layout
+    doWindowResize();
+}
+
+// Called when window resizes
+// Adjust sizing to fit display
+function doWindowResize()
+{
+    var enclosure = null;
+    var squares = null;
+
+    // Enclosure
+    enclosure = document.querySelector( ".enclosure" );
+    enclosure.style.height = ( window.innerHeight - BOX_INSET ) + "px";
+    enclosure.style.width = ( window.innerHeight - BOX_INSET ) + "px";
+    enclosure.style.left = ( ( window.innerWidth - enclosure.clientWidth ) / 2 ) + "px";
+    enclosure.style.top = ( ( window.innerHeight - enclosure.clientHeight ) / 2 ) + "px";
+
+    // Inside squares
+    squares = document.querySelectorAll( ".square" );
+
+    for( var s = 0; s < squares.length; s++ )
+    {
+        squares[s].style.width = Math.floor( (enclosure.clientWidth - ( SQUARE_INSET * 4 ) - LINE_COUNT ) / COLUMN_COUNT ) + "px";
+        squares[s].style.height = Math.floor( (enclosure.clientWidth - ( SQUARE_INSET * 4 ) - LINE_COUNT ) / COLUMN_COUNT ) + "px";
+    }
+
+    // Color picker
+    canvas.width = Math.floor( ( enclosure.clientWidth - ( SQUARE_INSET * 4 ) - LINE_COUNT ) / COLUMN_COUNT );
+    canvas.height = Math.floor( ( enclosure.clientWidth - ( SQUARE_INSET * 4 ) - LINE_COUNT ) / COLUMN_COUNT );
+
+    // Rebuild gradient on picker
+    picker();
+}
+
+// Listen for page to load
+// Window resize to adjust fit
+window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "resize", doWindowResize );
+</script>
+
+</head>
+<body>
+
+<!-- Enclosure representation -->
+<!-- One square for each RGB LED -->
+<!-- Data attribute indicates mapping to physical box -->
+<div class="enclosure">
+    <div class="square" data-index="7"></div>
+    <div class="square" data-index="8"></div>
+    <div class="square" data-index="9"></div>
+    <div class="square" data-index="6"></div>
+    <div class="square" data-index="5"></div>
+    <div class="square" data-index="4"></div>
+    <div class="square" data-index="1"></div>
+    <div class="square" data-index="2"></div>
+    <div class="square" data-index="3"></div>
+</div>
+
+<!-- Using canvas for color picker -->
+<canvas class="picker"></canvas>
+
+<!-- Kaazing -->
+<a href="http://www.kaazing.com" target="_blank">
+    <div class="logo">
+        <img src="kaazing.svg" width="75" height="75">
+    </div>
+</a>
+
+</body>
+</html>
