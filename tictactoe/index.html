@@ -4,10 +4,14 @@
 
 <title>Tic Tac Toe</title>
 
+<!-- Meta -->
+<meta name="viewport" content="initial-scale=1.0, user-scalable=0, width=device-width"/>
+
 <!-- Styling -->
 <style type="text/css">
 body {
     margin: 0px;
+    overflow: hidden;
     padding: 0px;
 }
 
@@ -23,7 +27,7 @@ canvas {
 
 .logo {
     background-color: #F47D31;
-    bottom: 10px;
+    /* bottom: 10px; */
     height: 75px;
     left: 10px;
     position: absolute;
@@ -47,7 +51,9 @@ canvas {
 <!-- Application -->
 <script type="text/javascript">
 // Constants
-var BOX_INSET = 100;
+var BOX_INSET_LANDSCAPE = 100;
+var BOX_INSET_PORTRAIT = 20;
+var BOX_TOP_PORTRAIT = 10;
 var COLUMN_COUNT = 3;
 var LINE_COUNT = 8;
 var SQUARE_INSET = 20;
@@ -109,13 +115,32 @@ function doCanvasDown( event )
     var green = null;
     var led = null;
     var red = null;
+    var offsets = null;
+    var offsetX = null;
+    var offsetY = null;
     var pixel = null;
+
+    // Handle both mouse and touch interactions
+    if( touch )
+    {
+        // Prevent selection
+        event.preventDefault();
+
+        // Touch event does not have offset properties
+        // Fake by removing location of selected element
+        offsets = selected.getBoundingClientRect();
+        offsetX = event.touches[0].pageX - offsets.left;
+        offsetY = event.touches[0].pageY - offsets.top;
+    } else {
+        offsetX = event.offsetX;
+        offsetY = event.offsetY;
+    }
 
     // Physical pixel in box
     led = selected.getAttribute( "data-index");
 
     // Color values for pixel indicated by user interaction
-    pixel = context.getImageData( event.offsetX, event.offsetY, 1, 1 );
+    pixel = context.getImageData( offsetX, offsetY, 1, 1 );
 
     red = pixel.data[0];
     green = pixel.data[1];
@@ -261,14 +286,36 @@ function doWindowLoad()
 function doWindowResize()
 {
     var enclosure = null;
+    var inset = null;
+    var logo = null;
     var squares = null;
+    var minimum = null;
+    var top = null;
+
+    // Logo placement
+    // Placed from top due to iOS7 treatment of position bottom
+    logo = document.querySelector( ".logo" );
+    logo.style.top = ( window.innerHeight - logo.clientHeight - 10 ) + "px";
 
     // Enclosure
     enclosure = document.querySelector( ".enclosure" );
-    enclosure.style.height = ( window.innerHeight - BOX_INSET ) + "px";
-    enclosure.style.width = ( window.innerHeight - BOX_INSET ) + "px";
+
+    // Adaptive layout
+    if( window.innerWidth < window.innerHeight )
+    {
+        minimum = window.innerWidth;
+        inset = BOX_INSET_PORTRAIT;
+        top = BOX_TOP_PORTRAIT;
+    } else {
+        minimum = window.innerHeight;
+        inset = BOX_INSET_LANDSCAPE;
+        top = Math.round( ( window.innerHeight - enclosure.clientHeight ) / 2 );
+    }
+
+    enclosure.style.height = ( minimum - inset ) + "px";
+    enclosure.style.width = ( minimum - inset ) + "px";
     enclosure.style.left = ( ( window.innerWidth - enclosure.clientWidth ) / 2 ) + "px";
-    enclosure.style.top = ( ( window.innerHeight - enclosure.clientHeight ) / 2 ) + "px";
+    enclosure.style.top = top + "px";
 
     // Inside squares
     squares = document.querySelectorAll( ".square" );
