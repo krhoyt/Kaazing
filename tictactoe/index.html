@@ -57,6 +57,7 @@ var WEBSOCKET_URL = "ws://kaazing.kevinhoyt.com:8001/jms";
 // Global
 var canvas = null;
 var connection = null;
+var consumer = null;
 var context = null;
 var future = null;
 var producer = null;
@@ -148,6 +149,11 @@ function doConnected()
         session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
         topic = session.createTopic( TOPIC_NAME );
 
+        // Consumer
+        // Set listener
+        consumer = session.createConsumer( topic );
+        consumer.setMessageListener( doMessageArrived );
+
         // Producer
         producer = session.createProducer( topic );
 
@@ -157,6 +163,24 @@ function doConnected()
         // Fail
         console.log( "Exception: " + e );
     }
+}
+
+// Called when a message has arrived
+// Changes color of box in user interface
+function doMessageArrived( message )
+{
+    var parts = null;
+    var square = null;
+
+    console.log( "Arrived: " + message.getText() );
+
+    // Split out index and color parts
+    parts = message.getText().split( "," );
+
+    // Select square based on physical index
+    // Set background color based on incoming data
+    square = document.querySelector( ".square[data-index='" + parts[0] + "']" );
+    square.style.backgroundColor = "rgb(" + parts[1] + ", " + parts[2] + ", " + parts[3] + ")";
 }
 
 // Called when a message has been sent
