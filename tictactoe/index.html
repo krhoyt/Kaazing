@@ -22,8 +22,8 @@ canvas {
 
 .enclosure {
     border: solid 1px black;
-    display: hidden;
     position: absolute;
+    visibility: hidden;
 }
 
 .logo {
@@ -329,7 +329,7 @@ function doWindowResize()
     enclosure.style.top = top + "px";
 
     // Show enclosure once initial layout is complete
-    enclosure.style.display = "inline";
+    enclosure.style.visibility = "visible";
 
     // Inside squares
     squares = document.querySelectorAll( ".square" );
