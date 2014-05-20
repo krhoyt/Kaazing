@@ -22,15 +22,16 @@ canvas {
 
 .enclosure {
     border: solid 1px black;
+    display: hidden;
     position: absolute;
 }
 
 .logo {
     background-color: #F47D31;
-    /* bottom: 10px; */
     height: 75px;
     left: 10px;
     position: absolute;
+    visibility: hidden;
     width: 75px;
 }
 
@@ -294,8 +295,10 @@ function doWindowResize()
 
     // Logo placement
     // Placed from top due to iOS7 treatment of position bottom
+    // Show once layout is complete
     logo = document.querySelector( ".logo" );
     logo.style.top = ( window.innerHeight - logo.clientHeight - 10 ) + "px";
+    logo.style.visibility = "visible";
 
     // Enclosure
     enclosure = document.querySelector( ".enclosure" );
@@ -324,6 +327,9 @@ function doWindowResize()
     }
 
     enclosure.style.top = top + "px";
+
+    // Show enclosure once initial layout is complete
+    enclosure.style.display = "inline";
 
     // Inside squares
     squares = document.querySelectorAll( ".square" );
