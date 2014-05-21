@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Telemetry</title>
+
+<!-- Big shout out to iHUD for the inspiration -->
+<!-- Check out their iOS application -->
+<!-- http://www.i-hud.com -->
+
+<!-- iHUD appears to be based off Garmin G1000 -->
+<!-- Used as secondary reference for implementation -->
+<!-- http://www.garmin.com -->
+
+<!-- Styles -->
+<!-- SVG uses DOM containers for sizing -->
+<link href="telemetry.css" rel="stylesheet" type="text/css">
+
+<!-- Emulation -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<!-- Animation -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.5/TweenLite.min.js" type="text/javascript"></script>
+
+<!-- Gauges -->
+<script src="script/svg/Dial.js" type="text/javascript"></script>
+<script src="script/svg/Heading.js" type="text/javascript"></script>
+<script src="script/svg/Pitch.js" type="text/javascript"></script>
+<script src="script/svg/Position.js" type="text/javascript"></script>
+<script src="script/svg/Switch.js" type="text/javascript"></script>
+<script src="script/svg/Tilt.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">
+// User interface constants
+var ANIMATE = true;
+var LIGHT_ON = "on";
+var LIGHT_OFF = "off";
+var PITCH_TILT_REVERSE = false;
+
+// Data constants
+var TOPIC_COMMAND = "/topic/telemetry/command";
+var TOPIC_DATA = "/topic/telemetry/data";
+var WEBSOCKET_URL = "ws://kaazing.kevinhoyt.com:8001/jms";
+
+// Global user interface
+var attitude = null;
+var heading = null;
+var lights = null;
+var pitch = null;
+var position = null;
+var touch = null;
+
+// Global data
+var connection = null;
+var consumer = null;
+var flight = null;
+var future = null;
+var producer = null;
+var session = null;
+var topicIn = null;
+var topicOut = null;
+
+// Called when connected to server
+// Not yet connected to broker
+function doConnected()
+{
+    var lights = null;
+
+    lights = document.querySelector( ".lights" );
+    lights.addEventListener( touch ? "touchstart" : "mousedown", doLightsClick );
+
+    try {
+        // Connection
+        connection = future.getValue();
+        console.log( "Connection established." );
+
+        // Session
+        // Topics
+        session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+        topicIn = session.createTopic( TOPIC_DATA );
+        topicOut = session.createTopic( TOPIC_COMMAND );
+
+        // Consumer
+        // Set listener
+        consumer = session.createConsumer( topicIn );
+        consumer.setMessageListener( doMessageArrived );
+
+        // Producer
+        producer = session.createProducer( topicOut );
+
+        // Start broker session
+        connection.start( doSessionStart );
+    } catch( e ) {
+        // Fail
+        console.log( "Exception: " + e );
+    }
+}
+
+// Handle toggle of heading source
+function doHeadingClick()
+{
+    console.log( "Heading click" );
+
+    if( heading.getSource() == heading.SOURCE_COMPASS )
+    {
+        heading.setSource( heading.SOURCE_GPS );
+    } else {
+        heading.setSource( heading.SOURCE_COMPASS );
+    }
+}
+
+// Called to toggle lights
+function doLightsClick()
+{
+    var message = null;
+
+    if( lights.enabled )
+    {
+        lights.setEnabled( false );
+        message = session.createTextMessage( flight + "," + LIGHT_OFF );
+    } else {
+        lights.setEnabled( true );
+        message = session.createTextMessage( flight + "," + LIGHT_ON );
+    }
+
+    // Send message
+    try {
+        producer.send( message, doMessageSent );
+    } catch( e ) {
+        console.log( "Exception: " + e );
+    }
+}
+
+// Called when a message has arrived
+// Parses data and updates user interface
+function doMessageArrived( message )
+{
+    var newPitch = null;
+    var newTilt = null;
+    var parts = null;
+
+    // Debug
+    // console.log( "Arrived: " + message.getText() );
+
+    // Message parts
+    parts = message.getText().split( "," );
+
+    // Pitch (up and down)
+    // Translate accelerometer 180 to flat (0)
+    newPitch = parseFloat( PITCH_TILT_REVERSE == true ? parts[17] : parts[16] ) - 180;
+
+    if( newPitch > 0 )
+    {
+        newPitch = 0 - Math.abs( newPitch );
+    } else if( newPitch < 0 ) {
+        newPitch = Math.abs( newPitch );
+    }
+
+    pitch.setPitch( newPitch );
+
+    // Tilt (left and right)
+    // Translate accelerometer 180 to flat (0)
+    newTilt = parseFloat( PITCH_TILT_REVERSE == true ? parts[16] : parts[17] ) - 180;
+
+    if( newTilt > 0 )
+    {
+        newTilt = 0 - Math.abs( newTilt );
+    } else if( newPitch < 0 ) {
+        newTilt = Math.abs( newTilt );
+    }
+
+    // Pitch display can tilt
+    pitch.setTilt( newTilt );
+    tilt.setTilt( newTilt );
+
+    // Heading
+    // Using compass or GPS
+    if( heading.getSource() == heading.SOURCE_COMPASS )
+    {
+        heading.setHeading( parseFloat( parts[15] ) );
+    } else if( heading.getSource() == heading.SOURCE_GPS ) {
+        heading.setHeading( parseFloat( parts[7] ) );
+    }
+
+    // Flight
+    flight = parts[22].trim();
+}
+
+// Message finished sending
+function doMessageSent()
+{
+    console.log( "Message sent." );
+}
+
+// Called when broker session started
+// Kick off periodic message send
+function doSessionStart()
+{
+    console.log( "JMS session created." );
+}
+
+// Called when the window loads
+// Initializes DOM references
+function doWindowLoad()
+{
+    var factory = null;
+
+    // Click or touch
+    touch = ( 'ontouchstart' in document.documentElement ) ? true : false;
+
+    // Heading
+    heading = new Heading( ".heading", ANIMATE );
+    heading.source.addEventListener( touch ? "touchstart" : "mousedown", doHeadingClick );
+    // heading.setHeading( 123 );
+
+    // Position
+    position = new Position( ".position" );
+
+    // Pitch
+    pitch = new Pitch( ".pitch", ANIMATE );
+    // pitch.setPitch( 12 );
+    // pitch.setTilt( 34 );
+
+    // Tilt
+    tilt = new Tilt( ".tilt", ANIMATE );
+    // tilt.setTilt( 12 );
+
+    // Lights
+    lights = new Switch( ".lights", "Lights", false );
+    lights.container.addEventListener( touch ? "touchstart" : "mousedown", doLightsClick );
+
+    // Fit to window
+    // Components only draw once
+    // Subsequent window resize only positions components
+    doWindowResize();
+
+    // Debug
+    // Tracer.setTrace( true );
+
+    // Use JMS as broker
+    factory = new JmsConnectionFactory( WEBSOCKET_URL );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+}
+
+// Called to layout user interface
+// Control width and height based on CSS
+function doWindowResize()
+{
+    // Heading (center)
+    heading.container.style.top = ( Math.round( ( window.innerHeight - heading.container.clientHeight ) / 2 ) - 16 ) + "px";
+    heading.container.style.left = Math.round( ( window.innerWidth - heading.container.clientWidth ) / 2 ) + "px";
+
+    // Position (center)
+    position.container.style.top = Math.round( ( window.innerHeight - position.container.clientHeight ) / 2 ) + "px";
+    position.container.style.left = Math.round( ( window.innerWidth - position.container.clientWidth ) / 2 ) + "px";
+
+    // Pitch (center)
+    pitch.container.style.top = Math.round( ( window.innerHeight - pitch.container.clientHeight ) / 2 ) + "px";
+    pitch.container.style.left = Math.round( ( window.innerWidth - pitch.container.clientWidth ) / 2 ) + "px";
+
+    // Tilt (center)
+    tilt.container.style.top = Math.round( ( window.innerHeight - tilt.container.clientHeight ) / 2 ) + "px";
+    tilt.container.style.left = Math.round( ( window.innerWidth - tilt.container.clientWidth ) / 2 ) + "px";
+
+    // Lights (bottom center)
+    lights.container.style.left = Math.round( ( window.innerWidth - lights.container.clientWidth ) / 2 ) + "px";
+}
+
+// Setup page load
+window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "resize", doWindowResize );
+</script>
+
+</head>
+<body>
+
+<!-- Background image -->
+<!-- http://www.weather-forecast.com/system/images/6464/original/Boston.jpg?1325155347 -->
+<div class="background"></div>
+
+<!-- Heading -->
+<div class="heading"></div>
+
+<!-- Pitch -->
+<div class="pitch"></div>
+
+<!-- Tilt -->
+<div class="tilt"></div>
+
+<!-- Position -->
+<div class="position"></div>
+
+<!-- Lights -->
+<div class="lights"></div>
+
+</body>
+</html>

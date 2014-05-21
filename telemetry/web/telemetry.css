@@ -20,6 +20,17 @@ body {
     width: 68px;
 }
 
+.background {
+    background-image: url( 'sunset.jpg' );
+    background-repeat: none;
+    background-size: 100% 100%;
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
 .dial {
     position: absolute;
     width: 12%;
