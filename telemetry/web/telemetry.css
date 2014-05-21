@@ -22,8 +22,9 @@ body {
 
 .background {
     background-image: url( 'sunset.jpg' );
+    background-position: center center;
     background-repeat: none;
-    background-size: 100% 100%;
+    background-size: 100% auto;
     bottom: 0px;
     left: 0px;
     position: absolute;

@@ -37,6 +37,7 @@
 <script type="text/javascript">
 // User interface constants
 var ANIMATE = true;
+var EASTER_KEY = 84;
 var LIGHT_ON = "on";
 var LIGHT_OFF = "off";
 var PITCH_TILT_REVERSE = false;
@@ -44,6 +45,7 @@ var PITCH_TILT_REVERSE = false;
 // Data constants
 var TOPIC_COMMAND = "/topic/telemetry/command";
 var TOPIC_DATA = "/topic/telemetry/data";
+var TOPIC_EASTER = "/topic/telemetry/easter";
 var WEBSOCKET_URL = "ws://kaazing.kevinhoyt.com:8001/jms";
 
 // Global user interface
@@ -57,10 +59,14 @@ var touch = null;
 // Global data
 var connection = null;
 var consumer = null;
+var consumerEaster = null;
 var flight = null;
 var future = null;
 var producer = null;
+var producerEaster = null;
 var session = null;
+var sunset = null;
+var topicEaster = null;
 var topicIn = null;
 var topicOut = null;
 
@@ -81,6 +87,7 @@ function doConnected()
         // Session
         // Topics
         session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+        topicEaster = session.createTopic( TOPIC_EASTER );
         topicIn = session.createTopic( TOPIC_DATA );
         topicOut = session.createTopic( TOPIC_COMMAND );
 
@@ -92,11 +99,77 @@ function doConnected()
         // Producer
         producer = session.createProducer( topicOut );
 
+        // Easter egg
+        // Listener
+        consumerEaster = session.createConsumer( topicEaster );
+        consumerEaster.setMessageListener( doEasterArrived );
+
+        // Producer
+        producerEaster = session.createProducer( topicEaster );
+
         // Start broker session
         connection.start( doSessionStart );
     } catch( e ) {
         // Fail
         console.log( "Exception: " + e );
+    }
+}
+
+// Called when an Easter message has arrived
+// Updates background image for user interface
+function doEasterArrived( message )
+{
+    var background = null;
+    var value = null;
+
+    background = document.querySelector( '.background' );
+    value = parseInt( message.getText() );
+
+    if( value == 0 )
+    {
+        background.style.backgroundImage = "url( 'sunset.jpg' )";
+        sunset = true;
+    } else if( value == 1 ) {
+        background.style.backgroundImage = "url( 'top-gun.jpg' )";
+        sunset = false;
+    }
+}
+
+// Easter egg handler
+// Listens for 't' key (84 ASCII)
+// Toggle alternative background
+// Broadcasts change across all screens
+function doEasterKey( event )
+{
+    var background = null;
+    var message = null;
+
+    if( sunset == null )
+    {
+        sunset = true;
+    }
+
+    if( event.keyCode == EASTER_KEY )
+    {
+        background = document.querySelector( '.background' );
+
+        if( sunset == true )
+        {
+            background.style.backgroundImage = "url( 'top-gun.jpg' )";
+            message = session.createTextMessage( "1" );
+            sunset = false;
+        } else {
+            background.style.backgroundImage = "url( 'sunset.jpg' )";
+            message = session.createTextMessage( "0" );
+            sunset = true;
+        }
+
+        // Send Easter message
+        try {
+            producerEaster.send( message, doMessageSent );
+        } catch( e ) {
+            console.log( "Exception: " + e );
+        }
     }
 }
 
@@ -279,6 +352,9 @@ function doWindowResize()
 // Setup page load
 window.addEventListener( "load", doWindowLoad );
 window.addEventListener( "resize", doWindowResize );
+
+// Easter egg
+window.addEventListener( "keydown", doEasterKey );
 </script>
 
 </head>
@@ -286,6 +362,7 @@ window.addEventListener( "resize", doWindowResize );
 
 <!-- Background image -->
 <!-- http://www.weather-forecast.com/system/images/6464/original/Boston.jpg?1325155347 -->
+<!-- http://thefilmstage.com/wp-content/uploads/2012/02/top-gun-original.jpg -->
 <div class="background"></div>
 
 <!-- Heading -->
