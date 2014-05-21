@@ -114,6 +114,9 @@ void loop()
       // Now subscribed
       state = SUBSCRIBED;
       Serial.println( "Subscribed." );
+
+      // Signal success
+      ready();
     }
     
     // If frame is connected
@@ -212,3 +215,39 @@ String getValue( String content, int part, String delimeter )
   return result;
 }
 
+// Blinks a short pattern to show ready state
+void ready()
+{
+  // Set pattern
+  // Kaazing orange - 125, 255, 49 (GRB)
+  // Kaazing blue   - 152, 73, 210 (GRB)
+  pixels.setPixelColor( 6, 125, 255, 49 );
+  pixels.setPixelColor( 7, 152, 73,  210 );
+  pixels.setPixelColor( 8, 125, 255, 49 );
+  pixels.setPixelColor( 5, 152, 73,  210 );
+  pixels.setPixelColor( 4, 125, 255, 49 );
+  pixels.setPixelColor( 3, 152, 73,  210 );
+  pixels.setPixelColor( 2, 125, 255, 49 );
+  pixels.setPixelColor( 1, 152, 73,  210 );
+  pixels.setPixelColor( 0, 125, 255, 49 );
+
+  // Display pattern
+  pixels.show();
+
+  // Hold for a second
+  delay( 1000 );
+
+  // Turn off pattern
+  pixels.setPixelColor( 0, 0, 0, 0 );
+  pixels.setPixelColor( 1, 0, 0, 0 );
+  pixels.setPixelColor( 2, 0, 0, 0 );
+  pixels.setPixelColor( 3, 0, 0, 0 );
+  pixels.setPixelColor( 4, 0, 0, 0 );
+  pixels.setPixelColor( 5, 0, 0, 0 );
+  pixels.setPixelColor( 6, 0, 0, 0 );
+  pixels.setPixelColor( 7, 0, 0, 0 );
+  pixels.setPixelColor( 8, 0, 0, 0 );
+
+  // Apply turned off pattern
+  pixels.show();
+}
