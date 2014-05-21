@@ -1,11 +1,11 @@
 <?php
 
 // Library
-require_once( "Stomp.php" );
+require_once( "library/Stomp.php" );
 
 // Broker URI
-$BROKER_URI = "tcp://ec2-54-211-72-62.compute-1.amazonaws.com:61613";
-$TOPIC = "/topic/hrmi";
+$BROKER_URI = "tcp://kaazing.kevinhoyt.com:61613";
+$TOPIC = "/topic/heart";
 
 // Connection
 $conn = new Stomp( $BROKER_URI );
