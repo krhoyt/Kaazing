@@ -16,7 +16,7 @@ const int SUBSCRIBED = 5;
 
 // Constants for application
 const int    PORT = 61613;
-const String ENDPOINT = "kaazing.kevinhoyt.com";
+const String ENDPOINT = "ec2-54-81-93-202.compute-1.amazonaws.com";
 const String TOPIC = "/topic/tictactoe";
 
 // NeoPixel
@@ -38,9 +38,15 @@ void setup()
   pixels.begin();
   pixels.show();
   
+  // Serial for debugging
+  Serial.begin( 9600 );
+  
   // Start Yun bridge
   // Used for network connectivity
   Bridge.begin();
+  
+  // Wait until bridge is open
+  while( !Serial );
 }
 
 // Loop
@@ -58,10 +64,14 @@ void loop()
   if( state == DISCONNECTED )
   {
     // Connect to server
-    if( client.connect( "kaazing.kevinhoyt.com", 61613 ) )
+    if( client.connect( "ec2-54-81-93-202.compute-1.amazonaws.com", 61613 ) )
     {
       // Set connecting state
       state = CONNECTING;
+      Serial.println( "Connecting..." );
+    } else {
+      // Problem connecting
+      Serial.println( "Not connected" );
     }    
   // Connected to server
   } else if( state == CONNECTING ) {
@@ -69,11 +79,12 @@ void loop()
     client.println( "CONNECT" );
     client.println( "accept-version:1.2" );
     client.print( "host:" );
-    client.println( "kaazing.kevinhoyt.com" );
+    client.println( "ec2-54-81-93-202.compute-1.amazonaws.com" );
     client.println();
     client.write( 0x0 );
     
     // Waiting for response  
+    Serial.println( "Connect header sent..." );
     state = WAITING;
   // Connected to STOMP broker
   } else if( state == CONNECTED ) {
@@ -87,6 +98,7 @@ void loop()
     client.write( 0x0 );
   
     // Wait for acknowledge
+    Serial.println( "Subscribing to topic..." );
     state = SUBSCRIBING;  
   }
   
@@ -101,6 +113,7 @@ void loop()
     {
       // Now subscribed
       state = SUBSCRIBED;
+      Serial.println( "Subscribed." );
     }
     
     // If frame is connected
@@ -108,12 +121,17 @@ void loop()
     {
       // Set state
       state = CONNECTED;
+      Serial.println( "Connected." );
       
       // Read session ID
       // Used for subscription purposes
       response = client.readStringUntil( '\n' );
       start = response.indexOf( ":" ) + 1;
       session = response.substring( start );
+
+      // Display session ID
+      Serial.print( "Session: " );
+      Serial.println( session );
     // If frame is a message
     } else if( response == "MESSAGE" ) {
       // Process message content
@@ -122,6 +140,10 @@ void loop()
       start = response.indexOf( "\n\n" ) + 2;
       response = response.substring( start );
 
+      // Display message
+      Serial.print( "Message body: " );
+      Serial.println( response );
+      
       // Parse message parts
       // LED and color
       led = getValue( response, 0, "," ).toInt();
