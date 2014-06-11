@@ -1,1 +1,449 @@
-hello world
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Register</title>
+<meta name="viewport" content="initial-scale=1.0">
+
+<style type="text/css">
+body {
+    background-color: #E7E8EC;
+    font-family: "Source Sans Pro", sans-serif;
+    margin: 0px;
+    overflow: hidden;
+    padding: 0px;
+}
+
+.register .layout {
+    position: absolute;
+    padding-left: 20px;
+    padding-top: 5px;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: 592px;
+}
+
+.register .product {
+    border: 1px rgba( 0, 0, 0, 0.20 ) solid;
+    border-radius: 6px;
+    float: left;
+    height: 100px;
+    margin-right: 15px;
+    margin-top: 15px;
+    width: 100px;
+    box-shadow: 0px 1px 0px 1px rgba( 255, 255, 255, 0.60 );
+}
+
+.splash {
+    background-image: url("img/grocery-shopping.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    display: none;
+}
+
+.splash .dialog {
+    background-color: rgba( 255, 255, 255, 0.60 );
+    border-radius: 6px;
+    box-shadow: 0px 0px 5px 5px rgba( 0, 0, 0, 0.20 );
+    position: absolute;
+    height: 420px;
+    width: 640px;
+}
+
+.splash .dialog .login {
+    background-color: #1E8CE2;
+    border-radius: 6px;
+    border: 1px solid #0D4E81;
+    color: white;
+    font-size: 4em;
+    height: 90px;
+    position: absolute;
+    right: 40px;
+    text-align: center;
+    text-shadow: -1px -1px #0D4E81;
+    top: 230px;
+    width: 220px;
+}
+
+.splash .dialog .clerk {
+    float: left;
+    font-size: 4em;
+    left: 40px;
+    position: absolute;
+    top: 20px;
+}
+
+.splash .dialog input {
+    background-color: white;
+    border-radius: 6px;
+    color: black;
+    clear: left;
+    font-size: 4em;
+    height: 60px;
+    left: 40px;
+    padding-left: 20px;
+    position: absolute;
+    right: 40px;
+    top: 110px;
+}
+
+.splash .dialog .message {
+    color: rgba( 0, 0, 0, 0.80 );
+    border: 1px solid rgba( 0, 0, 0, 0.40 );
+    border-radius: 6px;
+    font-size: 1.5em;
+    left: 40px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-top: 5px;
+    position: absolute;
+    right: 40px;
+    top: 350px;
+}
+
+.summary {
+    border: 1px rgba( 0, 0, 0, 0.20 ) solid;
+    background-color: #E7ECEF;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    bottom: 40px;
+    width: 388px;
+    border-radius: 6px;
+}
+
+.summary .header {
+    position: absolute;
+    background-color: #F5F6F8;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    height: 100px;
+    border-bottom: 1px rgba(0, 0, 0, 0.20) solid;
+    border-radius: 6px 6px 0px 0px;
+}
+
+.summary .logo {
+    float: left;
+    width: 70px;
+    height: 70px;
+    border: 1px rgba(0, 0, 0, 0.40) solid;
+    border-radius: 6px;
+    margin-left: 15px;
+    margin-top: 15px;
+    background-image: url("img/company-logo.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.summary .charge {
+    text-shadow: -1px -1px #0D4E81;
+    font-size: 2em;
+    font-weight: 600;
+    line-height: 70px;
+    background-color: #1E8CE2;
+    text-align: center;
+    color: white;
+    float: left;
+    width: 268px;
+    height: 70px;
+    border: 1px solid #0D4E81;
+    border-radius: 6px;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.summary .list {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 99px;
+    bottom: 30px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.summary .list .line {
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 1px rgba(0, 0, 0, 0.20) solid;
+    height: 60px;
+    border-top: 1px rgba(255, 255, 255, 0.80) solid;
+}
+
+.summary .list .line .photo {
+    float: left;
+    width: 37px;
+    height: 37px;
+    border-radius: 6px;
+    margin-top: 8px;
+    border: solid rgba(255, 255, 255, 1) 3px;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+}
+
+.summary .list .tax .photo {
+    float: left;
+    width: 37px;
+    height: 37px;
+    border-radius: 6px;
+    margin-top: 8px;
+    border: solid rgba(255, 255, 255, 1) 3px;
+    background-image: url("img/death-and.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    color: white;
+    font-weight: 600;
+    font-size: 1.5em;
+    text-align: center;
+    line-height: 35px;
+    text-shadow: 1px 1px 0px black;
+}
+
+.summary .list .line .label {
+    float: left;
+    margin-left: 10px;
+}
+
+.summary .list .line .duplicate {
+    float: left;
+    margin-left: 10px;
+    border-radius: 6px;
+    background-color: #8B9298;
+    color: #E7ECEF;
+    width: 30px;
+    line-height: 28px;
+    text-align: center;
+    height: 30px;
+    margin-top: 15px;
+}
+
+.summary .list .line .price {
+    float: right;
+}
+
+.summary .list .tax .duplicate {
+    display: none;
+}
+
+.summary .list .clear {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 1px rgba(0, 0, 0, 0.20) solid;
+    height: 60px;
+    border-top: 1px rgba(255, 255, 255, 0.80) solid;
+}
+
+.summary .list .tax .rate {
+    font-weight: normal;
+    float: left;
+    margin-left: 10px;
+    line-height: 60px;
+}
+
+.summary .footer {
+    position: absolute;
+    background-color: #F5F6F8;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-top: 1px rgba(0, 0, 0, 0.20) solid;
+    border-radius: 0px 0px 6px 6px;
+}
+
+.register .layout .item {
+    position: absolute;
+    top: 20px;
+    width: 102px;
+    height: 102px;
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.40);
+}
+
+.register .layout .item img {
+    margin-left: 5px;
+    margin-top: 5px;
+    float: left;
+}
+
+.register .layout .item .label {
+    font-size: 0.75em;
+    text-align: center;
+}
+</style>
+
+<!-- Source San Pro -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+function doLogin()
+{
+    alert( "Login" );
+}
+
+function doWindowLoad()
+{
+    doWindowResize();
+}
+
+function doWindowResize()
+{
+    var button = null;
+    var dialog = null;
+
+    dialog = document.querySelector( "div.splash > .dialog" );
+    dialog.style.left = ( ( window.innerWidth - dialog.clientWidth ) / 2 ) + "px";
+    dialog.style.top = ( ( window.innerHeight - dialog.clientHeight ) / 2 ) + "px";
+
+    button = document.querySelector( ".splash > .dialog > .login" );
+    button.addEventListener( "click", doLogin );
+
+    var element = document.querySelector( ".register .layout" );
+    // alert( element.clientWidth );
+}
+
+window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "resize", doWindowResize );
+</script>
+
+</head>
+<body>
+
+<!-- Login screen -->
+<div class="screen splash">
+
+    <!-- Dialog -->
+    <div class="dialog">
+
+        <!-- Clerk ID -->
+        <div class="clerk">Clerk ID:</div>
+        <input type="number">
+        <div class="login">Login</div>
+
+        <!-- Status -->
+        <div class="message">Tuesday, June 10 @ 6:58 PM</div>
+    </div>
+</div>
+
+<!-- Register screen -->
+<div class="screen register">
+
+    <!-- Product listing -->
+    <div class="layout">
+
+        <!-- Row 1 -->
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+
+        <!-- Row 2 -->
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+
+        <!-- Row 3 -->
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+
+        <!-- Row 4 -->
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+        <div class="product"></div>
+
+        <!-- Item template -->
+        <div class="item">
+            <img src="img/apple-biscuit-lg.png" width="92" height="79">
+            <div class="label">Apple Biscuit</div>
+        </div>
+
+        <div class="item" style="left: 137px;">
+            <img src="img/oatmeal-rasin-lg.png" width="92" height="79">
+            <div class="label">Oatmeal Rasin</div>
+        </div>
+
+        <div class="item" style="left: 488px;">
+            <img src="img/sweden-flag-lg.png" width="92" height="79">
+            <div class="label">Swedish Flag</div>
+        </div>
+
+    </div>
+
+    <!-- Right side summary -->
+    <div class="summary">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="logo"></div>
+            <div class="charge">Charge: $18.40</div>
+        </div>
+
+        <!-- Item list -->
+        <div class="list">
+            <div class="line">
+                <div class="photo" style="background-image: url( 'img/apple-biscuit-sm.png' );"></div>
+                <div class="label">Apple Biscuit</div>
+                <div class="duplicate">2</div>
+                <div class="price">$9.00</div>
+            </div>
+            <div class="line">
+                <div class="photo" style="background-image: url( 'img/oatmeal-rasin-sm.png' );"></div>
+                <div class="label">Oatmeal Rasin</div>
+                <div class="duplicate" style="display: none;">2</div>
+                <div class="price">$3.00</div>
+            </div>
+            <div class="line">
+                <div class="photo" style="background-image: url( 'img/sweden-flag-sm.png' );"></div>
+                <div class="label">Swedish Flag</div>
+                <div class="duplicate" style="display: none;">2</div>
+                <div class="price">$5.00</div>
+            </div>
+
+            <!-- Tax -->
+            <div class="line tax">
+                <div class="photo">%</div>
+                <div class="label">Tax</div>
+                <div class="rate">(8.25%)</div>
+                <div class="price">$1.40</div>
+            </div>
+
+            <!-- Clear -->
+            <div class="clear">
+                Clear List
+            </div>
+        </div>
+
+        <!-- Transaction -->
+        <div class="footer">Transaction #1234</div>
+    </div>
+</div>
+
+</body>
+</html>
