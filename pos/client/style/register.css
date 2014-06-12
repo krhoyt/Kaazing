@@ -1,0 +1,243 @@
+.register .layout {
+    position: absolute;
+    padding-left: 20px;
+    padding-top: 5px;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: 592px;
+}
+
+.register .layout .item {
+    position: absolute;
+    top: 20px;
+    width: 102px;
+    height: 102px;
+    border-radius: 6px;
+    background-color: white;
+    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.40);
+}
+
+.register .layout .item img {
+    margin-left: 5px;
+    margin-top: 5px;
+    float: left;
+}
+
+.register .layout .item .label {
+    font-size: 0.75em;
+    text-align: center;
+}
+
+.register .product {
+    border: 1px rgba( 0, 0, 0, 0.20 ) solid;
+    border-radius: 6px;
+    float: left;
+    height: 100px;
+    margin-right: 15px;
+    margin-top: 15px;
+    width: 100px;
+    box-shadow: 0px 1px 0px 1px rgba( 255, 255, 255, 0.60 );
+}
+
+.summary {
+    border: 1px rgba( 0, 0, 0, 0.20 ) solid;
+    background-color: #E7ECEF;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    bottom: 40px;
+    width: 388px;
+    border-radius: 6px;
+}
+
+.summary .total {
+    border-bottom: 1px rgba(0, 0, 0, 0.20) solid;
+    border-radius: 6px 6px 0px 0px;
+    top: 0px;
+}
+
+.receipt .total {
+    border-top: 1px rgba(0, 0, 0, 0.20) solid;
+    border-radius: 0px 0px 0px 0px;
+    bottom: 0px;
+}
+
+.total {
+    position: absolute;
+    background-color: #F5F6F8;
+    left: 0px;
+    right: 0px;
+    height: 100px;
+}
+
+.summary .total .logo {
+    float: left;
+    margin-left: 15px;
+}
+
+.receipt .total .logo {
+    float: right;
+    margin-right: 15px;
+}
+
+.total .logo {
+    width: 70px;
+    height: 70px;
+    border: 1px rgba(0, 0, 0, 0.40) solid;
+    border-radius: 6px;
+    margin-top: 15px;
+    background-image: url("../img/company-logo.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.summary .total .charge {
+    width: 268px;
+}
+
+.receipt .total .charge {
+    width: 307px;
+}
+
+.total .ready {
+    background-color: #1E8CE2;
+    color: white;
+    text-shadow: -1px -1px #0D4E81;
+    border: 1px solid #0D4E81;
+}
+
+.total .pending {
+    color: black;
+    text-shadow: -1px -1px white;
+    border: 1px solid rgba( 0, 0, 0, 0.20 );
+}
+
+.total .charge {
+    font-size: 2em;
+    font-weight: 600;
+    line-height: 70px;
+    text-align: center;
+    float: left;
+    height: 70px;
+    border-radius: 6px;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.summary .list {
+    top: 99px;
+    bottom: 30px;
+}
+
+.receipt .list {
+    top: 0px;
+    bottom: 101px;
+}
+
+.list {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.list .line {
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 1px rgba(0, 0, 0, 0.20) solid;
+    height: 60px;
+    border-top: 1px rgba(255, 255, 255, 0.80) solid;
+}
+
+.list .line .photo {
+    float: left;
+    width: 37px;
+    height: 37px;
+    border-radius: 6px;
+    margin-top: 8px;
+    border: solid rgba(255, 255, 255, 1) 3px;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+}
+
+.list .tax .photo {
+    float: left;
+    width: 37px;
+    height: 37px;
+    border-radius: 6px;
+    margin-top: 8px;
+    border: solid rgba(255, 255, 255, 1) 3px;
+    background-image: url("../img/death-and.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    color: white;
+    font-weight: 600;
+    font-size: 1.5em;
+    text-align: center;
+    line-height: 35px;
+    text-shadow: 1px 1px 0px black;
+}
+
+.list .line .label {
+    float: left;
+    margin-left: 10px;
+}
+
+.list .line .duplicate {
+    float: left;
+    margin-left: 10px;
+    border-radius: 6px;
+    background-color: #8B9298;
+    color: #E7ECEF;
+    width: 30px;
+    line-height: 28px;
+    text-align: center;
+    height: 30px;
+    margin-top: 15px;
+}
+
+.list .line .price {
+    float: right;
+}
+
+.list .tax .duplicate {
+    display: none;
+}
+
+.list .clear {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 1px rgba(0, 0, 0, 0.20) solid;
+    height: 60px;
+    border-top: 1px rgba(255, 255, 255, 0.80) solid;
+}
+
+.list .tax .rate {
+    font-weight: normal;
+    float: left;
+    margin-left: 10px;
+    line-height: 60px;
+}
+
+.summary .footer {
+    position: absolute;
+    background-color: #F5F6F8;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-top: 1px rgba(0, 0, 0, 0.20) solid;
+    border-radius: 0px 0px 6px 6px;
+}

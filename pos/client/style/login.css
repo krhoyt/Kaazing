@@ -1,0 +1,72 @@
+.splash {
+    background-image: url("../img/grocery-shopping.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    display: none;
+}
+
+.splash .dialog {
+    background-color: rgba( 255, 255, 255, 0.60 );
+    border-radius: 6px;
+    box-shadow: 0px 0px 5px 5px rgba( 0, 0, 0, 0.20 );
+    position: absolute;
+    height: 420px;
+    width: 640px;
+}
+
+.splash .dialog .login {
+    background-color: #1E8CE2;
+    border-radius: 6px;
+    border: 1px solid #0D4E81;
+    color: white;
+    font-size: 4em;
+    height: 90px;
+    position: absolute;
+    right: 40px;
+    text-align: center;
+    text-shadow: -1px -1px #0D4E81;
+    top: 230px;
+    width: 220px;
+}
+
+.splash .dialog .clerk {
+    float: left;
+    font-size: 4em;
+    left: 40px;
+    position: absolute;
+    top: 20px;
+}
+
+.splash .dialog input {
+    background-color: white;
+    border-radius: 6px;
+    color: black;
+    clear: left;
+    font-size: 4em;
+    height: 60px;
+    left: 40px;
+    padding-left: 20px;
+    position: absolute;
+    right: 40px;
+    top: 110px;
+}
+
+.splash .dialog .message {
+    color: rgba( 0, 0, 0, 0.80 );
+    border: 1px solid rgba( 0, 0, 0, 0.40 );
+    border-radius: 6px;
+    font-size: 1.5em;
+    left: 40px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-top: 5px;
+    position: absolute;
+    right: 40px;
+    top: 350px;
+}

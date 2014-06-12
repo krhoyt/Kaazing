@@ -3,17 +3,9 @@
 <head>
 
 <title>Mobile Payment</title>
-<meta name="viewport" content="initial-scale=1.0">
+<meta name="viewport" content="initial-scale=0.75">
 
 <style type="text/css">
-body {
-    background-color: #F2F2F2;
-    font-family: "Source Sans Pro", sans-serif;
-    margin: 0px;
-    overflow: hidden;
-    padding: 0px;
-}
-
 .status {
     position: absolute;
     left: 0px;
@@ -119,6 +111,23 @@ body {
     text-align: center;
     color: rgba(0, 0, 0, 0.80);
 }
+
+.payment {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: none;
+}
+
+.receipt {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+}
 </style>
 
 <!-- Source San Pro -->
@@ -126,6 +135,10 @@ body {
 
 <!-- Source Code Pro -->
 <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'>
+
+<!-- Application styles -->
+<link href="style/main.css" rel="stylesheet" type="text/css">
+<link href="style/register.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript">
 function doWindowLoad()
@@ -143,31 +156,78 @@ window.addEventListener( "load", doWindowLoad );
 </head>
 <body>
 
-<!-- Status -->
-<div class="status">READY TO PAY</div>
+<!-- Receipt -->
+<div class="receipt">
 
-<!-- Card -->
-<!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
-<div class="wallet">
-    <div class="card">
-        <div class="holder">KEVIN HOYT</div>
-        <div class="expiration">11/15</div>
-        <div class="number">1234 5678 9012 3456</div>
+    <!-- Item list -->
+    <div class="list">
+        <div class="line">
+            <div class="photo" style="background-image: url( 'img/apple-biscuit-sm.png' );"></div>
+            <div class="label">Apple Biscuit</div>
+            <div class="duplicate">2</div>
+            <div class="price">$9.00</div>
+        </div>
+        <div class="line">
+            <div class="photo" style="background-image: url( 'img/oatmeal-rasin-sm.png' );"></div>
+            <div class="label">Oatmeal Rasin</div>
+            <div class="duplicate" style="display: none;">2</div>
+            <div class="price">$3.00</div>
+        </div>
+        <div class="line">
+            <div class="photo" style="background-image: url( 'img/sweden-flag-sm.png' );"></div>
+            <div class="label">Swedish Flag</div>
+            <div class="duplicate" style="display: none;">2</div>
+            <div class="price">$5.00</div>
+        </div>
+
+        <!-- Tax -->
+        <div class="line tax">
+            <div class="photo">%</div>
+            <div class="label">Tax</div>
+            <div class="rate">(8.25%)</div>
+            <div class="price">$1.40</div>
+        </div>
+
     </div>
+
+    <!-- Footer -->
+    <div class="total">
+        <div class="charge pending">Total: $18.40</div>
+        <div class="logo"></div>
+    </div>
+
 </div>
 
-<!-- Page -->
-<div class="page">
-    <div class="holder">
-        <div class="indicator"></div>
-        <div class="indicator"></div>
-        <div class="indicator selected"></div>
-        <div class="indicator"></div>
-    </div>
-</div>
+<!-- Payment -->
+<div class="payment">
 
-<!-- Instructions -->
-<div class="instructions">To pay, swipe the selected card upwards.</div>
+    <!-- Status -->
+    <div class="status">READY TO PAY</div>
+
+    <!-- Card -->
+    <!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
+    <div class="wallet">
+        <div class="card">
+            <div class="holder">KEVIN HOYT</div>
+            <div class="expiration">11/15</div>
+            <div class="number">1234 5678 9012 3456</div>
+        </div>
+    </div>
+
+    <!-- Page -->
+    <div class="page">
+        <div class="holder">
+            <div class="indicator"></div>
+            <div class="indicator"></div>
+            <div class="indicator selected"></div>
+            <div class="indicator"></div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">To pay, swipe the selected card upwards.</div>
+
+</div>
 
 </body>
 </html>
