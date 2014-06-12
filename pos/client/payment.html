@@ -5,132 +5,7 @@
 <title>Mobile Payment</title>
 <meta name="viewport" content="initial-scale=0.75">
 
-<style type="text/css">
-.status {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 20px;
-    text-align: center;
-    font-weight: 600;
-}
-
-.wallet {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 50px;
-    bottom: 80px;
-}
-
-.card {
-    margin: auto;
-    border-radius: 10px;
-    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.40);
-    background-image: url('img/gold-card.png');
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-}
-
-.card .holder {
-    font-family: 'Source Code Pro';
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-shadow: -1px 0px 0px white;
-    -webkit-transform-origin: 0% 0%;
-    -webkit-transform: rotate(-90deg);
-    position: absolute;
-    bottom: 0px;
-    right: -15px;
-}
-
-.card .expiration {
-    font-family: 'Source Code Pro';
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-shadow: -1px 0px 0px white;
-    -webkit-transform-origin: 0% 0%;
-    -webkit-transform: rotate(-90deg);
-    position: absolute;
-    bottom: 0px;
-    right: 70px;
-}
-
-.card .number {
-    font-family: 'Source Code Pro';
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-shadow: -1px 0px 0px white;
-    -webkit-transform-origin: 0% 100%;
-    -webkit-transform: rotate(-90deg);
-    position: absolute;
-    bottom: 50px;
-    right: -60px;
-}
-
-.card .number a {
-    color: black;
-    text-decoration: none;
-}
-
-.page {
-    position: absolute;
-    bottom: 50px;
-    right: 0px;
-    left: 0px;
-}
-
-.page .holder {
-    margin: auto;
-    width: 78px;
-}
-
-.page .indicator {
-    float: left;
-    width: 10px;
-    height: 10px;
-    margin-right: 10px;
-    border-radius: 10px;
-    border: 1px black solid;
-}
-
-.page .indicator:last-of-type {
-    margin-right: 0px;
-}
-
-.page .selected {
-    background-color: rgba( 0, 0, 0, 0.40 );
-}
-
-.instructions {
-    position: absolute;
-    bottom: 20px;
-    left: 0px;
-    right: 0px;
-    text-align: center;
-    color: rgba(0, 0, 0, 0.80);
-}
-
-.payment {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    display: none;
-}
-
-.receipt {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-}
-</style>
-
-<!-- Source San Pro -->
+<!-- Source Sans Pro -->
 <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css">
 
 <!-- Source Code Pro -->
@@ -139,6 +14,7 @@
 <!-- Application styles -->
 <link href="style/main.css" rel="stylesheet" type="text/css">
 <link href="style/register.css" rel="stylesheet" type="text/css">
+<link href="style/payment.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript">
 function doWindowLoad()
@@ -208,9 +84,9 @@ window.addEventListener( "load", doWindowLoad );
     <!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
     <div class="wallet">
         <div class="card">
-            <div class="holder">KEVIN HOYT</div>
-            <div class="expiration">11/15</div>
-            <div class="number">1234 5678 9012 3456</div>
+            <div class="holder vertical">KEVIN HOYT</div>
+            <div class="expiration vertical">11/15</div>
+            <div class="number vertical">1234 5678 9012 3456</div>
         </div>
     </div>
 
