@@ -120,6 +120,10 @@
     margin-right: 15px;
 }
 
+.register {
+    visibility: hidden;
+}
+
 .register .layout {
     position: absolute;
     padding-left: 20px;
