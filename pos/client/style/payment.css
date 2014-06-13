@@ -14,21 +14,41 @@
 }
 
 .card .expiration {
-    bottom: 0px;
+    bottom: 370px;
     position: absolute;
-    right: 70px;
+    right: 23px;
 }
 
 .card .holder {
-    bottom: 0px;
+    bottom: 40px;
     position: absolute;
-    right: -15px;
+    right: -70px;
+}
+
+.card .logo {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    top: 30px;
+    right: 200px;
+}
+
+.card .name {
+    position: absolute;
+    color: white;
+    font-family: "Source Sans Pro";
+    font-size: 2.5em;
+    top: 375px;
+    font-weight: 600;
+    right: 55px;
+    font-style: italic;
+    -webkit-text-stroke: 1px #AA7300;
 }
 
 .card .number {
-    bottom: 50px;
+    bottom: 80px;
     position: absolute;
-    right: -60px;
+    right: -130px;
 }
 
 .card .number a {
@@ -94,7 +114,7 @@
 
 .vertical {
     -webkit-transform: rotate( -90deg );
-    -webkit-transform-origin: 0% 0%;
+    -webkit-transform-origin: bottom left;
 }
 
 .wallet {
