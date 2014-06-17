@@ -1,4 +1,8 @@
 // Modules
+// https://github.com/easternbloc/node-stomp-client
+// NOTE: The content-length header must be commented out
+//       ActiveMQ uses the header as a JMS flag
+//       Header can be found in frame.js
 var Stomp = require( "stomp-client" );
 
 // Constants
@@ -34,7 +38,8 @@ messaging.connect( function( sessionId ) {
         console.log( count );
 
         // Send current value
-        messaging.publish( TOPIC_COUNTER, count );
+        // Content must be a string
+        messaging.publish( TOPIC_COUNTER, count.toString() );
 
     // Every one second
     }, 1000 );
