@@ -5,3 +5,11 @@ body {
     overflow: hidden;
     padding: 0px;
 }
+
+.inactive {
+    visibility: hidden;
+}
+
+.template {
+    visibility: hidden;
+}

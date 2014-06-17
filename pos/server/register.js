@@ -16,14 +16,14 @@ var TOPIC_NOTIFICATION = "/topic/pos/notification";
 var TOPIC_PRODUCTS_LIST = "/topic/pos/products/list";
 var TOPIC_PRODUCTS_READ = "/topic/pos/products/read";
 var TWILIO_NUMBER = "+18136398942";
-var TWILIO_ID = "AC3432eb0a1f4cd5b071587c95aac1559d";
-var TWILIO_TOKEN = "c05103c1c9455060496f907f3b878984";
+var TWILIO_ID = "__TWILIO_ID__";
+var TWILIO_TOKEN = "__TWILIO_TOKEN__";
 
 // Connect to broker
 var messaging = new Stomp( BROKER_ADDRESS, 61613, null, null );
 
 // Configure Twilio SMS
-var notification = new Twilio.RestClient( TWILIO_ID, TWILIO_TOKEN );
+// var notification = new Twilio.RestClient( TWILIO_ID, TWILIO_TOKEN );
 
 // Connect to database
 Mongoose.connect( "mongodb://" + MONGOHQ_USER + ":" + MONGOHQ_PASSWORD + "@" + MONGOHQ_ADDRESS );
@@ -34,7 +34,7 @@ var productsSchema = Mongoose.Schema( {
     name: String,
     image: String,
     price: Number,
-    slot: Number
+    slot: String
 } );
 
 var Products = Mongoose.model( "Products", productsSchema );
@@ -63,6 +63,7 @@ messaging.connect( function( sessionId ) {
                 // Debug
                 console.log( "Send SMS" );
 
+                /*
                 // Send an SMS using Twilio
                 notification.sms.messages.create( {
                     to: "+13035223131",
@@ -77,6 +78,7 @@ messaging.connect( function( sessionId ) {
                         console.log( "Error sending SMS" );
                     }
                 } );
+                */
             }
         }
 
@@ -84,37 +86,20 @@ messaging.connect( function( sessionId ) {
         messaging.publish( TOPIC_PRODUCTS_READ, body );
     } );
 
-    console.log( "Should sent at connect." );
-    messaging.publish( TOPIC_PRODUCTS_LIST, "Dude!" );
-
     // Subscribe to read product list
     messaging.subscribe( TOPIC_PRODUCTS_READ, function( body, headers ) {
 
         // Debug
         console.log( "Get product list." );
 
-        var query = Products.find( {} );
-        var promise = query.exec();
-
-        promise.onResolve( function( error, products ) {
+        Products.find( function( error, products ) {
             if( error )
             {
-                return console.error( error );
+                console.log( error );
             }
-
-            // Debug
-            console.log( "Found " + products.length + " products." );
 
             // Send product event
             messaging.publish( TOPIC_PRODUCTS_LIST, JSON.stringify( products ) );
         } );
-    } );
-
-    messaging.subscribe( TOPIC_PRODUCTS_LIST, function( body, headers ) {
-
-        var data = JSON.parse( body );
-
-        // Debug
-        console.log( "Got " + data.length + " products." );
     } );
 } );
