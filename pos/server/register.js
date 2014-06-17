@@ -16,8 +16,8 @@ var TOPIC_NOTIFICATION = "/topic/pos/notification";
 var TOPIC_PRODUCTS_LIST = "/topic/pos/products/list";
 var TOPIC_PRODUCTS_READ = "/topic/pos/products/read";
 var TWILIO_NUMBER = "+18136398942";
-var TWILIO_ID = "AC3432eb0a1f4cd5b071587c95aac1559d";
-var TWILIO_TOKEN = "c05103c1c9455060496f907f3b878984";
+var TWILIO_ID = "__TWILIO_ID__";
+var TWILIO_TOKEN = "__TWILIO_TOKEN__";
 
 // Connect to broker
 var messaging = new Stomp( BROKER_ADDRESS, 61613, null, null );
