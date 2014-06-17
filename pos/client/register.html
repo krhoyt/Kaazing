@@ -23,17 +23,23 @@
 <script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-var TOPIC_NAME = "/topic/pos";
-var WEBSOCKET_URL = "ws://kaazing.kevinhoyt.com:8001/jms";
+var CONNECT_DELAY = 5000;
+var CONNECTING_MESSAGE = "Connecting to an American Express certified card holder ...";
+var TOPIC_NOTIFICATION = "/topic/pos/notification"
+var TOPIC_PRODUCTS = "/topic/pos/products/list";
+var WEBSOCKET_URL = "ws://localhost:8001/jms";
 
 var connection = null;
 var consumer = null;
 var future = null;
 var model = null;
-var producer = null;
+var produceNotify = null;
 var session = null;
 var interval = null;
-var topic = null;
+var consumeProducts = null;
+var start = null;
+var topicNotify = null;
+var topicProducts = null;
 var touch = null;
 
 // Update login status message
@@ -86,22 +92,27 @@ function doConnected()
     status = document.querySelector( ".dialog .message" );
 
     try {
+        // Debug
+        console.log( "Connected." );
+        console.log( "Subscribing." );
+
         // Connection
         connection = future.getValue();
-        status.innerHTML = "Subscribing to topics ...";
 
         // Session
-        // Topic
         session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
-        topic = session.createTopic( TOPIC_NAME );
 
-        // Consumer
+        // Topics
+        topicNotify = session.createTopic( TOPIC_NOTIFICATION );
+        topicProducts = session.createTopic( TOPIC_PRODUCTS );
+
+        // Producers
+        produceNotify = session.createProducer( topicNotify );
+
+        // Consumers
         // Set listener
-        consumer = session.createConsumer( topic );
-        consumer.setMessageListener( doMessageArrived );
-
-        // Producer
-        producer = session.createProducer( topic );
+        consumeProducts = session.createConsumer( topicProducts );
+        consumeProducts.setMessageListener( doProductsArrived );
 
         // Start broker session
         connection.start( doSessionStart );
@@ -109,6 +120,30 @@ function doConnected()
         // Fail
         console.log( "Exception: " + e );
     }
+}
+
+// Called after intentional delay during connection
+// Continues loading process by getting products
+function doDelayComplete()
+{
+    // Clear delay
+    clearInterval( interval );
+    interval = null;
+    start = null;
+
+    // Debug
+    console.log( "Intentional delay ended." );
+    console.log( "Sending notification." );
+
+    // Update status
+    status = document.querySelector( ".dialog .message" );
+    status.innerHTML = "Waiting for product listing ...";
+
+    // Send notification message
+    produceNotify.send(
+        session.createTextMessage( model.clerkId ),
+        doNotificationSent
+    );
 }
 
 // Called when login button is pressed
@@ -130,7 +165,13 @@ function doLoginClick()
 
     // Start socket connection
     status = document.querySelector( ".dialog .message" );
-    status.innerHTML = "Connecting ...";
+    status.innerHTML = CONNECTING_MESSAGE;
+
+    // Time connection process
+    start = new Date();
+
+    // Debug
+    console.log( "Connecting." );
 
     // Debug
     // Tracer.setTrace( true );
@@ -147,33 +188,50 @@ function doLoginClick()
 }
 
 // Called when a message has arrived
-function doMessageArrived( message )
+function doProductsArrived( message )
 {
-    console.log( "Arrived: " + message.getText() );
+    var data = null;
+
+    data = JSON.parse( message.getText() )
+
+    console.log( "Products: " + data );
+
+    /*
+     // Make sure window is scrolled to top
+     window.scrollTo( 0, 0 );
+
+     var splash = document.querySelector( ".splash" );
+     splash.style.visibility = "hidden";
+
+     var register = document.querySelector( ".register" );
+     register.style.visibility = "visible";
+     */
 }
 
-// Called when a message has been sent
+// Called when a notification message has been sent
 // Verification of send
-function doMessageSent()
+function doNotificationSent()
 {
-    console.log( "Message sent." );
+    console.log( "Notification sent." );
 }
 
 // Called when broker session started
+// Setup intentional delay before progressing
 function doSessionStart()
 {
+    var now = null;
     var status = null;
 
-    status = document.querySelector( ".dialog .message" );
-    status.innerHTML = "Getting product listing ...";
+    // Debug
+    console.log( "Subscribed." );
+    console.log( "Intentional delay starting." );
 
-    var splash = document.querySelector( ".splash" );
-    splash.style.visibility = "hidden";
+    // Time since connection started
+    now = new Date();
 
-    var register = document.querySelector( ".register" );
-    register.style.visibility = "visible";
-
-    window.scrollTo( 0, 0 );
+    // Delay for some period of time
+    // Designed to show customer branded information
+    interval = setInterval( doDelayComplete, CONNECT_DELAY - ( now.getTime() - start.getTime() ) );
 }
 
 // Called when window loads
@@ -235,7 +293,7 @@ window.addEventListener( "resize", doWindowResize );
 
         <!-- Clerk ID -->
         <div class="clerk">Clerk ID:</div>
-        <input type="number">
+        <input>
         <div class="login">Login</div>
 
         <!-- Status -->
@@ -291,8 +349,8 @@ window.addEventListener( "resize", doWindowResize );
         </div>
 
         <div class="item" style="left: 488px;">
-            <img src="img/janssons-frestelse-lg.png" width="92" height="79">
-            <div class="label">Janssons Frestelse</div>
+            <img src="img/pepparkakor-lg.png" width="92" height="79">
+            <div class="label">Pepparkakor</div>
         </div>
 
         <div class="item" style="left: 488px; top: 137px;">
@@ -326,8 +384,8 @@ window.addEventListener( "resize", doWindowResize );
                 <div class="price">$3.00</div>
             </div>
             <div class="line">
-                <div class="photo" style="background-image: url( 'img/janssons-frestelse-sm.png' );"></div>
-                <div class="label">Janssons Frestelse</div>
+                <div class="photo" style="background-image: url( 'img/pepparkakor-sm.png' );"></div>
+                <div class="label">Pepparkakor</div>
                 <div class="duplicate" style="display: none;">2</div>
                 <div class="price">$5.00</div>
             </div>

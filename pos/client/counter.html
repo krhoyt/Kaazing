@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Real-Time Counter</title>
+
+<!-- Emulation -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var TOPIC_COUNTER = "/topic/counter";
+var WEBSOCKET_URL = "ws://localhost:8001/jms";
+
+var connection = null;
+var consumer = null;
+var factory = null;
+var future = null;
+var session = null;
+var topic = null;
+
+function doConnected()
+{
+    // Debug
+    console.log( "Connected." );
+    console.log( "Subscribing." );
+
+    try {
+        // Connection
+        connection = future.getValue();
+
+        // Session
+        session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+
+        // Topics
+        topic = session.createTopic( TOPIC_COUNTER );
+
+        // Consumers
+        // Set listener
+        consumer = session.createConsumer( topic );
+        consumer.setMessageListener( doCounter );
+
+        // Start broker session
+        connection.start( doSessionStart );
+    } catch( e ) {
+        // Fail
+        console.log( "Exception: " + e );
+    }
+}
+
+function doCounter( message )
+{
+    // Display counter value
+    console.log( "Value: " + message.getText() );
+}
+
+function doSessionStart()
+{
+    // Debug
+    console.log( "Subscribed." );
+}
+
+function doWindowLoad()
+{
+    // Debug
+    console.log( "Connecting." );
+
+    // Use JMS as broker
+    factory = new JmsConnectionFactory( WEBSOCKET_URL );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+}
+
+window.addEventListener( "load", doWindowLoad );
+</script>
+
+</head>
+<body>
+
+
+
+</body>
+</html>
