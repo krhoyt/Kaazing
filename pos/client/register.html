@@ -19,14 +19,18 @@
 <!-- Image preload -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/PreloadJS/0.4.1/preloadjs.min.js" type="text/javascript"></script>
 
+<!-- Animation -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/TweenMax.min.js" type="text/javascript"></script>
+
 <!-- Emulation -->
-<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+<script src="http://localhost:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
 
 <!-- JMS -->
-<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+<script src="http://localhost:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 // Constants
+var CHARGE_LABEL = "Charge: $";
 var CONNECT_DELAY = 1000;
 var CONNECTING_MESSAGE = "Connecting to an American Express certified card holder ...";
 var IMAGE_PATH = "img/";
@@ -36,24 +40,105 @@ var PLACEMENT_HEIGHT = 117;
 var PLACEMENT_LEFT = 20;
 var PLACEMENT_TOP = 20;
 var PLACEMENT_WIDTH = 117;
-var TOPIC_NOTIFICATION = "/topic/pos/notification"
+var TAX_RATE = 0.0825;
+var TOPIC_CLEAR = "/topic/pos/clear";
+var TOPIC_CONNECT = "/topic/pos/connect";
+var TOPIC_GEOCODE = "/topic/pos/geocode";
+var TOPIC_LOCATION = "/topic/pos/location";
+var TOPIC_NOTIFICATION = "/topic/pos/notification";
 var TOPIC_PRODUCTS = "/topic/pos/products/list";
+var TOPIC_PURCHASE = "/topic/pos/purchase";
+var TOPIC_REMOVE = "/topic/pos/remove";
 var WEBSOCKET_URL = "ws://localhost:8001/jms";
 
-// Global
+// Connection
 var connection = null;
-var consumeProducts = null;
-var consumer = null;
 var future = null;
+var session = null;
+
+// Messaging
+var consumeClear = null;
+var consumeLocation = null;
+var consumeNotification = null;
+var consumeProducts = null;
+var consumePurchase = null;
+var consumeRemove = null;
+var produceClear = null;
+var produceConnect = null;
+var produceGeocode = null;
+var producePurchase = null;
+var produceRemove = null;
+var topicClear = null;
+var topicConnect = null;
+var topicGeocode = null;
+var topicLocation = null;
+var topicNotification = null;
+var topicProducts = null;
+var topicPurchase = null;
+
+// Application
 var interval = null;
 var model = null;
-var produceNotify = null;
 var queue = null;
-var session = null;
 var start = null;
-var topicNotify = null;
-var topicProducts = null;
 var touch = null;
+
+// Called to update totals and user interface on list
+function updateList()
+{
+    var charge = null;
+    var clear = null;
+    var list = null;
+    var tax = null;
+    var total = null;
+
+    // Reference to purchase list
+    list = document.querySelector( ".list" );
+
+    total = 0;
+
+    for( var c = 0; c < list.children.length - 2; c++ )
+    {
+        total = total + ( parseInt( list.children[c].children[2].innerHTML ) * parseFloat( list.children[c].getAttribute( "data-price" ) ) );
+    }
+
+    // Calculate tax
+    // Update purchase total with tax
+    tax = document.querySelector( ".tax" );
+    tax.children[3].innerHTML = "$" + ( ( total * TAX_RATE ) ).toFixed( 2 );
+    total = total + ( total * TAX_RATE);
+
+    // Debug
+    console.log( "Total: $" + total.toFixed( 2 ) );
+
+    // Update charge button label
+    charge = document.querySelector( ".charge" );
+    charge.innerHTML = CHARGE_LABEL + total.toFixed( 2 );
+
+    // Reference to clear list button
+    clear = document.querySelector( ".clear" );
+
+    // Reset appearance if list is empty
+    // Enable additional interface if list has items
+    if( ( list.children.length - 2 ) > 0 )
+    {
+        // Tax and clear list line items
+        tax.style.visibility = "visible";
+        clear.style.visibility = "visible";
+
+        // Charge button
+        charge.classList.remove( "pending" );
+        charge.classList.add( "ready" );
+        charge.addEventListener( touch ? "touchstart" : "click", doChargeClick );
+    } else {
+        tax.style.visibility = "hidden";
+        clear.style.visibility = "hidden";
+
+        charge.classList.remove( "ready" );
+        charge.classList.add( "pending" );
+        charge.removeEventListener( touch ? "touchstart" : "click", doChargeClick );
+    }
+}
 
 // Update login status message
 // Incremental updates to track clock
@@ -96,6 +181,54 @@ function doChargeClick()
     );
 }
 
+// Called when a clear message arrives
+// Clears all items from purchase list
+function doClearArrived( message )
+{
+    var count = null;
+    var list = null;
+
+    // Reference to purchase list
+    list = document.querySelector( ".list" );
+
+    // How many line items to remove
+    count = list.children.length - 2;
+
+    // Remove that many line items
+    // Always child zero as length will change
+    for( var c = 0; c < count; c++ )
+    {
+        list.removeChild( list.children[0] );
+    }
+
+    // Reset memory model as well
+    model.purchased = null;
+
+    // Update user interface for remaining items
+    updateList();
+}
+
+// Called when clear button is clicked
+// Sends message to clear purchase list
+function doClearClick()
+{
+    // Debug
+    console.log( "Clear list." );
+
+    // Send message to clear purchase list
+    produceClear.send(
+        session.createTextMessage( "clear" ),
+        doClearSent
+    );
+}
+
+// Called when a clear message has been sent
+// Verification of send
+function doClearSent()
+{
+    console.log( "Clear sent." );
+}
+
 // Called when connected to server
 // Subscribes to topics
 function doConnected()
@@ -116,16 +249,41 @@ function doConnected()
         session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
 
         // Topics
-        topicNotify = session.createTopic( TOPIC_NOTIFICATION );
+        topicClear = session.createTopic( TOPIC_CLEAR );
+        topicConnect = session.createTopic( TOPIC_CONNECT );
+        topicGeocode = session.createTopic( TOPIC_GEOCODE );
+        topicLocation = session.createTopic( TOPIC_LOCATION );
+        topicNotification = session.createTopic( TOPIC_NOTIFICATION );
         topicProducts = session.createTopic( TOPIC_PRODUCTS );
+        topicPurchase = session.createTopic( TOPIC_PURCHASE );
+        topicRemove = session.createTopic( TOPIC_REMOVE );
 
         // Producers
-        produceNotify = session.createProducer( topicNotify );
+        produceClear = session.createProducer( topicClear );
+        produceConnect = session.createProducer( topicConnect );
+        produceGeocode = session.createProducer( topicGeocode );
+        producePurchase = session.createProducer( topicPurchase );
+        produceRemove = session.createProducer( topicRemove );
 
         // Consumers
         // Set listener
+        consumeLocation = session.createConsumer( topicLocation );
+        consumeLocation.setMessageListener( doLocationArrived );
+
+        consumeNotification = session.createConsumer( topicNotification );
+        consumeNotification.setMessageListener( doNotificationArrived );
+
         consumeProducts = session.createConsumer( topicProducts );
         consumeProducts.setMessageListener( doProductsArrived );
+
+        consumePurchase = session.createConsumer( topicPurchase );
+        consumePurchase.setMessageListener( doPurchaseArrived );
+
+        consumeRemove = session.createConsumer( topicRemove );
+        consumeRemove.setMessageListener( doRemoveArrived );
+
+        consumeClear = session.createConsumer( topicClear );
+        consumeClear.setMessageListener( doClearArrived );
 
         // Start broker session
         connection.start( doSessionStart );
@@ -133,6 +291,13 @@ function doConnected()
         // Fail
         console.log( "Exception: " + e );
     }
+}
+
+// Called when a connect message has been sent
+// Verification of send
+function doConnectSent()
+{
+    console.log( "Connection sent." );
 }
 
 // Called after intentional delay during connection
@@ -148,17 +313,67 @@ function doDelayComplete()
 
     // Debug
     console.log( "Intentional delay ended." );
-    console.log( "Sending notification." );
+    console.log( "Sending connection." );
 
     // Update status
     status = document.querySelector( ".dialog .message" );
     status.innerHTML = "Waiting for product listing ...";
 
     // Send notification message
-    produceNotify.send(
-        session.createTextMessage( model.clerkId ),
-        doNotificationSent
+    produceConnect.send(
+        session.createTextMessage( JSON.stringify( model ) ),
+        doConnectSent
     );
+}
+
+// Called as shortcut to open consumer endpoint
+// Launches new window representing the consumer
+// Unique query string appended to URL for transaction
+function doFooterClick()
+{
+    // Debug
+    console.log( "Launch consumer endpoint." )
+
+    // Open consumer endpoint
+    // Link is based off last four digits of full transaction ID
+    window.open( "payment.html?id=" + model.transactionId.substr( model.transactionId.length - 4 ) );
+}
+
+// Called when geolocation lookup is complete
+// Sends address information to console
+// No implemented user interface in this version
+function doLocationArrived( message )
+{
+    var data = null;
+    var components = null;
+
+    // Parse incoming data
+    data = JSON.parse( message.getText() );
+
+    // Store address in application model
+    model.location.address = data.results[0].formatted_address;
+
+    // Locate postal code in data set
+    for( var a = 0; a < data.results[0].address_components.length; a++ )
+    {
+        if( data.results[0].address_components[a].types[0] == "postal_code" )
+        {
+            // Store in application model
+            model.location.zipcode = data.results[0].address_components[a].long_name;
+            break;
+        }
+    }
+
+    // Debug
+    console.log( "Address: " + model.location.address );
+    console.log( "Zip code: " + model.location.zipcode );
+}
+
+// Called when a geolocation message has been sent
+// Verification of send
+function doLocationSent()
+{
+    console.log( "Location sent." );
 }
 
 // Called when login button is pressed
@@ -202,6 +417,50 @@ function doLoginClick()
     );
 }
 
+// Called when transaction is started
+// Stores reference to ID from database
+function doNotificationArrived( message )
+{
+    var data = null;
+    var footer = null;
+
+    // Parse incoming data
+    data = JSON.parse( message.getText() );
+
+    // Store transaction in model
+    model.transactionId = data.transactionId;
+
+    // Debug
+    console.log( "Transaction arrived (" + model.transactionId + ")." );
+
+    // Show transaction in user interface
+    // Enables direct entry of URL
+    footer = document.querySelector( ".summary .footer" );
+    footer.innerHTML = "Transaction #" + model.transactionId.substr( model.transactionId.length - 4 );
+}
+
+// Called when geolocation information is updated
+// Sends location information to console
+// No user interface in this implementation
+function doPositionSuccess( position )
+{
+    var globe = null;
+
+    // Debug
+    console.log( "Latitude: " + position.coords.latitude );
+    console.log( "Longitude: " + position.coords.longitude );
+
+    // Store in model
+    model.location.latitude = position.coords.latitude;
+    model.location.longitude = position.coords.longitude;
+
+    // Show visual representation of location
+    globe = document.querySelector( ".globe" );
+
+    // Animate opacity to not distract
+    TweenMax.to( globe, 1, {opacity: 0.80} );
+}
+
 // Called when a message has arrived
 // Preloads product images
 function doProductsArrived( message )
@@ -210,7 +469,7 @@ function doProductsArrived( message )
 
     // Parse incoming message
     // Assign to application model
-    model.products = JSON.parse( message.getText() )
+    model.products = JSON.parse( message.getText() );
 
     // Debug
     console.log( "Products arrived (" + model.products.length + ")." );
@@ -232,11 +491,272 @@ function doProductsArrived( message )
     queue.loadManifest( manifest );
 }
 
-// Called when a notification message has been sent
-// Verification of send
-function doNotificationSent()
+// Called when an item is to be added to the list
+// Broadcasts message to add item
+function doProductsClick( event )
 {
-    console.log( "Notification sent." );
+    var product = null;
+
+    // Assemble item attributes
+    product = {
+        _id: this.getAttribute( "data-id" ),
+        name: this.getAttribute( "data-name" ),
+        image: this.getAttribute( "data-image" ),
+        price: parseFloat( this.getAttribute( "data-price" ) ),
+        transactionId: model.transactionId
+    }
+
+    // Sent message to add item
+    producePurchase.send(
+        session.createTextMessage( JSON.stringify( product ) ),
+        doPurchaseSent
+    );
+}
+
+// Called when a purchase arrives
+// Adds to purchase list
+function doPurchaseArrived( message )
+{
+    var charge = null;
+    var clear = null;
+    var clone = null;
+    var count = null;
+    var data = null;
+    var duplicate = null;
+    var found = null;
+    var line = null;
+    var list = null;
+    var tax = null;
+    var total = null;
+
+    // Parse incoming data structure
+    data = JSON.parse( message.getText() );
+
+    // Debug
+    console.log( "Purchase (" + data.name + ")." )
+
+    // Confirm related purchase
+    if( model.transactionId == data.transactionId )
+    {
+        // Add to total purchases
+        // Line item not totaled
+        if( model.purchased == null )
+        {
+            model.purchased = new Array();
+        }
+
+        model.purchased.push( data );
+
+        // Reference to purchase list
+        list = document.querySelector( ".list" );
+
+        // Reference to tax line item
+        tax = document.querySelector( ".tax" );
+
+        // Reference to individual line item
+        line = document.querySelector( ".line.template" );
+
+        // Seed values
+        found = false;
+        // total = 0;
+
+        // Iterate through purchase list
+        // Using list in UI not in data model
+        for( var c = 0; c < list.children.length - 2; c++ )
+        {
+            // How many have been purchased
+            count = parseInt( list.children[c].children[2].innerHTML );
+
+            // The added item already exists
+            if( list.children[c].getAttribute( "data-id" ) == data._id )
+            {
+                // Increment count in list
+                count = count + 1;
+
+                // Place count value
+                // Place total priced summed at line
+                list.children[c].children[2].innerHTML = count;
+                list.children[c].children[3].innerHTML = "$" + ( data.price * count ).toFixed( 2 );
+
+                // Show duplicate if exists
+                if( count > 1 )
+                {
+                    list.children[c].children[2].style.visibility = "visible";
+                } else {
+                    list.children[c].children[2].style.visibility = "hidden";
+                }
+
+                // Duplicate found
+                found = true;
+            }
+
+            // Total of items in the list
+            // total = total + ( count * parseFloat( list.children[c].getAttribute( "data-price" ) ) );
+        }
+
+        // New item not in list already
+        if( !found )
+        {
+            // Build line item
+            clone = line.cloneNode( true );
+            clone.children[0].style.backgroundImage = "url( '" + IMAGE_PATH + data.image + IMAGE_SMALL + "' )";
+            clone.children[1].innerHTML = data.name;
+            clone.children[2].innerHTML = 1;
+            clone.children[2].style.visibility = "hidden";
+            clone.children[3].innerHTML = "$" + data.price.toFixed( 2 );
+            clone.setAttribute( "data-id", data._id );
+            clone.setAttribute( "data-price", data.price );
+            clone.classList.remove( "template" );
+            clone.addEventListener( touch ? "touchstart" : "click", doRemoveItem );
+
+            // Add to list
+            list.insertBefore( clone, tax );
+
+            // Increase total purchase price
+            // total = total + data.price;
+        }
+
+        updateList();
+
+        /*
+        // Calculate tax
+        // Update purchase total with tax
+        tax.children[3].innerHTML = "$" + ( ( total * TAX_RATE ) ).toFixed( 2 );
+        total = total + ( total * TAX_RATE);
+
+        // Debug
+        console.log( "Total: $" + total.toFixed( 2 ) );
+
+        // Update charge button label
+        charge = document.querySelector( ".charge" );
+        charge.innerHTML = CHARGE_LABEL + total.toFixed( 2 );
+
+        // Reference to clear list button
+        clear = document.querySelector( ".clear" );
+
+        // Reset appearance if list is empty
+        // Enable additional interface if list has items
+        if( ( list.children.length - 2 ) > 0 )
+        {
+            // Tax and clear list line items
+            tax.style.visibility = "visible";
+            clear.style.visibility = "visible";
+
+            // Charge button
+            charge.classList.remove( "pending" );
+            charge.classList.add( "ready" );
+            charge.addEventListener( touch ? "touchstart" : "click", doChargeClick );
+        } else {
+            tax.style.visibility = "hidden";
+            clear.style.visibility = "hidden";
+
+            charge.classList.remove( "ready" );
+            charge.classList.add( "pending" );
+            charge.removeEventListener( touch ? "touchstart" : "click", doChargeClick );
+        }
+        */
+    }
+}
+
+// Called when a purchase message has been sent
+// Verification of send
+function doPurchaseSent()
+{
+    console.log( "Purchase sent." );
+}
+
+function doRemoveArrived( message )
+{
+    var count = null;
+    var data = null;
+    var list = null;
+
+    // Parse incoming data
+    data = JSON.parse( message.getText() );
+
+    // Check for matching transaction ID
+    if( model.transactionId == data.transactionId )
+    {
+        // Reference to purchase list
+        list = document.querySelector( ".list" );
+
+        // Iterate through list in user interface
+        for( var c = 0; c < list.children.length - 2; c++ )
+        {
+            // Look for matching product ID
+            if( list.children[c].getAttribute( "data-id" ) == data._id )
+            {
+                // Find out how many are purchased
+                count = parseInt( list.children[c].children[2].innerHTML );
+
+                // Remove a single item
+                // Decrement an item with duplicates
+                if( count == 1 )
+                {
+                    list.removeChild( list.children[c] );
+                } else {
+                    count = count - 1;
+
+                    // Single item remaining
+                    // Do not show duplicate count
+                    if( count == 1 )
+                    {
+                        list.children[c].children[2].style.visibility = "hidden";
+                    }
+
+                    // Still need to keep track
+                    list.children[c].children[2].innerHTML = count;
+
+                    // Update price for line item
+                    list.children[c].children[3].innerHTML = "$" + ( count * parseFloat( list.children[c].getAttribute( "data-price" ) ) ).toFixed( 2 );
+                }
+
+                break;
+            }
+        }
+
+        // Look for item in memory data model
+        for( var p = 0; p < model.purchased.length; p++ )
+        {
+            // Remove when found
+            if( model.purchased[p]._id == data._id )
+            {
+                model.purchased.splice( p, 1 );
+                break;
+            }
+        }
+
+        // Update list user interface and totals
+        updateList();
+    }
+}
+
+// Called to remove a line item
+function doRemoveItem()
+{
+    var product = null;
+
+    // Debug
+    console.log( "Remove item (" + this.children[1].innerHTML + ")." );
+
+    // Assemble product information
+    product = {
+        _id: this.getAttribute( "data-id" ),
+        transactionId: model.transactionId
+    }
+
+    // Sent message to remove item
+    produceRemove.send(
+        session.createTextMessage( JSON.stringify( product ) ),
+        doRemoveSent
+    );
+}
+
+// Called when a purchase removal message has been seent
+// Verification of send
+function doRemoveSent()
+{
+    console.log( "Remove sent." );
 }
 
 // Called when product images are loaded
@@ -272,8 +792,13 @@ function doQueueComplete()
         clone.style.left = ( PLACEMENT_LEFT + ( PLACEMENT_WIDTH * parseInt( slot[1] ) ) ) + "px";
         clone.style.top = ( PLACEMENT_TOP + ( PLACEMENT_HEIGHT * parseInt( slot[0] ) ) ) + "px";
         clone.classList.remove( "template" );
+        clone.setAttribute( "data-id", model.products[p]._id );
+        clone.setAttribute( "data-price", model.products[p].price );
+        clone.setAttribute( "data-image", model.products[p].image );
+        clone.setAttribute( "data-name", model.products[p].name );
         clone.children[0].src = IMAGE_PATH + model.products[p].image + IMAGE_LARGE;
         clone.children[1].innerHTML = model.products[p].name;
+        clone.addEventListener( touch ? "touchstart" : "click", doProductsClick );
 
         // Place into layout
         layout.appendChild( clone );
@@ -294,6 +819,12 @@ function doQueueComplete()
     // Clean up memory
     queue.removeEventListener( "complete", doQueueComplete );
     queue = null;
+
+    // Lookup location
+    produceGeocode.send(
+        session.createTextMessage( JSON.stringify( model.location ) ),
+        doLocationSent
+    );
 }
 
 // Called when broker session started
@@ -320,7 +851,10 @@ function doSessionStart()
 function doWindowLoad()
 {
     var charge = null;
+    var clear = null;
+    var footer = null;
     var login = null;
+    var options = null;
 
     // Check to see if there is a touch event handler
     touch = ( "ontouchstart" in document.documentElement ) ? true : false;
@@ -328,17 +862,35 @@ function doWindowLoad()
     // Application data model
     model = {
         clerkId: null,
+        location: {
+            address: null,
+            latitude: null,
+            longitude: null,
+            zipcode: null
+        },
         products: null,
-        registerId: Math.round( new Date().getTime() / 1000 )
+        purchased: null,
+        registerId: Math.round( new Date().getTime() / 1000 ),
+        transactionId: null
     };
 
     // Login event listener
     login = document.querySelector( ".splash > .dialog > .login" );
     login.addEventListener( touch ? "touchstart" : "click", doLoginClick );
 
-    // Charge event listener
-    charge = document.querySelector( ".total .charge" );
-    charge.addEventListener( touch ? "touchstart" : "click", doChargeClick );
+    // Clear list listener
+    clear = document.querySelector( ".clear" );
+    clear.addEventListener( touch ? "touchstart" : "click", doClearClick );
+
+    // Footer transaction link
+    footer = document.querySelector( ".summary .footer" );
+    footer.addEventListener( touch ? "touchstart" : "click", doFooterClick );
+
+    // Gelocation for tax information
+    if( navigator.geolocation )
+    {
+        navigator.geolocation.getCurrentPosition( doPositionSuccess );
+    }
 
     // Register status message
     updateStatus();
@@ -375,13 +927,15 @@ window.addEventListener( "resize", doWindowResize );
 
         <!-- Clerk ID -->
         <div class="clerk">Clerk ID:</div>
-        <input>
+        <input value="303-522-3131">
         <div class="login">Login</div>
 
         <!-- Status -->
         <div class="message"></div>
 
     </div>
+
+    <div class="globe"></div>
 
 </div>
 
@@ -429,35 +983,11 @@ window.addEventListener( "resize", doWindowResize );
         <!-- Header -->
         <div class="total">
             <div class="logo"></div>
-            <div class="charge ready">Charge: $21.65</div>
+            <div class="charge pending">Charge: $0.00</div>
         </div>
 
         <!-- Item list -->
         <div class="list">
-            <div class="line">
-                <div class="photo" style="background-image: url( 'img/apple-biscuit-sm.png' );"></div>
-                <div class="label">Apple Biscuit</div>
-                <div class="duplicate">2</div>
-                <div class="price">$9.00</div>
-            </div>
-            <div class="line">
-                <div class="photo" style="background-image: url( 'img/oatmeal-rasin-sm.png' );"></div>
-                <div class="label">Oatmeal Rasin</div>
-                <div class="duplicate" style="display: none;">2</div>
-                <div class="price">$3.00</div>
-            </div>
-            <div class="line">
-                <div class="photo" style="background-image: url( 'img/pepparkakor-sm.png' );"></div>
-                <div class="label">Pepparkakor</div>
-                <div class="duplicate" style="display: none;">2</div>
-                <div class="price">$5.00</div>
-            </div>
-            <div class="line">
-                <div class="photo" style="background-image: url( 'img/dobos-torta-sm.png' );"></div>
-                <div class="label">Dobos Torta</div>
-                <div class="duplicate" style="display: none;">2</div>
-                <div class="price">$3.00</div>
-            </div>
 
             <!-- Tax -->
             <div class="line tax">
@@ -471,6 +1001,7 @@ window.addEventListener( "resize", doWindowResize );
             <div class="clear">
                 Clear List
             </div>
+
         </div>
 
         <!-- Transaction -->
@@ -484,6 +1015,13 @@ window.addEventListener( "resize", doWindowResize );
 <div class="item template">
     <img width="92" height="79">
     <div class="label"></div>
+</div>
+
+<div class="line template">
+    <div class="photo" style="background-image: url( 'img/apple-biscuit-sm.png' );"></div>
+    <div class="label">Apple Biscuit</div>
+    <div class="duplicate">0</div>
+    <div class="price">$4.50</div>
 </div>
 
 </body>

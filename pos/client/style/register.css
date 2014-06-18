@@ -16,6 +16,8 @@
     border-bottom: 1px rgba( 0, 0, 0, 0.20 ) solid;
     height: 60px;
     border-top: 1px rgba( 255, 255, 255, 0.80 ) solid;
+    visibility: hidden;
+    cursor: default;
 }
 
 .list .line {
@@ -27,6 +29,7 @@
     border-bottom: 1px rgba( 0, 0, 0, 0.20 ) solid;
     height: 60px;
     border-top: 1px rgba( 255, 255, 255, 0.80 ) solid;
+    cursor: default;
 }
 
 .list .line .duplicate {
@@ -61,6 +64,11 @@
 
 .list .line .price {
     float: right;
+}
+
+.list .tax {
+    cursor: default;
+    visibility:  hidden;
 }
 
 .list .tax .duplicate {
@@ -143,6 +151,7 @@
     border-radius: 6px;
     background-color: white;
     box-shadow: 0px 1px 2px 1px rgba( 0, 0, 0, 0.40 );
+    cursor: default;
 }
 
 .register .layout .item img {
@@ -189,6 +198,7 @@
     text-align: center;
     border-top: 1px rgba( 0, 0, 0, 0.20 ) solid;
     border-radius: 0px 0px 6px 6px;
+    cursor: default;
 }
 
 .summary .list {
@@ -229,6 +239,7 @@
     border-radius: 6px;
     margin-left: 15px;
     margin-top: 15px;
+    cursor: default;
 }
 
 .total .logo {
