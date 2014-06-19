@@ -23,10 +23,10 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/TweenMax.min.js" type="text/javascript"></script>
 
 <!-- Emulation -->
-<script src="http://localhost:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
 
 <!-- JMS -->
-<script src="http://localhost:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 // Constants
@@ -49,7 +49,7 @@ var TOPIC_NOTIFICATION = "/topic/pos/notification";
 var TOPIC_PRODUCTS = "/topic/pos/products/list";
 var TOPIC_PURCHASE = "/topic/pos/purchase";
 var TOPIC_REMOVE = "/topic/pos/remove";
-var WEBSOCKET_URL = "ws://localhost:8001/jms";
+var WEBSOCKET_URL = "ws://kaazing.kevinhoyt.com:8001/jms";
 
 // Connection
 var connection = null;
@@ -248,43 +248,6 @@ function doConnected()
         // Session
         session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
 
-        // Topics
-        topicClear = session.createTopic( TOPIC_CLEAR );
-        topicConnect = session.createTopic( TOPIC_CONNECT );
-        topicGeocode = session.createTopic( TOPIC_GEOCODE );
-        topicLocation = session.createTopic( TOPIC_LOCATION );
-        topicNotification = session.createTopic( TOPIC_NOTIFICATION );
-        topicProducts = session.createTopic( TOPIC_PRODUCTS );
-        topicPurchase = session.createTopic( TOPIC_PURCHASE );
-        topicRemove = session.createTopic( TOPIC_REMOVE );
-
-        // Producers
-        produceClear = session.createProducer( topicClear );
-        produceConnect = session.createProducer( topicConnect );
-        produceGeocode = session.createProducer( topicGeocode );
-        producePurchase = session.createProducer( topicPurchase );
-        produceRemove = session.createProducer( topicRemove );
-
-        // Consumers
-        // Set listener
-        consumeLocation = session.createConsumer( topicLocation );
-        consumeLocation.setMessageListener( doLocationArrived );
-
-        consumeNotification = session.createConsumer( topicNotification );
-        consumeNotification.setMessageListener( doNotificationArrived );
-
-        consumeProducts = session.createConsumer( topicProducts );
-        consumeProducts.setMessageListener( doProductsArrived );
-
-        consumePurchase = session.createConsumer( topicPurchase );
-        consumePurchase.setMessageListener( doPurchaseArrived );
-
-        consumeRemove = session.createConsumer( topicRemove );
-        consumeRemove.setMessageListener( doRemoveArrived );
-
-        consumeClear = session.createConsumer( topicClear );
-        consumeClear.setMessageListener( doClearArrived );
-
         // Start broker session
         connection.start( doSessionStart );
     } catch( e ) {
@@ -319,7 +282,7 @@ function doDelayComplete()
     status = document.querySelector( ".dialog .message" );
     status.innerHTML = "Waiting for product listing ...";
 
-    // Send notification message
+    // Create new transaction
     produceConnect.send(
         session.createTextMessage( JSON.stringify( model ) ),
         doConnectSent
@@ -589,9 +552,6 @@ function doPurchaseArrived( message )
                 // Duplicate found
                 found = true;
             }
-
-            // Total of items in the list
-            // total = total + ( count * parseFloat( list.children[c].getAttribute( "data-price" ) ) );
         }
 
         // New item not in list already
@@ -611,50 +571,10 @@ function doPurchaseArrived( message )
 
             // Add to list
             list.insertBefore( clone, tax );
-
-            // Increase total purchase price
-            // total = total + data.price;
         }
 
+        // Update calculations
         updateList();
-
-        /*
-        // Calculate tax
-        // Update purchase total with tax
-        tax.children[3].innerHTML = "$" + ( ( total * TAX_RATE ) ).toFixed( 2 );
-        total = total + ( total * TAX_RATE);
-
-        // Debug
-        console.log( "Total: $" + total.toFixed( 2 ) );
-
-        // Update charge button label
-        charge = document.querySelector( ".charge" );
-        charge.innerHTML = CHARGE_LABEL + total.toFixed( 2 );
-
-        // Reference to clear list button
-        clear = document.querySelector( ".clear" );
-
-        // Reset appearance if list is empty
-        // Enable additional interface if list has items
-        if( ( list.children.length - 2 ) > 0 )
-        {
-            // Tax and clear list line items
-            tax.style.visibility = "visible";
-            clear.style.visibility = "visible";
-
-            // Charge button
-            charge.classList.remove( "pending" );
-            charge.classList.add( "ready" );
-            charge.addEventListener( touch ? "touchstart" : "click", doChargeClick );
-        } else {
-            tax.style.visibility = "hidden";
-            clear.style.visibility = "hidden";
-
-            charge.classList.remove( "ready" );
-            charge.classList.add( "pending" );
-            charge.removeEventListener( touch ? "touchstart" : "click", doChargeClick );
-        }
-        */
     }
 }
 
@@ -663,6 +583,74 @@ function doPurchaseArrived( message )
 function doPurchaseSent()
 {
     console.log( "Purchase sent." );
+}
+
+// Called when product images are loaded
+// Builds product listing
+// Shows register screen
+function doQueueComplete()
+{
+    var clone = null;
+    var layout = null;
+    var register = null;
+    var slot = null;
+    var splash = null;
+    var template = null;
+
+    // Debug
+    console.log( "Product images loaded." );
+    console.log( "Building product listing." );
+
+    // Product listing container
+    layout = document.querySelector( ".register .layout" );
+
+    // Product listing item template
+    template = document.querySelector( "div.item.template" );
+
+    // Build product listing
+    for( var p = 0; p < model.products.length; p++ )
+    {
+        // Contains row and column placement
+        slot = model.products[p].slot.split( "," );
+
+        // Populate item
+        clone = template.cloneNode( true );
+        clone.style.left = ( PLACEMENT_LEFT + ( PLACEMENT_WIDTH * parseInt( slot[1] ) ) ) + "px";
+        clone.style.top = ( PLACEMENT_TOP + ( PLACEMENT_HEIGHT * parseInt( slot[0] ) ) ) + "px";
+        clone.classList.remove( "template" );
+        clone.setAttribute( "data-id", model.products[p].objectId );
+        clone.setAttribute( "data-price", model.products[p].price );
+        clone.setAttribute( "data-image", model.products[p].image );
+        clone.setAttribute( "data-name", model.products[p].name );
+        clone.children[0].src = IMAGE_PATH + model.products[p].image + IMAGE_LARGE;
+        clone.children[1].innerHTML = model.products[p].name;
+        clone.addEventListener( touch ? "touchstart" : "click", doProductsClick );
+
+        // Place into layout
+        layout.appendChild( clone );
+    }
+
+    // Make sure window is scrolled to top
+    // Form entry pushes screen around
+    window.scrollTo( 0, 0 );
+
+    // Hide splash screen
+    splash = document.querySelector( ".splash" );
+    splash.style.visibility = "hidden";
+
+    // Show register
+    register = document.querySelector( ".register" );
+    register.style.visibility = "visible";
+
+    // Clean up memory
+    queue.removeEventListener( "complete", doQueueComplete );
+    queue = null;
+
+    // Lookup location
+    produceGeocode.send(
+            session.createTextMessage( JSON.stringify( model.location ) ),
+            doLocationSent
+    );
 }
 
 function doRemoveArrived( message )
@@ -759,74 +747,6 @@ function doRemoveSent()
     console.log( "Remove sent." );
 }
 
-// Called when product images are loaded
-// Builds product listing
-// Shows register screen
-function doQueueComplete()
-{
-    var clone = null;
-    var layout = null;
-    var register = null;
-    var slot = null;
-    var splash = null;
-    var template = null;
-
-    // Debug
-    console.log( "Product images loaded." );
-    console.log( "Building product listing." );
-
-    // Product listing container
-    layout = document.querySelector( ".register .layout" );
-
-    // Product listing item template
-    template = document.querySelector( "div.item.template" );
-
-    // Build product listing
-    for( var p = 0; p < model.products.length; p++ )
-    {
-        // Contains row and column placement
-        slot = model.products[p].slot.split( "," );
-
-        // Populate item
-        clone = template.cloneNode( true );
-        clone.style.left = ( PLACEMENT_LEFT + ( PLACEMENT_WIDTH * parseInt( slot[1] ) ) ) + "px";
-        clone.style.top = ( PLACEMENT_TOP + ( PLACEMENT_HEIGHT * parseInt( slot[0] ) ) ) + "px";
-        clone.classList.remove( "template" );
-        clone.setAttribute( "data-id", model.products[p]._id );
-        clone.setAttribute( "data-price", model.products[p].price );
-        clone.setAttribute( "data-image", model.products[p].image );
-        clone.setAttribute( "data-name", model.products[p].name );
-        clone.children[0].src = IMAGE_PATH + model.products[p].image + IMAGE_LARGE;
-        clone.children[1].innerHTML = model.products[p].name;
-        clone.addEventListener( touch ? "touchstart" : "click", doProductsClick );
-
-        // Place into layout
-        layout.appendChild( clone );
-    }
-
-    // Make sure window is scrolled to top
-    // Form entry pushes screen around
-    window.scrollTo( 0, 0 );
-
-    // Hide splash screen
-    splash = document.querySelector( ".splash" );
-    splash.style.visibility = "hidden";
-
-    // Show register
-    register = document.querySelector( ".register" );
-    register.style.visibility = "visible";
-
-    // Clean up memory
-    queue.removeEventListener( "complete", doQueueComplete );
-    queue = null;
-
-    // Lookup location
-    produceGeocode.send(
-        session.createTextMessage( JSON.stringify( model.location ) ),
-        doLocationSent
-    );
-}
-
 // Called when broker session started
 // Setup intentional delay before progressing
 function doSessionStart()
@@ -837,6 +757,43 @@ function doSessionStart()
     // Debug
     console.log( "Subscribed." );
     console.log( "Intentional delay starting." );
+
+    // Topics
+    topicClear = session.createTopic( TOPIC_CLEAR );
+    topicConnect = session.createTopic( TOPIC_CONNECT );
+    topicGeocode = session.createTopic( TOPIC_GEOCODE );
+    topicLocation = session.createTopic( TOPIC_LOCATION );
+    topicNotification = session.createTopic( TOPIC_NOTIFICATION );
+    topicProducts = session.createTopic( TOPIC_PRODUCTS );
+    topicPurchase = session.createTopic( TOPIC_PURCHASE );
+    topicRemove = session.createTopic( TOPIC_REMOVE );
+
+    // Producers
+    produceClear = session.createProducer( topicClear );
+    produceConnect = session.createProducer( topicConnect );
+    produceGeocode = session.createProducer( topicGeocode );
+    producePurchase = session.createProducer( topicPurchase );
+    produceRemove = session.createProducer( topicRemove );
+
+    // Consumers
+    // Set listener
+    consumeLocation = session.createConsumer( topicLocation );
+    consumeLocation.setMessageListener( doLocationArrived );
+
+    consumeNotification = session.createConsumer( topicNotification );
+    consumeNotification.setMessageListener( doNotificationArrived );
+
+    consumeProducts = session.createConsumer( topicProducts );
+    consumeProducts.setMessageListener( doProductsArrived );
+
+    consumePurchase = session.createConsumer( topicPurchase );
+    consumePurchase.setMessageListener( doPurchaseArrived );
+
+    consumeRemove = session.createConsumer( topicRemove );
+    consumeRemove.setMessageListener( doRemoveArrived );
+
+    consumeClear = session.createConsumer( topicClear );
+    consumeClear.setMessageListener( doClearArrived );
 
     // Time since connection started
     now = new Date();
@@ -870,7 +827,7 @@ function doWindowLoad()
         },
         products: null,
         purchased: null,
-        registerId: Math.round( new Date().getTime() / 1000 ),
+        registerId: Math.round( new Date().getTime() / 1000).toString(),
         transactionId: null
     };
 

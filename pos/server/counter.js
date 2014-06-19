@@ -6,7 +6,7 @@
 var Stomp = require( "stomp-client" );
 
 // Constants
-var BROKER_ADDRESS = "127.0.0.1";
+var BROKER_ADDRESS = "kaazing.kevinhoyt.com";
 var BROKER_PORT = 61613;
 var TOPIC_COUNTER = "/topic/counter";
 
