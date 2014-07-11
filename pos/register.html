@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Register</title>
+<meta name="viewport" content="initial-scale=1.0">
+
+<!-- Source Sans Pro -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css">
+
+<!-- Application styles -->
+<link href="style/register.css" rel="stylesheet" type="text/css">
+
+<!-- Date and time formatting -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js" type="text/javascript"></script>
+
+<!-- Image preload -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/PreloadJS/0.4.1/preloadjs.min.js" type="text/javascript"></script>
+
+<!-- Animation -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.12.1/TweenMax.min.js" type="text/javascript"></script>
+
+<!-- Google for reverse geocoding -->
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp" type="text/javascript"></script>
+
+<!-- Parse.com for data storage -->
+<script src="//www.parsecdn.com/js/parse-1.2.18.min.js" type="text/javascript"></script>
+
+<!-- URL parsing -->
+<script src="script/URLParser.js" type="text/javascript"></script>
+
+<!-- Emulation -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<!-- Message handling -->
+<script src="script/messaging.js" type="text/javascript"></script>
+
+<!-- Common functionality -->
+<script src="script/common.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">
+// Messaging
+var TOPIC_POS = "/topic/pos";
+
+// Application
+var CONNECTING_DELAY = 5000;
+var DEFAULT_REGISTER = "kaazing";
+
+// Messaging
+var connection = null;
+var future = null;
+var session = null;
+var producer = null;
+var consumer = null;
+var topic = null;
+
+// Application
+var demoNotify = null;
+var interval = null;
+var model = null;
+var start = null;
+var touch = null;
+var queue = null;
+var watch = null;
+
+// Called to build the product list
+function buildLayout()
+{
+    var clone = null;
+    var itemHeight = null;
+    var itemWidth = null;
+    var layout = null;
+    var product = null;
+    var template = null;
+
+    // Reference template
+    template = document.querySelector( ".item.template" );
+
+    // Layout holder
+    layout = document.querySelector( ".layout" );
+
+    // Iterate over layout
+    for( var v = 0; v < model.layout.length; v++ )
+    {
+        // Find matching product detail
+        for( var p = 0; p < model.products.length; p++ )
+        {
+            if( model.products[p].objectId == model.layout[v].productId.objectId )
+            {
+                product = model.products[p];
+                break;
+            }
+        }
+
+        itemWidth = Math.floor( ( layout.clientWidth - 60 - 8 ) / 4 );
+        itemHeight = Math.floor( ( layout.clientHeight - 60 - 8 ) / 4 );
+
+        // Clone template
+        clone = template.cloneNode( true );
+        clone.setAttribute( "data-id", product.objectId );
+        clone.setAttribute( "data-name", product.name );
+        clone.setAttribute( "data-price", product.price );
+        clone.setAttribute( "data-image", product.image );
+        clone.setAttribute( "data-path", product.imagePath );
+        clone.classList.remove( "template" );
+        clone.children[0].style.backgroundImage = "url( '" + product.imagePath + "/" + product.image + "' )";
+        clone.children[1].innerHTML = product.name;
+        clone.style.width = itemWidth + "px";
+        clone.style.height = itemHeight + "px";
+        clone.style.left = ( ( ( itemWidth + 20 + 2 ) * model.layout[v].column ) + 1 ) + "px";
+        clone.style.top = ( ( ( itemHeight + 20 + 2 ) * model.layout[v].row ) + 1) + "px";
+        clone.addEventListener( touch ? "touchstart" : "click", doProductClick );
+
+        // Add to user interface
+        layout.appendChild( clone );
+    }
+}
+
+function generateTransaction()
+{
+    var clerk = null;
+    var register = null;
+    var transaction = null;
+
+    // Create a default starting transaction
+    // Normally done with first purchase
+    // Default used for demonstration purposes
+    clerk = new Clerk();
+    clerk.id = model.clerk.objectId;
+
+    register = new Register();
+    register.id = model.register.objectId;
+
+    transaction = new Transaction();
+    transaction.set( "clerkId", clerk );
+    transaction.set( "registerId", register );
+    transaction.save( null, {
+        success: function( result ) {
+            var message = null;
+
+            // Debug
+            logMessage( "Transaction created." );
+
+            // Construct message object
+            message = {
+                action: POS_TRANSACTION,
+                transaction: result
+            };
+
+            // Send message of transaction details
+            producer.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        },
+        error: function( result, error ) {
+            logMessage( "Error creating transaction." );
+        }
+    } );
+}
+
+// Called to display a clock on the login screen
+// Informational to let you know something is happening
+function statusClock()
+{
+    var status = null;
+
+    // Start updating clock if needed
+    if( interval == null )
+    {
+        interval = setInterval( statusClock, 1000 );
+    }
+
+    // Update clock text
+    status = document.querySelector( ".dialog .message" );
+    status.innerHTML = moment().format( "MMMM Do YYYY, h:mm:ss A" );
+}
+
+// Called when ready to charge purchases
+function doChargeClick()
+{
+    var amount = null;
+    var index = null;
+    var message = null;
+
+    // Debug
+    logMessage( "Ready to charge." );
+
+    // Determine charge amount
+    // Calculation takes place on clients
+    // Passed for dashboard purposes
+    index = this.innerHTML.indexOf( "$" ) + 1;
+    amount = parseFloat( this.innerHTML.substr( index ) );
+
+    // Update the interface
+    this.classList.remove( "ready" );
+    this.classList.add( "waiting" );
+    this.innerHTML = CURRENCY_PENDING + amount.toFixed( 2 );
+
+    // Construct message
+    message = {
+        action: TRANSACTION_CHARGE,
+        total: amount
+    };
+
+    // Send message that we are ready to charge
+    producer.send(
+        session.createTextMessage( JSON.stringify( message ) ),
+        doMessageSent
+    );
+}
+
+// Called to clear an entire transaction
+// Does not delete transaction
+// Only removes all items from transaction
+function doClearClick()
+{
+    var list = null;
+    var purchase = null;
+
+    // Debug
+    logMessage( "Clear transaction." );
+
+    // Build list of objects to remove
+    list = new Array()
+
+    for( var p = 0; p < model.purchase.length; p++ )
+    {
+        purchase = new Purchase();
+        purchase.id = model.purchase[p].objectId;
+
+        list.push( purchase );
+    }
+
+    // Remove all items in transaction
+    Parse.Object.destroyAll( list, {
+        success: function() {
+            var message = null;
+
+            // Debug
+            logMessage( "Transaction cleared." );
+
+            // Construct message
+            message = {
+                action: PURCHASE_CLEAR
+            };
+
+            // Send message of that purchases were cleared
+            producer.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        },
+        error: function( error ) {
+            logMessage( error )
+        }
+    } );
+}
+
+// Called when connected to broker
+// Starts messaging session
+function doConnected()
+{
+    // Debug
+    logMessage( "Connection established." );
+
+    // Connection
+    connection = future.getValue();
+
+    // Session
+    session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+
+    // Start broker session
+    connection.start( doSessionStart );
+}
+
+// Called when geolocation has completed
+// Performs reverse geolocation lookup
+// Sends results to message bus
+function doCurrentPosition( position )
+{
+    var geocoder = null;
+    var latlng = null;
+
+    // Leave alone once we have a fix
+    navigator.geolocation.clearWatch( watch );
+    watch = null;
+
+    // Debug
+    logMessage( "Latitude: " + position.coords.latitude );
+    logMessage( "Longitude: " + position.coords.longitude );
+
+    // Google location object
+    latlng = new google.maps.LatLng( position.coords.latitude, position.coords.longitude );
+
+    // Google geocoding
+    geocoder = new google.maps.Geocoder();
+    geocoder.geocode( {
+        "latLng": latlng
+    }, function( results, status ) {
+        // var message = null;
+        var point = null;
+        var register = null;
+
+        if( status == google.maps.GeocoderStatus.OK )
+        {
+            if( results[0] )
+            {
+                // Debug
+                logMessage( "Geocoding complete." );
+
+                // Application data model
+                model.location.address = results[0].formatted_address;
+                model.location.postal = results[0].address_components[results[0].address_components.length - 1].long_name;
+                model.location.latitude = position.coords.latitude;
+                model.location.longitude = position.coords.longitude;
+
+                // Date store
+                point = new Parse.GeoPoint( {
+                    latitude: model.location.latitude,
+                    longitude: model.location.longitude
+                } );
+
+                register = new Register();
+                register.set( "address", model.location.address );
+                register.set( "postalCode", model.location.postal );
+                register.set( "location", point );
+
+                register.save( {
+                    success: function( result ) {
+                        logMessage( result );
+
+                        model.register.objectId = result.id;
+                        model.register.createdAt = result.createdAt;
+                        model.register.updatedAt = result.updatedAt;
+                        model.register.postal = result.get( "postalCode" );
+                        model.register.address = result.get( "address" );
+
+
+                    },
+                    error: function( error ) {
+                        logMessage( "Failed creating register." );
+                    }
+                } );
+
+                /*
+                // Location details message
+                message = {
+                    action: REGISTER_LOCATION,
+                    location: {
+                        address: results[0].formatted_address,
+                        postal: results[0].address_components[results[0].address_components.length - 1].long_name,
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                };
+
+                // Send message of location details
+                producer.send(
+                    session.createTextMessage( JSON.stringify( message ) ),
+                    doMessageSent
+                );
+                */
+            } else {
+                // Debug
+                logMessage( "Location not found." );
+            }
+        } else {
+            // Debug
+            logMessage( "Geocoding failed." );
+        }
+    } );
+}
+
+// Called when the summary footer is clicked
+// Acts as a shortcut to the customer view
+function doFooterClick()
+{
+    var pin = null;
+
+    // Only use part of object ID
+    pin = model.transaction.objectId.substr( model.transaction.objectId.length - 4 );
+
+    // Open window
+    window.open( "wallet.html?id=" + pin, "_blank" );
+}
+
+// Called to remove a line item
+function doItemClick()
+{
+    var item = null;
+    var purchaseId = null;
+
+    // Debug
+    logMessage( "Remove line item (" + this.getAttribute( "data-name" ) + ")." );
+
+    for( var p = 0; p < model.purchase.length; p++ )
+    {
+        if( model.purchase[p].productId.objectId == this.getAttribute( "data-id" ) )
+        {
+            purchaseId = model.purchase[p].objectId;
+            break;
+        }
+    }
+
+    // Remove selected item from data storage
+    item = new Purchase();
+    item.id = purchaseId;
+    item.destroy( {
+        success: function( result ) {
+            var message = null;
+
+            // Debug
+            logMessage( "Line item removed." );
+
+            // Construct message
+            message = {
+                action: PURCHASE_REMOVE,
+                purchase: result
+            };
+
+            // Send message of removed purchase
+            producer.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        },
+        error: function( error ) {
+            logMessage( "Error removing purchase." );
+        }
+    } );
+}
+
+// Called to login register
+function doLoginClick()
+{
+    var authorization = null;
+    var query = null;
+    var status = null;
+
+    // Position window at top
+    window.scrollTo( 0, 0 );
+
+    // Input field
+    authorization = document.querySelector( ".dialog input" );
+
+    // Make sure we have some value for notification
+    // Could be much tighter validation and UI
+    if( authorization.value.trim() == 0 )
+    {
+        alert( "Phone number or email required." );
+        return;
+    }
+
+    // Stop status bar clock
+    clearInterval( interval );
+    interval = null;
+
+    // Track start time
+    // Make sure message displays for duration
+    start = new Date();
+
+    // Show user what is going on
+    status = document.querySelector( ".dialog .message" );
+    status.innerHTML = "Connecting to a " + model.register.vendorName + " certified card holder ...";
+
+    // Debug
+    logMessage( "Login." );
+
+    // Look for matching clerks
+    query = new Parse.Query( Clerk );
+    query.equalTo( "authorization", authorization.value );
+    query.find( {
+        success: function( results ) {
+            var clerk = null;
+            var register = null;
+
+            if( results.length == 0 )
+            {
+                // Debug
+                logMessage( "Create clerk." );
+
+                // Register pointer
+                register = new Register();
+                register.id = model.register.objectId;
+
+                // New clerk object
+                clerk = new Clerk();
+                clerk.set( "authorization", authorization.value );
+                clerk.set( "location", new Parse.GeoPoint( {
+                    latitude: model.location.latitude,
+                    longitude: model.location.longitude
+                } ) );
+                clerk.save( null, {
+                    success: function( result ) {
+                        var message = null;
+
+                        // Debug
+                        logMessage( "Clerk created." );
+
+                        // Construct message
+                        // Location is just for interesting data
+                        message = {
+                            action: POS_CLERK,
+                            clerk: result,
+                            location: model.location
+                        };
+
+                        // Send message of clerk details
+                        producer.send(
+                            session.createTextMessage( JSON.stringify( message ) ),
+                            doMessageSent
+                        );
+                    },
+                    error: function( error ) {
+                        // Debug
+                        logMessage( error );
+                    }
+                } );
+            } else {
+                // Debug
+                logMessage( "Known clerk." );
+
+                // Update location for existing clerk records
+                results[0].set( "location", new Parse.GeoPoint( {
+                    latitude: model.location.latitude,
+                    longitude: model.location.longitude
+                } ) );
+                results[0].save( {
+                    success: function( result ) {
+                        var message = null;
+
+                        // Debug
+                        logMessage( "Clerk location updated." );
+
+                        // Construct message
+                        // Location is just for interesting data
+                        message = {
+                            action: POS_CLERK,
+                            clerk: results[0],
+                            location: model.location
+                        };
+
+                        // Send message of clerk details
+                        producer.send(
+                            session.createTextMessage( JSON.stringify( message ) ),
+                            doMessageSent
+                        );
+                    },
+                    error: function( error ) {
+                        // Debug
+                        logMessage( error );
+                    }
+                } );
+            }
+        },
+        error: function( error ) {
+            // Debug
+            logMessage( error );
+        }
+    } );
+}
+
+// Called when messages arrive
+// Performs action based on message content
+function doMessageArrived( message )
+{
+    var data = null;
+
+    // Debug
+    logMessage( "Message received." );
+
+    console.log( message.getText() );
+
+    // Parse incoming data
+    data = JSON.parse( message.getText() );
+
+    // Channel various events to handlers
+    if( data.action == REGISTER_READ )
+    {
+        registerReadArrived( data.register );
+    } else if( data.action == REGISTER_LOCATION ) {
+        registerLocationArrived( data.location );
+    } else if( data.action == POS_CLERK ) {
+        clerkArrived( data.clerk );
+    } else if( data.action == POS_LOGIN ) {
+        loginArrived( data.login );
+    } else if( data.action == POS_LAYOUT ) {
+        layoutArrived( data.layout, data.products );
+    } else if( data.action == POS_TRANSACTION ) {
+        transactionArrived( data.transaction );
+    } else if( data.action == PURCHASE_ADD ) {
+        purchaseAddArrived( data.purchase, data.product );
+    } else if( data.action == PURCHASE_REMOVE ) {
+        purchaseRemoveArrived( data.purchase );
+    } else if( data.action == PURCHASE_CLEAR ) {
+        purchaseClearArrived();
+    } else if( data.action == CUSTOMER_SWIPE ) {
+        customerSwipeArrived( data.card );
+    } else if( data.action == TRANSACTION_ACCEPTED ) {
+        transactionAcceptArrived( data.total );
+        cardChangeArrived( data.card );
+    } else if( data.action == CARD_CHANGE ) {
+        cardChangeArrived( data.card );
+    }
+}
+
+// Called when a message is sent
+// Confirmation of send
+function doMessageSent()
+{
+    // Debug
+    logMessage( "Message sent." );
+}
+
+// Called when a product is selected for purchase
+function doProductClick()
+{
+    var product = null;
+    var purchase = null;
+    var selection = null;
+    var transaction = null;
+
+    selection = {
+        objectId: this.getAttribute( "data-id" ),
+        name: this.getAttribute( "data-name" ),
+        price: parseFloat( this.getAttribute( "data-price" ) ),
+        image: this.getAttribute( "data-image" ),
+        imagePath: this.getAttribute( "data-path" )
+    };
+
+    transaction = new Transaction();
+    transaction.id = model.transaction.objectId;
+
+    product = new Product();
+    product.id = this.getAttribute( "data-id" );
+
+    purchase = new Purchase();
+    purchase.set( "price", parseFloat( this.getAttribute( "data-price" ) ) );
+    purchase.set( "transactionId", transaction );
+    purchase.set( "productId", product );
+    purchase.save( null, {
+        success: function( result ) {
+            var message = null;
+
+            // Debug
+            logMessage( "Purchase added." );
+
+            // Construct message
+            message = {
+                action: PURCHASE_ADD,
+                purchase: result,
+                product: selection
+            };
+
+            // Send message of register details
+            producer.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        },
+        error: function( result, error ) {
+            // Debug
+            logMessage( "Problem adding transaction." );
+        }
+    } );
+}
+
+// Called when broker session started
+// Configures topic
+// Configures consumer
+// Configures producer
+// Retrieve register details
+function doSessionStart()
+{
+    var message = null;
+
+    // Debug
+    logMessage( "Session created." );
+
+    // Topics
+    topic = session.createTopic( TOPIC_POS + "." + model.register.objectId );
+
+    // Consumers
+    consumer = session.createConsumer( topic );
+    consumer.setMessageListener( doMessageArrived );
+
+    // Producer
+    producer = session.createProducer( topic );
+
+    // Debug
+    logMessage( "Register data loaded." );
+
+    // Build message
+    message = {
+        action: REGISTER_READ,
+        register: model.register
+    };
+
+    // Send message of register details
+    producer.send(
+        session.createTextMessage( JSON.stringify( message ) ),
+        doMessageSent
+    );
+}
+
+// Called to move from login screen to register screen
+// Happens only after predetermined delay
+function doShowRegister()
+{
+    var landing = null;
+    var qr = null;
+    var register = null;
+
+    // Clear intentional delay if needed
+    if( interval != null )
+    {
+        clearInterval( interval );
+        interval = null;
+    }
+
+    // Clear duration counter
+    start = null;
+
+    // Remove the login screen
+    landing = document.querySelector( ".login" );
+    landing.style.display = "none";
+
+    // Show register screen
+    window.scrollTo( 0, 0 );
+    register = document.querySelector( ".register" );
+    register.style.visibility = "visible";
+
+    // Show QR code
+    qr = document.querySelector( ".qr" );
+    qr.style.visibility = "visible";
+}
+
+// Called as card animates through screen
+// Clears register interface at center
+// Starts a new transaction
+// Sends return trip message at edge
+function doSwipeUpdate()
+{
+    var center = null;
+    var message = null;
+    var top = null;
+
+    // Determine placement
+    center = Math.round( window.innerHeight / 2 );
+    top = parseInt( this.style.top.substr( this.style.top - 2 ) );
+
+    // If at center
+    if( top < center && this.getAttribute( "data-center" ) == "false" )
+    {
+        // Mark as point reached
+        this.setAttribute( "data-center", "true" );
+
+        // Clear register interface
+        clearLineItems();
+    }
+
+    // If at top but not off screen
+    if( top < 0 && this.getAttribute( "data-edge" ) == "false" )
+    {
+        // Mark as point reached
+        this.setAttribute( "data-edge", "true" );
+
+        // Construct message
+        message = {
+            action: REGISTER_SWIPE
+        };
+
+        // Send message return trip
+        producer.send(
+            session.createTextMessage( JSON.stringify( message ) ),
+            doMessageSent
+        );
+    }
+}
+
+// Called as the card exits the register screen
+// Hides card from UI
+function doSwipeComplete()
+{
+    this.style.visibility = "hidden";
+
+    // Kick off a new transaction
+    generateTransaction();
+}
+
+// Called when document has loaded
+// Setup initial application model
+// Performs initial broker connection
+function doWindowLoad()
+{
+    var clear = null;
+    var factory = null;
+    var footer = null;
+    var login = null;
+    var query = null;
+    var configuration = null;
+
+    // Debug
+    logMessage( "Loaded." );
+
+    // Create application data model
+    model = {
+        clerk: null,
+        configuration: null,
+        layout: null,
+        location: {
+            latitude: null,
+            longitude: null,
+            address: null,
+            postal: null
+        },
+        login: null,
+        products: null,
+        purchase: null,
+        topic: null,
+        register: null,
+        transaction: null
+    };
+
+    demoNotify = false;
+
+    // Touch support
+    touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+
+    // Event listeners
+    login = document.querySelector( ".dialog > div:nth-of-type( 2 )" );
+    login.addEventListener( touch ? "touchstart" : "click", doLoginClick );
+
+    clear = document.querySelector( ".clear" );
+    clear.addEventListener( touch ? "touchstart" : "click", doClearClick );
+
+    footer = document.querySelector( ".footer" );
+    footer.addEventListener( touch ? "touchstart" : "click", doFooterClick );
+
+    // Show clock on login screen
+    statusClock();
+
+    if( !URLParser( window.location.href ).hasParam( "id" ) )
+    {
+        configuration = DEFAULT_REGISTER;
+    } else {
+        configuration = URLParser( window.location.href ).getParam( "id" );
+    }
+
+    // Get register details
+    query = new Parse.Query( Configuration );
+    query.equalTo( "shortCode", configuration );
+    query.first( {
+        success: function( result ) {
+            model.configuration = {
+                objectId: result.id,
+                createdAt: result.createdAt,
+                updatedAt: result.updatedAt,
+                vendorName: result.get( "vendorName" ),
+                vendorPath: result.get( "vendorPath" ),
+                vendorLogo: result.get( "vendorLogo" ),
+                shortCode: result.get( "shortCode" ),
+                notification: result.get( "notification" ),
+                animationDelay: result.get( "animationDelay" ),
+                endpoint: result.get( "endpoint" )
+            };
+
+            // Start geolocation
+            if( navigator.geolocation )
+            {
+                // The getCurrentPosition tested unreliably to report results
+                // Using watchPosition as it always seems to come back with something
+                watch = navigator.geolocation.watchPosition( doCurrentPosition );
+            }
+
+            /*
+            // Debug
+            Tracer.setTrace( true );
+
+            // Use JMS as protocol
+            factory = new JmsConnectionFactory( model.register.endpoint );
+
+            // Connect to server
+            future = factory.createConnection(
+                null,           // User name
+                null,           // Password
+                doConnected     // Callback
+            );
+            */
+        },
+        error: function( error ) {
+            logMessage( error );
+        }
+    } );
+
+    // Initial layout
+    doWindowResize();
+}
+
+// Called when window resizes
+// Used for some absolute positioning
+function doWindowResize()
+{
+    var dialog = null;
+    var element = null;
+    var layout = null;
+    var login = null;
+    var qr = null;
+    var register = null;
+
+    // Login
+    login = document.querySelector( ".login" );
+    login.style.width = window.innerWidth + "px";
+    login.style.height = window.innerHeight + "px";
+
+    dialog = document.querySelector( ".dialog" );
+    dialog.style.top = Math.round( ( window.innerHeight - dialog.clientHeight ) / 2 ) + "px";
+    dialog.style.left = Math.round( ( window.innerWidth - dialog.clientWidth ) / 2 ) + "px";
+
+    login.style.visibility = "visible";
+
+    // Register
+    register = document.querySelector( ".register" );
+    register.style.width = window.innerWidth + "px";
+    register.style.height = window.innerHeight + "px";
+
+    // Layout
+    layout = document.querySelector( ".layout" );
+
+    for( var r = 0; r < 4; r++ )
+    {
+        for( var c = 0; c < 4; c++ )
+        {
+            element = document.createElement( "div" );
+            element.style.width = Math.floor( ( layout.clientWidth - 60 - 8 ) / 4 ) + "px";
+            element.style.height = Math.floor( ( layout.clientHeight - 60 - 8 ) / 4 ) + "px";
+            element.classList.add( "product" );
+
+            if( c < 3 )
+            {
+                element.style.marginRight = "20px";
+            }
+
+            if( r < 3 )
+            {
+                element.style.marginBottom = "20px";
+            }
+
+            if( r > 1 && c > 1 )
+            {
+                element.style.visibility = "hidden";
+            }
+
+            layout.appendChild( element );
+        }
+    }
+
+    qr = document.querySelector( ".qr" );
+    qr.style.width = ( ( element.clientWidth * 2 ) + 22 ) + "px";
+    qr.style.height = ( ( element.clientHeight * 2 ) + 22 ) + "px";
+
+    // Place at top for good measure
+    window.scrollTo( 0, 0 );
+}
+
+// Listen for document load
+// Entry point for application
+window.addEventListener( "load", doWindowLoad );
+
+// Listen for resize
+// Arrange some elements
+window.addEventListener( "resize", doWindowResize );
+</script>
+
+</head>
+<body>
+
+<!-- Login screen -->
+<div class="login">
+
+    <!-- Dialog -->
+    <div class="dialog">
+
+        <!-- Clerk ID -->
+        <div class="clerk">Clerk ID:</div>
+        <input>
+        <div>Login</div>
+
+        <!-- Status -->
+        <div class="message"></div>
+
+    </div>
+
+    <div class="globe"></div>
+
+</div>
+
+<!-- Register screen -->
+<div class="register">
+
+    <!-- Product listing -->
+    <div class="layout">
+
+        <!-- Product slots -->
+
+        <!-- Products -->
+
+        <!-- QR Code -->
+        <div class="qr">
+            <div>Scan here to pay digitally ...</div>
+        </div>
+
+    </div>
+
+    <!-- Right side summary -->
+    <div class="summary">
+
+        <!-- Header -->
+        <div class="total">
+            <div class="logo"></div>
+            <div class="charge pending">Charge: $0.00</div>
+        </div>
+
+        <!-- Item list -->
+        <div class="list">
+
+            <!-- Line items -->
+
+            <!-- Tax -->
+            <div class="line tax">
+                <div class="photo">%</div>
+                <div class="label">Tax</div>
+                <div class="rate">(8.25%)</div>
+                <div class="price">$1.65</div>
+            </div>
+
+            <!-- Clear -->
+            <div class="clear">
+                Clear List
+            </div>
+
+        </div>
+
+        <!-- Security -->
+        <div class="security">
+            <img src="img/padlock.svg" width="26" height="40">
+            <div>Connection is secure.</div>
+        </div>
+
+        <!-- Transaction -->
+        <div class="footer">Transaction #1234</div>
+
+    </div>
+
+</div>
+
+<!-- Credit card -->
+<!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
+<div class="card">
+    <div class="holder">KEVIN HOYT</div>
+    <div class="expiration">11/15</div>
+    <div class="number">1234 5678 9012 3456</div>
+    <img class="logo" width="70" height="70" src="img/american-express.svg">
+</div>
+
+<!-- Product template -->
+<div class="item template">
+    <div></div>
+    <div class="label"></div>
+</div>
+
+<!-- Line item template -->
+<div class="line template">
+    <div class="photo" style="background-image: url( 'img/apple-biscuit.png' );"></div>
+    <div class="label">Apple Biscuit</div>
+    <div class="duplicate">0</div>
+    <div class="price">$4.50</div>
+</div>
+
+</body>
+</html>

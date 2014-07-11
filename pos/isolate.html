@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Isolation</title>
+<meta name="viewport" content="initial-scale=1.0">
+
+<!-- Source Sans Pro -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css">
+
+<!-- Application styles -->
+<link href="style/register.css" rel="stylesheet" type="text/css">
+
+<!-- Date and time formatting -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js" type="text/javascript"></script>
+
+<!-- Parse.com for data storage -->
+<script src="http://www.parsecdn.com/js/parse-1.2.18.min.js" type="text/javascript"></script>
+
+<!-- Emulation -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<!-- URL parsing -->
+<script src="script/URLParser.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">
+var PARSE_APPLICATION = "BkyGNTBvPzhwd32zSiKmsxaFN719abjjQ4lPySiv";
+var PARSE_KEY = "0KDnIgzlUzQryGTjgw3ObhM2yEW0Bkrh1m6Qs8ck";
+
+var Configuration = Parse.Object.extend( "Configuration" );
+
+Parse.initialize( PARSE_APPLICATION, PARSE_KEY );
+
+var DEFAULT_REGISTER = "kaazing";
+
+var connection = null;
+var consumer = null;
+var future = null;
+var producer = null;
+var session = null;
+var topicConsume = null;
+var topicProduce = null;
+
+var CLERK_CREATE = "clerkCreate";
+var CLERK_READ = "clerkRead";
+var GEOCODE = "geocode";
+var LAYOUT_READ = "layoutRead";
+var LOGIN_CREATE = "loginCreate";
+var REGISTER_CREATE = "registerCreate";
+var TRANSACTION_CREATE = "transactionCreate";
+
+var concurrent = null;
+var interval = null;
+var model = {
+    clerk: {
+        authorization: null,
+        createdAt: null,
+        objectId: null,
+        updatedAt: null
+    },
+    configuration: {
+        animationDelay: null,
+        authorization: null,
+        connecting: null,
+        createdAt: null,
+        endpoint: null,
+        notification: null,
+        objectId: null,
+        shortCode: null,
+        splashDelay: null,
+        topic: null,
+        updatedAt: null,
+        vendorLogo: null,
+        vendorName: null,
+        vendorPath: null
+    },
+    layout: null,
+    login: {
+        clerkId: null,
+        createdAt: null,
+        objectId: null,
+        registerId: null,
+        updatedAt: null
+    },
+    products: null,
+    register: {
+        address: null,
+        createdAt: null,
+        location: {
+            latitude: null,
+            longitude: null
+        },
+        objectId: null,
+        postalCode: null,
+        topic: null,
+        updatedAt: null
+    }
+};
+var reply = null;
+var sending = null;
+var touch = null;
+var watch = null;
+
+function broadcast( message )
+{
+    // Debug
+    console.log( "Broadcast: " + message.client.action );
+
+    // Initialize concurrency if needed
+    if( sending == null )
+    {
+        concurrent = new Array();
+        sending = false;
+    }
+
+    // Do not allow concurrent sending
+    if( !sending )
+    {
+        sending = true;
+        producer.send(
+            session.createTextMessage( JSON.stringify( message ) ),
+            doMessageSent
+        );
+    } else {
+        // Queue for retry later
+        concurrent.push( message );
+    }
+}
+
+function generateRandomString()
+{
+    var now = null;
+    var random = null;
+
+    // Random with date seed
+    now = new Date();
+    random = Math.floor( Math.random() * now.getTime() );
+
+    // Hex version
+    return random.toString( 16 );
+}
+
+function initializeClient()
+{
+    var authorization = null;
+    var button = null;
+    var dialog = null;
+    var login = null;
+
+    // Debug
+    console.log( "Initializing client." );
+
+    // Touch support
+    touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+
+    // **
+    // Login
+    // **
+
+    // Make sure authorization field has content
+    authorization = document.querySelector( ".login input" );
+    authorization.addEventListener( "keyup", doAuthorizationChange );
+
+    button = document.querySelector( ".login .dialog > div:nth-of-type( 2 )" );
+
+    // Development flag
+    if( model.configuration.notification == true )
+    {
+        button.classList.add( "disabled" );
+    } else {
+        authorization.value = model.configuration.authorization;
+        button.addEventListener( touch ? "touchstart" : "click", doLoginClick );
+    }
+
+    // Position dialog
+    dialog = document.querySelector( ".dialog" );
+    dialog.style.left = Math.round( ( window.innerWidth - dialog.clientWidth ) / 2 ) + "px";
+    dialog.style.top = Math.round( ( window.innerHeight - dialog.clientHeight ) / 2 ) + "px";
+
+    // Status bar
+    updateStatus();
+
+    // Show login screen
+    login = document.querySelector( ".login" );
+    login.style.width = window.innerWidth + "px";
+    login.style.height = window.innerHeight + "px";
+    login.style.visibility = "visible";
+}
+
+function initializeServer()
+{
+    var configuration = null;
+    var query = null;
+
+    // Debug
+    console.log( "Intializing server." );
+
+    // Desired configuration if any
+    if( !URLParser( window.location.href ).hasParam( "id" ) )
+    {
+        console.log( "Using default configuration." );
+        configuration = DEFAULT_REGISTER;
+    } else {
+        configuration = URLParser( window.location.href ).getParam( "id" );
+        console.log( "Configured as: " + configuration );
+    }
+
+    // Load desired configuration
+    query = new Parse.Query( Configuration );
+    query.equalTo( "shortCode", configuration );
+    query.first( {
+        success: doConfigurationSuccess,
+        error: doConfigurationError
+    } );
+}
+
+function updateStatus( message )
+{
+    var status = null;
+
+    status = document.querySelector( ".dialog .message" );
+
+    if( arguments.length == 0 )
+    {
+        // Start updating clock if needed
+        if( interval == null )
+        {
+            interval = setInterval( updateStatus, 1000 );
+        }
+
+        // Update clock text
+        message = moment().format( "MMMM Do YYYY, h:mm:ss A" );
+    } else {
+        clearInterval( interval );
+        interval = null;
+    }
+
+    status.innerHTML = message;
+}
+
+function doAuthorizationChange()
+{
+    var button = null;
+
+    // Login button
+    button = document.querySelector( ".login .dialog > div:nth-of-type( 2 )" );
+
+    // Make sure there is content
+    if( this.value.trim().length > 0 )
+    {
+        button.classList.remove( "disabled" );
+        button.addEventListener( touch ? "touchstart" : "click", doLoginClick );
+    } else {
+        button.classList.add( "disabled" );
+        button.removeEventListener( touch ? "touchstart" : "click", doLoginClick );
+    }
+}
+
+function doClerkRead( data )
+{
+    var message = null;
+
+    // Store in memory model
+    model.clerk.authorization = data.content.authorization;
+    model.clerk.createdAt = data.content.createdAt;
+    model.clerk.objectId = data.content.objectId;
+    model.clerk.updatedAt = data.content.updatedAt;
+
+    // Construct message
+    message = {
+        client: {
+            action: LOGIN_CREATE,
+            reply: reply
+        },
+        content: {
+            clerkId: model.clerk.objectId,
+            registerId: model.register.objectId
+        }
+    };
+
+    // Send login entry
+    broadcast( message );
+}
+
+function doConfigurationError( error )
+{
+    console.log( "Error loading configuration." );
+}
+
+function doConfigurationSuccess( result )
+{
+    var factory = null;
+
+    // Debug
+    console.log( "Configuration loaded." );
+
+    // Store in memory model
+    model.configuration.animationDelay = result.get( "animationDelay" );
+    model.configuration.authorization = result.get( "authorization" );
+    model.configuration.connecting = result.get( "connecting" );
+    model.configuration.createdAt = result.createdAt;
+    model.configuration.endpoint = result.get( "endpoint" );
+    model.configuration.notification = result.get( "notification" );
+    model.configuration.objectId = result.id;
+    model.configuration.shortCode = result.get( "shortCode" );
+    model.configuration.splashDelay = result.get( "splashDelay" );
+    model.configuration.topic = result.get( "topic" );
+    model.configuration.updatedAt = result.updatedAt;
+    model.configuration.vendorLogo = result.get( "vendorLogo" );
+    model.configuration.vendorName = result.get( "vendorName" );
+    model.configuration.vendorPath = result.get( "vendorPath" );
+
+    // Use JMS as broker
+    factory = new JmsConnectionFactory( model.configuration.endpoint );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+}
+
+function doConnected()
+{
+    // Debug
+    console.log( "Client connection established." );
+
+    // Connection
+    connection = future.getValue();
+
+    // Start broker session
+    connection.start( doSessionStart );
+}
+
+function doLayoutRead( data )
+{
+    var message = null;
+
+    // Store in memory model
+    model.layout = data.content.layout;
+    model.products = data.content.product;
+
+    // Construct message
+    message = {
+        client: {
+            action: TRANSACTION_CREATE,
+            reply: reply
+        },
+        content: {
+            clerkId: model.clerk.objectId,
+            registerId: model.register.objectId
+        }
+    };
+
+    // Send to create transaction
+    broadcast( message );
+}
+
+function doLoginClick()
+{
+    var input = null;
+    var message = null;
+
+    // Debug
+    console.log( "Login clicked." );
+
+    // Get login value
+    input = document.querySelector( ".login input" );
+
+    // Construct message
+    message = {
+        client: {
+            action: CLERK_READ,
+            reply: reply
+        },
+        content: {
+            authorization: input.value.trim()
+        }
+    };
+
+    // Send read clerk
+    broadcast( message );
+}
+
+function doLoginCreate( data )
+{
+    var message = null;
+
+    // Store in memory model
+    model.login.clerkId = data.content.clerkId;
+    model.login.createdAt = data.content.createdAt;
+    model.login.objectId = data.content.objectId;
+    model.login.registerId = data.content.registerId;
+    model.login.updatedAt = data.content.updatedAt;
+
+    // Construct message
+    message = {
+        client: {
+            action: LAYOUT_READ,
+            reply: reply
+        },
+        content: {
+            configurationId: model.configuration.objectId
+        }
+    }
+
+    // Send read layout
+    broadcast( message );
+}
+
+function doMessageArrived( message )
+{
+    var data = null;
+
+    // Parse incoming data
+    data = JSON.parse( message.getText() );
+
+    // Debug
+    console.log( "Action \"" + data.server.action + "\" arrived." );
+
+    // Decision tree
+    if( data.server.action == GEOCODE )
+    {
+        doWatchResponse( data.content );
+    } else if( data.server.action == REGISTER_CREATE ) {
+        doRegisterCreate( data.content );
+    } else if( data.server.action == CLERK_READ || data.server.action == CLERK_CREATE ) {
+        doClerkRead( data );
+    } else if( data.server.action == LOGIN_CREATE ) {
+        doLoginCreate( data );
+    } else if( data.server.action == LAYOUT_READ ) {
+        doLayoutRead( data );
+    } else if( data.server.action == TRANSACTION_CREATE ) {
+        doTransactionCreate( data );
+    }
+}
+
+function doMessageSent()
+{
+    // Debug
+    console.log( "Message sent." );
+
+    // Not sending any longer
+    sending = false;
+
+    // Check for next messages
+    // Send first-in-first-out
+    if( concurrent.length > 0 )
+    {
+        broadcast( concurrent[0] );
+        concurrent.splice( 0, 1 );
+    }
+}
+
+function doRegisterCreate( content )
+{
+    // Store in application model
+    model.register.objectId = content.objectId;
+    model.register.createdAt = content.createdAt;
+    model.register.updatedAt = content.updatedAt;
+    model.register.address = content.address;
+    model.register.postalCode = content.postalCode;
+    model.register.location = {
+        latitude: content.location.latitude,
+        longitude: content.location.longitude
+    };
+    model.register.topic = content.topic;
+
+    // Initialize client side
+    initializeClient();
+}
+
+function doSessionStart()
+{
+    // Debug
+    console.log( "Client session started." );
+
+    // Unique destination
+    reply = model.configuration.topic + "." + generateRandomString();
+
+    // Session
+    // Topic
+    session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+    topicConsume = session.createTopic( reply );
+    topicProduce = session.createTopic( model.configuration.topic );
+
+    // Consumer
+    // Set listener
+    consumer = session.createConsumer( topicConsume );
+    consumer.setMessageListener( doMessageArrived );
+
+    // Producer
+    producer = session.createProducer( topicProduce );
+
+    // Start geolocation
+    if( navigator.geolocation )
+    {
+        // The getCurrentPosition tested unreliably to report results
+        // Using watchPosition as it always seems to come back with something
+        watch = navigator.geolocation.watchPosition( doWatchPosition );
+    }
+}
+
+function doTransactionCreate( data )
+{
+    // Store in memory model
+    model.transaction = data.content;
+
+
+}
+
+function doWatchPosition( position )
+{
+    var message = null;
+
+    // Debug
+    console.log( "Geolocation successful." );
+
+    // Leave alone once we have a fix
+    navigator.geolocation.clearWatch( watch );
+    watch = null;
+
+    // Request geocoding
+    message = {
+        client: {
+            action: GEOCODE,
+            reply: reply
+        },
+        content: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        }
+    };
+
+    // Send geocoding request
+    broadcast( message );
+}
+
+function doWatchResponse( content )
+{
+    var message = null;
+
+    // Create a register entry
+    message = {
+        client: {
+            action: REGISTER_CREATE,
+            reply: reply
+        },
+        content: {
+            address: content.address,
+            postalCode: content.postalCode,
+            latitude: content.latitude,
+            longitude: content.longitude
+        }
+    };
+
+    // Send register creation
+    broadcast( message );
+}
+
+function doWindowLoad()
+{
+    // Debug
+    console.log( "Page loaded." );
+
+    // Initialize
+    initializeServer();
+}
+
+// Setup
+window.addEventListener( "load", doWindowLoad );
+</script>
+
+</head>
+<body>
+
+<!-- Login screen -->
+<div class="login">
+
+    <!-- Dialog -->
+    <div class="dialog">
+
+        <!-- Clerk ID -->
+        <div class="clerk">Clerk ID:</div>
+        <input>
+        <div>Login</div>
+
+        <!-- Status -->
+        <div class="message"></div>
+
+    </div>
+
+    <!-- Ready indicator -->
+    <div class="globe"></div>
+
+</div>
+
+
+</body>
+</html>

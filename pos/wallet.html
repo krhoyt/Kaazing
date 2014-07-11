@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Wallet</title>
+<meta name="viewport" content="initial-scale=1.0">
+
+<!-- Source Sans Pro -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600" rel="stylesheet" type="text/css">
+
+<!-- Source Code Pro -->
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'>
+
+<!-- Application styles -->
+<link href="style/wallet.css" rel="stylesheet" type="text/css">
+
+<!-- Date and time formatting -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js" type="text/javascript"></script>
+
+<!-- Parse.com for data storage -->
+<script src="//www.parsecdn.com/js/parse-1.2.18.min.js" type="text/javascript"></script>
+
+<!-- URL parsing -->
+<script src="script/URLParser.js" type="text/javascript"></script>
+
+<!-- Image preload -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/PreloadJS/0.4.1/preloadjs.min.js" type="text/javascript"></script>
+
+<!-- Animation -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.12.1/TweenMax.min.js" type="text/javascript"></script>
+
+<!-- Emulation -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://kaazing.kevinhoyt.com:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<!-- Common functionality -->
+<script src="script/common.js" type="text/javascript"></script>
+
+<!-- Message handling -->
+<script src="script/messaging.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">
+var CARD_RATIO = 0.6279;
+var CLICK_DISTANCE = 40;
+var CUSTOMER_PIN = "1234";
+
+var TOPIC_POS = "/topic/pos";
+
+var connection = null;
+var consumer = null;
+var future = null;
+var producer = null;
+var session = null;
+var topic = null;
+
+var discounts = null;
+var down = null;
+var move = null;
+var touch = null;
+var model = null;
+
+function sendCardChange( element, data )
+{
+    var message = null;
+
+    // Allow preload at register
+    message = {
+        action: CARD_CHANGE,
+        card: {
+            background: data.getAttribute( "data-card" ),
+            width: element.clientWidth,
+            height: element.clientHeight,
+            name: element.children[0].innerHTML,
+            expires: element.children[1].innerHTML,
+            number: element.children[2].innerHTML,
+            vendor: data.getAttribute( "data-vendor" )
+        }
+    };
+
+    // Send message of transaction details
+    producer.send(
+        session.createTextMessage( JSON.stringify( message ) ),
+        doMessageSent
+    );
+}
+
+// Called to check list for existing product
+// Pertains to product descriptions not purchases
+// Does not alter local data model
+// Only references local data model for matches
+// Returns boolean to add to data model
+function shouldAddProduct( list, product )
+{
+    var found = null;
+    var result = null;
+
+    // Seed lookup
+    found = false;
+
+    // No products may exist
+    if( list != null )
+    {
+        // Look through local data model
+        for( var p = 0; p < list.length; p++ )
+        {
+            // Matching product identifiers
+            if( list[p].objectId == product.objectId )
+            {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    // Return whether or not to add
+    return !found;
+}
+
+function doCardAnimation()
+{
+    var message = null;
+    var top = null;
+
+    top = parseInt( this.style.top.substring( 0, this.style.top.length - 2) );
+
+    if( top < 5 && this.getAttribute( "data-top" ) == "false" )
+    {
+        this.setAttribute( "data-top", "true" );
+
+        message = {
+            action: CUSTOMER_SWIPE,
+            card: {
+                width: this.clientWidth,
+                height: this.clientHeight,
+                name: this.children[0].innerHTML,
+                expires: this.children[1].innerHTML,
+                number: this.children[2].innerHTML,
+                logo: this.getAttribute( "data-vendor" ),
+                background: this.getAttribute( "data-card" )
+            }
+        };
+
+        // Send message of transaction details
+        producer.send(
+            session.createTextMessage( JSON.stringify( message ) ),
+            doMessageSent
+        );
+    }
+}
+
+function doCardComplete( card, clone, data )
+{
+    var img = null;
+
+    // Remove logo image
+    card.removeChild( card.children[3] );
+
+    // Rebuild logo image
+    // SVG placed into SVG scales down
+    // Rebuilding from scratch keep scale
+    img = document.createElement( "img" );
+    img.width = 52;
+    img.height = 52;
+    img.src = "img/" + data.getAttribute( "data-vendor" ) + ".svg";
+    img.classList.add( "logo" );
+
+    card.style.backgroundImage = "url( 'img/" + data.getAttribute( "data-card" ) + ".png' )";
+    card.style.left = Math.round( ( window.innerWidth - card.clientWidth ) / 2 ) + "px";
+    card.appendChild( img );
+
+    document.body.removeChild( clone );
+
+    // Allow preload at register
+    sendCardChange( card, data );
+}
+
+function doCardDown( event )
+{
+    event.preventDefault();
+
+    if( touch )
+    {
+        down = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+        };
+    } else {
+        down = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+
+    logMessage( down );
+
+    document.addEventListener( touch ? "touchmove" : "mousemove", doCardMove );
+    document.addEventListener( touch ? "touchend" : "mouseup", doCardUp );
+}
+
+function doCardLeft()
+{
+    var card = null;
+    var clone = null;
+    var incoming = null;
+    var message = null;
+    var page = null;
+    var selected = null;
+
+    page = document.querySelector( ".payment .holder" );
+
+    for( var c = 0; c < page.children.length; c++ )
+    {
+        if( page.children[c].classList.contains( "selected" ) )
+        {
+            selected = c;
+            break;
+        }
+    }
+
+    if( selected == ( page.children.length - 1 ) )
+    {
+        incoming = 0;
+    } else {
+        incoming = selected + 1;
+    }
+
+    card = document.querySelector( ".card" );
+
+    clone = card.cloneNode( true );
+    clone.style.backgroundImage = "url( 'img/" + page.children[incoming].getAttribute( "data-card" ) + ".png' )";
+    clone.children[3].src = "img/" + page.children[incoming].getAttribute( "data-vendor" ) + ".svg";
+    clone.style.left = window.innerWidth + "px";
+    document.body.appendChild( clone );
+
+    page.children[selected].classList.remove( "selected" );
+    page.children[incoming].classList.add( "selected" );
+
+    TweenMax.to( card, 0.50, {
+        left: 0 - window.innerWidth,
+        onComplete: doCardComplete,
+        onCompleteParams: [card, clone, page.children[incoming]]
+    } );
+
+    TweenMax.to( clone, 0.50, {
+        left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+    } );
+}
+
+function doCardMove( event )
+{
+    event.preventDefault();
+
+    if( touch )
+    {
+        move = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+        };
+    } else {
+        move = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+}
+
+function doCardRight()
+{
+    var card = null;
+    var clone = null;
+    var incoming = null;
+    var message = null;
+    var page = null;
+    var selected = null;
+
+    page = document.querySelector( ".payment .holder" );
+
+    for( var c = 0; c < page.children.length; c++ )
+    {
+        if( page.children[c].classList.contains( "selected" ) )
+        {
+            selected = c;
+            break;
+        }
+    }
+
+    if( selected == 0 )
+    {
+        incoming = page.children.length - 1;
+    } else {
+        incoming = selected - 1;
+    }
+
+    card = document.querySelector( ".card" );
+
+    clone = card.cloneNode( true );
+    clone.style.backgroundImage = "url( 'img/" + page.children[incoming].getAttribute( "data-card" ) + ".png' )";
+    clone.children[3].src = "img/" + page.children[incoming].getAttribute( "data-vendor" ) + ".svg";
+    clone.style.left = ( 0 - window.innerWidth ) + "px";
+    document.body.appendChild( clone );
+
+    page.children[selected].classList.remove( "selected" );
+    page.children[incoming].classList.add( "selected" );
+
+    TweenMax.to( card, 0.50, {
+        left: window.innerWidth,
+        onComplete: doCardComplete,
+        onCompleteParams: [card, clone, page.children[incoming]]
+    } );
+
+    TweenMax.to( clone, 0.50, {
+        left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+    } );
+}
+
+function doCardUp( event )
+{
+    var card = null;
+    var distance = null;
+    var distanceX = null;
+    var distanceY = null;
+    var status = null;
+    var up = null;
+
+    event.preventDefault();
+
+    logMessage( move );
+
+    distance = Math.sqrt( Math.pow( move.x - down.x, 2 ) + Math.pow( move.y - down.y, 2 ) );
+
+    logMessage( distance );
+
+    if( distance < CLICK_DISTANCE )
+    {
+        logMessage( "Click" );
+    } else {
+        distanceX = Math.max( down.x, move.x ) - Math.min( down.x, move.x );
+        distanceY = Math.max( down.y, move.y ) - Math.min( down.y, move.y );
+
+        if( distanceX > distanceY )
+        {
+            logMessage( "Horizontal swipe." );
+
+            if( down.x < move.x )
+            {
+                doCardRight();
+            } else if( down.x > move.x ) {
+                doCardLeft();
+            }
+        } else if( distanceY > distanceX ) {
+            logMessage( "Vertical swipe." );
+
+            if( down.y < move.y )
+            {
+                logMessage( "Down" );
+            } else if( down.y > move.y ) {
+                // Debug
+                logMessage( "Up" );
+
+                status = document.querySelector( ".status" );
+                status.innerHTML = "PROCESSING PAYMENT";
+
+                card = document.querySelector( ".card" );
+                card.setAttribute( "data-top", "false" );
+
+                TweenMax.to( card, 0.50, {
+                    top: 0 - card.clientWidth,
+                    onUpdate: doCardAnimation,
+                    onUpdateScope: card
+                } );
+            }
+        }
+    }
+
+    document.removeEventListener( touch ? "touchmove" : "mousemove", doCardMove );
+    document.removeEventListener( touch ? "touchend" : "mouseup", doCardUp );
+
+    down = null;
+    move = null;
+}
+
+function doChargeClick()
+{
+    logMessage( "Pay for it!" );
+}
+
+// Called when connected to server
+// Subscribes to topics
+function doConnected()
+{
+    // Debug
+    logMessage( "Connected." );
+
+    // Connection
+    connection = future.getValue();
+
+    // Session
+    session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+
+    // Start broker session
+    connection.start( doSessionStart );
+}
+
+function doCouponAccept()
+{
+    var coupon = null;
+    var receipt = null;
+
+    clearLineItems();
+
+    // References
+    coupon = document.querySelector( ".coupon" );
+    receipt = document.querySelector( ".receipt" );
+
+    receipt.style.left = window.innerWidth + "px";
+    receipt.style.display = "inline";
+
+    TweenMax.to( coupon, 0.50, {
+        left: 0 - window.innerWidth,
+        onComplete: doCouponComplete,
+        onCompleteScope: coupon,
+        onCompleteParams: [true]
+    } );
+
+    TweenMax.to( receipt, 0.50, {
+        left: 0
+    } );
+}
+
+// http://stackoverflow.com/questions/10488831/link-to-add-to-google-calendar
+// https://www.google.com/calendar/render?action=TEMPLATE&text=Joe%27s+40th+Birthday&details=Joe+turns+40+just+this+once&dates=20111212T190000/20111212T200000&location=Gillette+Stadium&sf=true&output=xml
+// 20111212T190000/20111212T200000
+function doCouponComplete( accepted )
+{
+    var end = null;
+    var start = null;
+    var url = null;
+
+    if( accepted )
+    {
+        start = new Date( model.coupon.date );
+        end = new Date( model.coupon.date );
+
+        // Build calendar URL
+        url = "https://www.google.com/calendar/render?" +
+              "action=TEMPLATE&" +
+              "text=Save " + model.coupon.percent + " on " + model.coupon.product + "&" +
+              "dates=" +
+              start.getFullYear() + ( start.getMonth() + 1 ) + start.getDate() + "/" +
+              end.getFullYear() + ( end.getMonth() + 1 ) + end.getDate() + "&" +
+              "sf=true&" +
+              "output=xml";
+
+        // Open calendar window
+        window.open( url, "_blank" );
+    }
+
+    this.style.display = "none";
+}
+
+function doCouponDecline()
+{
+    var coupon = null;
+    var receipt = null;
+
+    clearLineItems();
+
+    // References
+    coupon = document.querySelector( ".coupon" );
+    receipt = document.querySelector( ".receipt" );
+
+    receipt.style.left = window.innerWidth + "px";
+    receipt.style.display = "inline";
+
+    TweenMax.to( coupon, 0.50, {
+        left: 0 - window.innerWidth,
+        onComplete: doCouponComplete,
+        onCompleteScope: coupon,
+        onCompleteParams: [false]
+    } );
+
+    TweenMax.to( receipt, 0.50, {
+        left: 0
+    } );
+}
+
+// Called when a message arrives
+// Uses action property to make next call
+function doMessageArrived( message )
+{
+    var data = null;
+    var query = null;
+    var transaction = null;
+
+    // Debug
+    logMessage( "Message arrived." );
+    logMessage( message.getText() );
+
+    // Parse incoming data
+    data = JSON.parse( message.getText() );
+
+    if( data.action == TRANSACTION_READ )
+    {
+        transactionReadArrived( data.transaction, data.register );
+    } else if( data.action == PURCHASE_READ ) {
+        purchaseReadArrived( data.purchase, data.products );
+    } else if( data.action == PURCHASE_ADD ) {
+        purchaseAddArrived( data.purchase, data.product );
+    } else if( data.action == PURCHASE_REMOVE ) {
+        purchaseRemoveArrived( data.purchase );
+    } else if( data.action == PURCHASE_CLEAR ) {
+        purchaseClearArrived();
+    } else if( data.action == TRANSACTION_CHARGE ) {
+        transactionChargeArrived();
+    } else if( data.action == REGISTER_SWIPE ) {
+        registerSwipeArrived();
+    }
+}
+
+// Called when a message has been sent
+// Verification of send
+function doMessageSent()
+{
+    logMessage( "Message sent." );
+}
+
+// Called when the customer confirms payment
+// Moves to display credit card selection
+function doPayClick()
+{
+    var pin = null;
+    var receipt = null;
+
+    // Debug
+    logMessage( "Present digital wallet." );
+
+    // Switch views
+    pin = document.querySelector( ".pin" );
+    receipt = document.querySelector( ".receipt" );
+
+    pin.style.left = receipt.clientWidth + "px";
+    pin.style.display = "inline";
+
+    TweenMax.to( receipt, 0.50, {
+        left: 0 - receipt.clientWidth,
+        onComplete: doReceiptComplete,
+        onCompleteScope: receipt
+    } );
+
+    TweenMax.to( pin, 0.50, {
+        left: 0
+    } );
+}
+
+function doPaymentAnimation()
+{
+    this.style.display = "none";
+}
+
+// Called when payment is complete
+// Shows coupon
+function doPaymentComplete()
+{
+    setTimeout( function() {
+        var accept = null;
+        var card = null;
+        var coupon = null;
+        var details = null;
+        var end = null;
+        var list = null;
+        var payment = null;
+        var percent = null;
+        var product = null;
+        var savings = null;
+        var start = null;
+        var today = null;
+        var url = null;
+
+        payment = document.querySelector( ".payment" );
+        card = document.querySelector( ".card" );
+
+        coupon = document.querySelector( ".coupon" );
+        coupon.style.left = window.innerWidth + "px";
+        coupon.style.display = "inline";
+
+        list = document.querySelector( ".list" );
+        product = list.children[Math.floor( Math.random() * ( list.children.length - 1 ) )];
+
+        percent = discounts[Math.floor( Math.random() * discounts.length )];
+
+        savings = document.querySelector( ".savings" );
+        savings.innerHTML = "Save " + percent + "% on " + product.getAttribute( "data-name" ) + ".";
+
+        today = new Date();
+        today.setDate( today.getDate() + Math.floor( Math.random() * 7 ) );
+
+        // Display offer
+        details = document.querySelector( ".details" );
+        details.innerHTML = "Come back on " + moment( today ).format( "dddd, MMMM Do" ) + " to get extra savings.";
+
+        // Store coupon details in application model
+        model.coupon = {
+            percent: percent,
+            product: product.getAttribute( "data-name" ),
+            date: today.getTime()
+        };
+
+        // Build calendar URL
+        start = new Date( model.coupon.date );
+        end = new Date( model.coupon.date );
+
+        url = "https://www.google.com/calendar/render?" +
+            "action=TEMPLATE&" +
+            "text=Save " + model.coupon.percent + "% on " + model.coupon.product + "&" +
+            "dates=" +
+                start.getFullYear() + "0" + ( start.getMonth() + 1 ) + "0" + start.getDate() + "/" +
+                end.getFullYear() + "0" + ( end.getMonth() + 1 ) + "0" + end.getDate() + "&" +
+            "sf=true&" +
+            "output=xml";
+        url = encodeURI( url );
+
+        // Assign link
+        accept = document.querySelector( ".coupon .total" );
+        accept.children[0].innerHTML = "<a href=\"" + url + "\">Remind me</a>";
+
+        TweenMax.to( payment, 0.50, {
+            left: 0 - payment.clientWidth,
+            onComplete: doPaymentAnimation,
+            onCompleteScope: payment
+        } );
+
+        TweenMax.to( card, 0.50, {
+            left: 0 - payment.clientWidth
+        } );
+
+        TweenMax.to( coupon, 0.50,  {
+            left: 0
+        } );
+    }, 3000 );
+}
+
+function doPinChange()
+{
+    var button = null;
+
+    button = document.querySelector( ".pin .total > div:last-of-type" );
+
+    if( this.value.trim().length == 4 )
+    {
+        button.classList.add( "ready" );
+        button.classList.remove( "pending" );
+        button.addEventListener( touch ? "touchstart" : "click", doPinContinue );
+    } else {
+        button.classList.add( "pending" );
+        button.classList.remove( "ready" );
+        button.removeEventListener( touch ? "touchstart" : "click", doPinContinue );
+    }
+}
+
+function doPinComplete()
+{
+    this.style.display = "none";
+}
+
+function doPinContinue()
+{
+    var amount = null;
+    var card = null;
+    var input = null;
+    var index = null;
+    var message = null;
+    var page = null;
+    var payment = null;
+    var pin = null;
+    var total = null;
+
+    input = document.querySelector( ".pin input" );
+
+    if( input.value.trim() != CUSTOMER_PIN )
+    {
+        alert( "PIN is incorrect." );
+
+        input.value = "";
+
+        this.classList.remove( "ready" );
+        this.classList.add( "pending" );
+    } else {
+        payment = document.querySelector( ".payment" );
+        payment.style.left = window.innerWidth + "px";
+        payment.style.display = "inline";
+
+        pin = document.querySelector( ".pin" );
+
+        card = document.querySelector( ".card" );
+        card.style.left = window.innerWidth + "px";
+        card.style.visibility = "visible";
+
+        TweenMax.to( card, 0.50, {
+            left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+        } );
+
+        TweenMax.to( pin, 0.50, {
+            left: 0 - window.innerWidth,
+            onComplete: doPinComplete,
+            onCompleteScope: pin
+        } );
+
+        TweenMax.to( payment, 0.50, {
+            left: 0
+        } );
+
+        // Parse out total amount
+        // Mostly used for brevity
+        total = document.querySelector( ".receipt .charge" );
+
+        index = total.innerHTML.indexOf( CURRENCY_SYMBOL ) + 1;
+        amount = parseFloat( total.innerHTML.substr( index ) );
+
+        // Preload data fpr register
+        page = document.querySelector( ".page .holder > div:first-of-type" );
+
+        // Construct message
+        // Transaction and default card
+        message = {
+            action: TRANSACTION_ACCEPTED,
+            total: amount,
+            card: {
+                background: page.getAttribute( "data-card" ),
+                width: card.clientWidth,
+                height: card.clientHeight,
+                name: card.children[0].innerHTML,
+                expires: card.children[1].innerHTML,
+                number: card.children[2].innerHTML,
+                vendor: page.getAttribute( "data-vendor" )
+            }
+        };
+
+        // Let register know payment has been accepted
+        producer.send(
+            session.createTextMessage( JSON.stringify( message ) ),
+            doMessageSent
+        );
+    }
+}
+
+function doPrevious()
+{
+    var pin = null;
+    var receipt = null;
+
+    pin = document.querySelector( ".pin" );
+
+    receipt = document.querySelector( ".receipt" );
+    receipt.style.left = ( 0 - window.innerWidth ) + "px";
+    receipt.style.display = "inline";
+
+    TweenMax.to( pin, 0.50,  {
+        left: window.innerWidth,
+        onComplete: doPreviousComplete,
+        onCompleteScope: pin
+    } );
+
+    TweenMax.to( receipt, 0.50, {
+        left: 0
+    } );
+}
+
+function doPreviousComplete()
+{
+    this.style.display = "none";
+}
+
+function doReceiptComplete()
+{
+    this.style.display = "none";
+}
+
+// Called when broker session started
+function doSessionStart()
+{
+    var query = null;
+
+    // Debug
+    logMessage( "Subscribed." );
+
+    // Topic
+    topic = session.createTopic( TOPIC_POS );
+
+    // Consumer
+    consumer = session.createConsumer( topic );
+    consumer.setMessageListener( doMessageArrived );
+
+    // Producer
+    producer = session.createProducer( topic );
+
+    query = new Parse.Query( Transaction );
+    query.include( "registerId" );
+    query.descending( "createdAt" );
+    query.find( {
+        success: function( results ) {
+            var found = null;
+            var message = null;
+
+            // Check if found
+            found = false;
+
+            // Look for matching transaction
+            for( var r = 0; r < results.length; r++ )
+            {
+                if( results[r].id.substr( results[r].id.length - 4 ) == model.pin )
+                {
+                    logMessage( "Found: " + results[r] );
+                    found = true;
+                    break;
+                }
+            }
+
+            // No matching transaction
+            if( !found )
+            {
+                // Debug
+                logMessage( "Could not find transaction." );
+            } else {
+                // Construct message
+                // Include serializable register reference
+                message = {
+                    action: TRANSACTION_READ,
+                    transaction: results[r],
+                    register: {
+                        vendorName: results[r].get( "registerId" ).get( "vendorName" ),
+                        vendorPath: results[r].get( "registerId" ).get( "vendorPath" ),
+                        vendorLogo: results[r].get( "registerId" ).get( "vendorLogo" ),
+                        shortCode: results[r].get( "registerId" ).get( "shortCode" ),
+                        animation: results[r].get( "registerId" ).get( "animationDelay" ),
+                        createdAt: results[r].get( "registerId" ).createdAt,
+                        updatedAt: results[r].get( "registerId" ).updatedAt,
+                        objectId: results[r].get( "registerId").id
+                    }
+                };
+
+                // Send message of transaction details
+                producer.send(
+                    session.createTextMessage( JSON.stringify( message ) ),
+                    doMessageSent
+                );
+            }
+        },
+        error: function( error ) {
+            // Debug
+            logMessage( "Problem reading transactions." );
+        }
+    } );
+}
+
+// Called when window is loaded
+// Configures event handlers and models
+// Connects to message server
+function doWindowLoad()
+{
+    var buttons = null;
+    var card = null;
+    var input = null;
+
+    // Debug
+    logMessage( "Loaded." );
+
+    // Check to see if there is a touch event handler
+    touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+
+    // Pin entry
+    input = document.querySelector( ".pin input" );
+    input.addEventListener( "keyup", doPinChange );
+
+    buttons = document.querySelector( ".pin .total" );
+    buttons.children[0].addEventListener( touch ? "touchstart" : "click", doPrevious );
+
+    // Listen for card mouse movements
+    card = document.querySelector( ".card" );
+    card.addEventListener( touch ? "touchstart" : "mousedown", doCardDown );
+
+    // Listen for coupon accept
+    buttons = document.querySelector( ".coupon .total" );
+    // buttons.children[0].addEventListener( touch ? "touchstart" : "click", doCouponAccept );
+    buttons.children[1].addEventListener( touch ? "touchstart" : "click", doCouponDecline );
+
+    // Random seed of discounts to apply
+    discounts = [5, 10, 15, 20, 25, 30, 35, 40];
+
+    // Establish data model
+    // Transaction ID from URL
+    model = {
+        pin: URLParser( window.location.href ).getParam( "id" ),
+        products: null,
+        purchase: null,
+        transaction: null
+    };
+
+    // Debug
+    Tracer.setTrace( true );
+
+    // Use JMS as broker
+    factory = new JmsConnectionFactory( DEFAULT_ENDPOINT );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+
+    // Initial layout
+    doWindowResize();
+}
+
+function doWindowResize()
+{
+    var buttons = null;
+    var card = null;
+    var code = null;
+    var codeWidth = null;
+    var coupon = null;
+    var passbook = null;
+    var payment = null;
+    var pin = null;
+    var receipt = null;
+    var wallet = null;
+
+    // Receipt screen
+    receipt = document.querySelector( ".receipt" );
+    receipt.style.width = window.innerWidth + "px";
+    receipt.style.height = window.innerHeight + "px";
+    receipt.style.display = "inline";
+    // receipt.style.left = window.innerWidth + "px";
+
+    // Pin screen
+    pin = document.querySelector( ".pin" );
+    pin.style.width = window.innerWidth + "px";
+    pin.style.height = window.innerHeight + "px";
+
+    buttons = document.querySelector( ".pin .total" );
+    buttons.children[0].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+    buttons.children[1].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+
+    // Payment screen
+    payment = document.querySelector( ".payment" );
+    payment.style.width = window.innerWidth + "px";
+    payment.style.height = window.innerHeight + "px";
+
+    wallet = document.querySelector( ".wallet" );
+    card = document.querySelector( ".card" );
+
+    card.style.width = ( window.innerHeight - ( 80 + 50 ) ) + "px";
+    card.style.height = Math.round( ( window.innerHeight - ( 80 + 50 ) ) * CARD_RATIO ) + "px";
+    // card.style.left = Math.round( ( window.innerWidth - card.clientWidth ) / 2 ) + "px";
+    card.style.top = Math.round( ( ( window.innerHeight - card.clientHeight ) / 2 ) - 15 ) + "px";
+
+    // Coupon screen
+    coupon = document.querySelector( ".coupon" );
+    coupon.style.width = window.innerWidth + "px";
+    coupon.style.height = window.innerHeight + "px";
+
+    passbook = document.querySelector( ".passbook" );
+
+    codeWidth = Math.round( window.innerWidth * 0.60 );
+
+    code = document.querySelector( ".code" );
+    code.style.width = codeWidth + "px";
+
+    // BEWARE MAGIC NUMBERS
+    // 30 is 15 * 2
+    // 15px offset on left and right of passbook
+    // Passbook measurement are not calculated with display = none
+    // BEWARE MAGIC NUMBERS
+    code.style.left = Math.round( ( ( window.innerWidth - 30 ) - codeWidth ) / 2 ) + "px";
+
+    buttons = document.querySelector( ".coupon .total" );
+    buttons.children[0].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+    buttons.children[1].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+}
+
+window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "resize", doWindowResize );
+</script>
+
+</head>
+<body>
+
+<!-- Receipt -->
+<div class="receipt">
+
+    <!-- Item list -->
+    <div class="list">
+
+        <!-- Products -->
+
+        <!-- Tax -->
+        <div class="line tax">
+            <div class="photo">%</div>
+            <div class="label">Tax</div>
+            <div class="rate">(8.25%)</div>
+            <div class="price">$1.65</div>
+        </div>
+
+    </div>
+
+    <!-- Security -->
+    <div class="security">
+        <img src="img/padlock.svg" width="20" height="30">
+        <div>Your connection is secure.</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="total">
+        <div class="charge pending">Total: $0.00</div>
+        <div class="logo"></div>
+    </div>
+
+</div>
+
+<!-- Pin -->
+<div class="pin">
+
+    <!-- Prompt -->
+    <div class="prompt">Enter your 4-digit pin to continue.</div>
+    <input type="password" pattern="[0-9]*" inputmode="numeric">
+
+    <!-- Buttons -->
+    <div class="total">
+        <div class="charge no">Previous</div>
+        <div class="charge pending">Next</div>
+    </div>
+
+</div>
+
+
+<!-- Payment -->
+<div class="payment">
+
+    <!-- Status -->
+    <div class="status">READY TO PAY</div>
+
+    <!-- Wallet area -->
+    <!-- Gives measurements for card -->
+    <div class="wallet"></div>
+
+    <!-- Page -->
+    <div class="page">
+        <div class="holder">
+            <div class="indicator selected" data-card="gold-card" data-vendor="kaazing"></div>
+            <div class="indicator" data-card="red-card" data-vendor="visa"></div>
+            <div class="indicator" data-card="blue-card" data-vendor="american-express"></div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">To pay, swipe the selected card upwards.</div>
+
+</div>
+
+<!-- Coupon -->
+<div class="coupon">
+
+    <div class="holder">
+        <div class="passbook">
+            <div class="brand"></div>
+            <div class="savings"></div>
+            <div class="details"></div>
+            <div class="code"></div>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="total">
+        <div class="charge ready">Remind me</div>
+        <div class="charge no">No thanks</div>
+    </div>
+
+</div>
+
+<!-- Credit card -->
+<!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
+<div class="card">
+    <div class="holder">VIKRAM MEHTA</div>
+    <div class="expiration">11/15</div>
+    <div class="number">1234 5678 9012 3456</div>
+    <img class="logo" width="52" height="52" src="img/kaazing.svg">
+</div>
+
+<!-- Line item template -->
+<div class="line template">
+    <div class="photo" style="background-image: url( 'img/barkram.jpg' );"></div>
+    <div class="label">Apple Biscuit</div>
+    <div class="duplicate">0</div>
+    <div class="price">$4.50</div>
+</div>
+
+</body>
+</html>
