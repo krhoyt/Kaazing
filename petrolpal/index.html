@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1">
+
+<title>Petrol Pal</title>
+
+<!-- Web application icons -->
+<link rel="apple-touch-icon" href="img/logo.60.png">
+<link rel="apple-touch-icon" sizes="76x76" href="img/logo.76.png">
+<link rel="apple-touch-icon" sizes="120x120" href="img/logo.120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="img/logo.152.png">
+
+<!-- Google Fonts -->
+<!-- Righteous, 400 -->
+<!-- Source Sans Pro, 300, 400, 700 -->
+<!-- Source Code Pro, 600 -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700|Righteous|Source+Code+Pro:600" rel="stylesheet" type="text/css">
+
+<style type="text/css">
+body {
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+#viewport {
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.card {
+    position: absolute;
+    border-radius: 8px;
+    background-image: url( 'img/gold-card.png' );
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    box-shadow: -2px 0 5px 0 rgba( 0, 0, 0, 0.40 );
+    -webkit-transform: rotate( -90deg );
+    transform: rotate( -90deg );
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 600;
+    font-size: 1.125em;
+    letter-spacing: 3px;
+    text-shadow: 1px 0 0 white;
+    cursor: default;
+    visibility: hidden;
+}
+
+.card > .bank {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+}
+
+.card > .chip {
+    position: absolute;
+    left: 100px;
+    bottom: 80px;
+}
+
+.card > .expiration {
+    position: absolute;
+    right: 23px;
+    bottom: 30px;
+}
+
+.card > .holder {
+    position: absolute;
+    left: 15px;
+    bottom: 45px;
+}
+
+.card > .kaazing {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+}
+
+.card > .logo {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.card > .member {
+    color: black;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 700;
+    position: absolute;
+    left: 15px;
+    bottom: 15px;
+    text-shadow: none;
+    letter-spacing: 0;
+}
+
+.card > .number {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    bottom: 70px;
+}
+
+.card > .number > a {
+    color: black;
+    text-decoration: none;
+}
+
+.card > .petrol {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.card > .since {
+    position: absolute;
+    left: 140px;
+    bottom: 15px;
+}
+
+.details {
+    left: 640px;
+    top: 0;
+}
+
+.details > .panel > .pump {
+    border-top: dashed 1px darkgray;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url( 'img/stripe.png' );
+    background-repeat: repeat;
+}
+
+.details > .panel > .pump > .code {
+    /*
+    display: block;
+    margin: auto;
+    width: 300px;
+    */
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.details > .panel > .pump > .code > p {
+    color: black;
+    float: left;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    line-height: 50px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.details > .panel > .pump > .code > input {
+    border: solid 1px darkgray;
+    color: black;
+    float: right;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    line-height: 50px;
+    margin-bottom: 15px;
+    margin-left: 15px;
+    margin-top: 15px;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-align: center;
+    width: 50px;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+}
+
+.details > .map {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.details > .panel {
+    background-color: rgba( 255, 255, 255, 0.90 );
+    border-top: 1px solid #a8a8a7;
+    bottom: 0;
+    height: 280px;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+}
+
+.details > .panel > .pump > button {
+    border: none;
+    display: block;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.25em;
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    width: 290px;
+}
+
+.details > .panel > .pump > button.pending {
+    background-color: darkgray;
+    color: lightgray;
+}
+
+.details > .panel > .pump > button.ready {
+    background-color: orange;
+    color: white;
+}
+
+.details > .panel > p:nth-of-type( 1 ) {
+    color: black;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 0;
+    margin-left: 15px;
+    margin-top: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.details > .panel > p:nth-of-type( 2 ) {
+    color: darkgray;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-left: 15px;
+    margin-top: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.details > .panel > .prices {
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 303px;
+}
+
+.details > .panel > .prices > div {
+    border-right: dashed 1px darkgray;
+    margin-bottom: 0;
+    margin-top: 0;
+    float: left;
+    width: 75px;
+}
+
+.details > .panel > .prices > div > p:first-of-type {
+    color: #3b6e8f;
+    /* color: orange; */
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+}
+
+.details > .panel > .prices > div > p:last-of-type {
+    color: darkgray;
+    /* color: orange; */
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    font-size: 1em;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+}
+
+.details > .panel > .prices > div:last-of-type {
+    border-right: none;
+}
+
+.fill {
+    background-color: white;
+    left: 320px;
+    top: 0;
+}
+
+.fill > div {
+    background-image: url( 'img/stripe.png' );
+    background-repeat: repeat;
+    border-top: dashed 1px darkgray;
+    bottom: 0;
+    height: 200px;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+
+.fill > div > div {
+    background-image: url( 'img/hot-dogs.jpg' );
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    border: solid 1px lightgray;
+    border-radius: 4px;
+    height: 115px;
+    left: 15px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.fill > div > p {
+    bottom: 15px;
+    color: #000000;
+    font-family: 'Source Sans Pro', sans-serif;
+    left: 30px;
+    margin-bottom: 0;
+    margin-top: 0;
+    position: absolute;
+    right: 30px;
+    text-align: center;
+}
+
+.fill > p:nth-of-type( 1 ) {
+    color: #3b6e8f;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 4em;
+    margin-bottom: 0;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.fill > p:nth-of-type( 2 ) {
+    color: darkgray;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+}
+
+.fill > p:nth-of-type( 3 ) {
+    color: #3b6e8f;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 4em;
+    margin-bottom: 0;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.fill > p:nth-of-type( 4 ) {
+    color: darkgray;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+}
+
+.locations {
+    background-color: lightgray;
+    left: 320px;
+    top: 0;
+}
+
+.locations > .list {
+    background-color: rgba( 255, 255, 255, 0.90 );
+    border-top: 1px solid #a8a8a7;
+    bottom: 0;
+    height: 265px;
+    left: 0;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    position: absolute;
+    right: 0;
+}
+
+.locations > .list > .item {
+    border-top: 1px solid #a8a8a7;
+    cursor: default;
+    height: 75px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.locations > .list > .item:first-of-type {
+    border-top: none;
+}
+
+.locations > .list > .item > .station {
+    float: left;
+    margin-left: 15px;
+    margin-top: 11px;
+}
+
+.locations > .list > .item > .station > p:first-of-type {
+    color: black;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 0;
+    margin-top: 0;
+    max-width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.locations > .list > .item > .station > p:last-of-type {
+    color: darkgray;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+    max-width: 185px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.locations > .list > .item > .price {
+    float: right;
+    margin-right: 15px;
+    margin-top: 11px;
+}
+
+.locations > .list > .item > .price > p:first-of-type {
+    color: #3b6e8f;
+    /* color: orange; */
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: right;
+    width: 92px;
+}
+
+.locations > .list > .item > .price > p:last-of-type {
+    color: darkgray;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: right;
+    width: 92px;
+}
+
+.locations > .map {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.marker {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    height: 74px;
+    width: 63px;
+}
+
+.marker_empty {
+    background-image: url( 'img/marker.empty.svg' );
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    height: 24px;
+    width: 20px;
+}
+
+.payment {
+    background-color: white;
+    left: 320px;
+    top: 0;
+}
+
+.payment > button {
+    border: none;
+    bottom: 15px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.25em;
+    left: 15px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    position: absolute;
+    right: 15px;
+}
+
+.payment > p {
+    bottom: 15px;
+    color: darkgray;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    left: 15px;
+    margin-bottom: 0;
+    position: absolute;
+    right: 15px;
+    text-align: center;
+}
+
+.payment > button.pending {
+    background-color: darkgray;
+    color: lightgray;
+}
+
+.payment > button.ready {
+    background-color: orange;
+    color: white;
+}
+
+.payment > .page {
+    /* bottom: 69px; */
+    bottom: 45px;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+
+.payment > .page > .holder {
+    margin: auto;
+    width: 58px;
+}
+
+.payment > .page > .holder > .indicator {
+    border-radius: 10px;
+    border: 1px darkgray solid;
+    float: left;
+    height: 10px;
+    margin-right: 10px;
+    width: 10px;
+}
+
+.payment > .page > .holder > .indicator:last-of-type {
+    margin-right: 0;
+}
+
+.payment > .page > .holder > .indicator.selected {
+    background-color: #3b6e8f;
+    border: solid 1px #3b6e8f;
+}
+
+.payment > .status {
+    font-family: 'Source Sans Pro', sans-serif;
+    left: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 15px;
+}
+
+.payment > .wallet {
+    bottom: 45px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 50px;
+}
+
+.screen {
+    height: 480px;
+    position: absolute;
+    width: 320px;
+}
+
+.splash {
+    background: url( 'img/steel.mesh.png' ) no-repeat center;
+    background-size: cover;
+    left: 0;
+    top: 0;
+}
+
+.splash > p:first-of-type {
+    color: orange;
+    font-family: 'Righteous', sans-serif;
+    font-size: 3em;
+    margin-top: 125px;
+    text-align: center;
+    text-shadow: 2px 2px 5px rgba( 0, 0, 0, 0.60 );
+}
+
+.splash > p:last-of-type {
+    color: white;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1em;
+    font-weight: 300;
+    margin-top: -25px;
+    text-align: center;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.60);
+}
+
+.template {
+    display: none;
+}
+
+.waiting {
+    background-color: white;
+    color: black;
+    font-family: 'Source Sans Pro', sans-serif;
+    left: 320px;
+    top: 0;
+}
+
+.waiting > p {
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 100px;
+    text-align: center;
+}
+</style>
+
+<!-- Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js" type="text/javascript"></script>
+
+<!-- Rich Marker -->
+<!-- https://googlemaps.github.io/js-rich-marker/reference.html -->
+<script src="script/rich.marker.js" type="text/javascript"></script>
+
+<!-- GreenSock -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/TweenMax.min.js" type="text/javascript"></script>
+
+<!-- PreloadJS -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/PreloadJS/0.4.1/preloadjs.min.js" type="text/javascript"></script>
+
+<!-- Emulation -->
+<script src="http://wallet.kaazing.com/lib/client/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://wallet.kaazing.com/lib/client/javascript/jms/JmsClient.js" type="text/javascript"></script>
+
+<!-- Application constants -->
+<script src="script/constants.js" type="text/javascript"></script>
+
+<!-- Brand constants -->
+<script src="script/brands.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+// Kaazing
+var connection = null;
+var consumer = null;
+var future = null;
+var producer = null;
+var session = null;
+var topic = null;
+
+// Application
+var down = null;
+var latitude = null;
+var longitude = null;
+var map_list = null;
+var map_detail = null;
+var map_detail_marker = null;
+var move = null;
+var petrol = null;
+var petrol_selection = null;
+var queue = null;
+var touch = null;
+
+function stationFind( id )
+{
+    var result = null;
+
+    for( var p = 0; p < petrol.length; p++ )
+    {
+        if( petrol[p].id == id )
+        {
+            result = petrol[p];
+            break;
+        }
+    }
+
+    return result;
+}
+
+function stationGraphic( station )
+{
+    var result = null;
+
+    result = ICON_GENERIC;
+
+    // TODO: Put in alphanumeric order
+    if( station.toLowerCase().indexOf( STATION_7_ELEVEN ) >= 0 )
+    {
+        result = ICON_7_ELEVEN;
+    } else if( station.toLowerCase().indexOf( STATION_CIRCLE_K ) >= 0 ) {
+        result = ICON_CIRCLE_K;
+    } else if( station.toLowerCase().indexOf( STATION_CIRCLE_K ) >= 0 ) {
+        result = ICON_CIRCLE_K;
+    } else if( station.toLowerCase().indexOf( STATION_CONOCO ) >= 0 ) {
+        result = ICON_CONOCO;
+    } else if( station.toLowerCase().indexOf( STATION_LOAF_N_JUG ) >= 0 ) {
+        result = ICON_LOAF_N_JUG;
+    } else if( station.toLowerCase().indexOf( STATION_VALERO ) >= 0 ) {
+        result = ICON_VALERO;
+    } else if( station.toLowerCase().indexOf( STATION_76 ) >= 0 ) {
+        result = ICON_76;
+    } else if( station.toLowerCase().indexOf( STATION_ARCO ) >= 0 ) {
+        result = ICON_ARCO;
+    } else if( station.toLowerCase().indexOf( STATION_BP ) >= 0 ) {
+        result = ICON_BP;
+    } else if( station.toLowerCase().indexOf( STATION_CHEVRON ) >= 0 ) {
+        result = ICON_CHEVRON;
+    } else if( station.toLowerCase().indexOf( STATION_CITGO ) >= 0 ) {
+        result = ICON_CITGO;
+    } else if( station.toLowerCase().indexOf( STATION_COSTCO ) >= 0 ) {
+        result = ICON_COSTCO;
+    } else if( station.toLowerCase().indexOf( STATION_EXXON ) >= 0 ) {
+        result = ICON_EXXON;
+    } else if( station.toLowerCase().indexOf( STATION_MOBIL ) >= 0 ) {
+        result = ICON_MOBIL;
+    } else if( station.toLowerCase().indexOf( STATION_SHELL ) >= 0 ) {
+        result = ICON_SHELL;
+    } else if( station.toLowerCase().indexOf( STATION_TEXACO ) >= 0 ) {
+        result = ICON_TEXACO;
+    }
+
+    return result;
+}
+
+function stationList( json )
+{
+    var item = null;
+    var list = null;
+    var locations = null;
+    var marker = null;
+    var match = null;
+    var price = null;
+    var station = null;
+    var status = null;
+    var template = null;
+
+    // Store results
+    petrol = json.stations;
+
+    // Display message
+    status = document.querySelector( ".splash > p:last-of-type" );
+    status.innerHTML = MESSAGE_READY;
+
+    // List
+    list = document.querySelector( ".locations > .list" );
+
+    // List line item
+    template = document.querySelector( ".item.template" );
+
+    // Show stations
+    for( var p = 0; p < petrol.length; p++ )
+    {
+        // Get matching logo
+        match = stationGraphic( petrol[p].station );
+
+        // Station location
+        // Big icons for closest
+        if( p > MAP_DISPLAY )
+        {
+            marker = new RichMarker( {
+                position: new google.maps.LatLng( petrol[p].lat, petrol[p].lng ),
+                map: map_list,
+                draggable: false,
+                flat: true,
+                content: "<div class=\"marker_empty\"></div>"
+            } );
+        } else {
+            marker = new RichMarker( {
+                position: new google.maps.LatLng( petrol[p].lat, petrol[p].lng ),
+                map: map_list,
+                draggable: false,
+                flat: true,
+                content: "<div class=\"marker\" style=\"background-image: url( '" + match + "' );\"></div>"
+            } );
+        }
+
+        // Line item
+        item = template.cloneNode( true );
+        item.setAttribute( "data-id", petrol[p].id );
+        item.addEventListener( "click", doStationClick );
+        item.classList.remove( "template" );
+
+        // Price and distance
+        price = item.querySelector( ".price" );
+        price.children[0].innerHTML = "$" + petrol[p].reg_price;
+        price.children[1].innerHTML = petrol[p].distance;
+
+        // Location
+        station = item.querySelector( ".station" );
+        station.children[0].innerHTML = petrol[p].station;
+        station.children[1].innerHTML = petrol[p].address;
+
+        list.appendChild( item );
+    }
+
+    // Show locations screen
+    locations = document.querySelector( ".locations" );
+    locations.style.left = window.innerWidth + "px";
+    locations.style.display = "inline";
+    locations.style.visibility = "visible";
+
+    TweenMax.to( locations, TIMING_SCREEN_MOVE, {
+        delay: TIMING_SPLASH_DELAY,
+        left: 0
+    } );
+}
+
+function showPosition( position )
+{
+    var center_place = null;
+    var latlng = null;
+    var list = null;
+    var locations = null;
+    var map_area = null;
+    var marker = null;
+    var new_place = null;
+    var script = null;
+    var status = null;
+
+    // Display message
+    status = document.querySelector( ".splash > p:last-of-type" );
+    status.innerHTML = MESSAGE_STATIONS;
+
+    // Store location
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude;
+
+    // For use in Google Maps
+    latlng = new google.maps.LatLng( latitude, longitude );
+
+    // Current location
+    if( POSITION_OWN == true )
+    {
+        marker = new google.maps.Marker( {
+            position: latlng,
+            map: map_list
+        } );
+    }
+
+    // Center on current location
+    // Based on screen placement
+    locations = document.querySelector( ".locations" );
+    list = document.querySelector( ".locations > .list" );
+
+    map_area = locations.clientHeight - list.clientHeight;
+    center_place = locations.clientHeight / 2;
+    new_place = center_place - ( map_area / 2 );
+
+    map_list.setCenter( latlng );
+    map_list.panBy( 0, new_place );
+
+    // Load station data
+    script = document.createElement( "script" );
+    script.src =
+        PETROL_FEED_URL +
+        latitude + "/" +
+        longitude + "/" +
+        PETROL_FEED_DISTANCE + "/" +
+        PETROL_FEED_TYPE + "/" +
+        PETROL_FEED_SORT + "/" +
+        PETROL_FEED_API_KEY + ".json?callback=" +
+        PETROL_FEED_CALLBACK;
+    document.getElementsByTagName( "head" )[0].appendChild( script );
+}
+
+function doAuthorizationComplete( card )
+{
+    console.log( "Bouncing ball." );
+
+    // Next screen please
+    setTimeout( doPaymentClick, 2000 );
+}
+
+function doCardAnimation()
+{
+    var message = null;
+    var top = null;
+
+    console.log( "Checking card animation." );
+
+    top = parseInt( this.style.top.substring( 0, this.style.top.length - 2) );
+
+    if( top < 5 && this.getAttribute( "data-top" ) == "false" )
+    {
+        console.log( "Telling register to animate card." );
+
+        this.setAttribute( "data-top", "true" );
+
+        // Assemble message
+        message = {
+            action: "swipe",
+            width: this.clientWidth,
+            height: this.clientHeight,
+            name: this.children[0].innerHTML,
+            expires: this.children[1].innerHTML,
+            number: this.children[2].innerHTML,
+            logo: this.getAttribute( "data-vendor" ),
+            background: this.getAttribute( "data-card" )
+        };
+
+        // Reached top of this screen
+        // Show on register screen
+        producer.send(
+            session.createTextMessage( JSON.stringify( message ) ),
+            doMessageSent
+        );
+    }
+}
+
+function doCardComplete( card, clone, data )
+{
+    var img = null;
+
+    console.log( "Horizontal gesture complete." );
+
+    // Remove logo image
+    card.removeChild( card.children[3] );
+
+    // Kaazing
+    img = document.createElement( "img" );
+    img.height = 52;
+    img.src = "img/kaazing.svg";
+    img.classList.add( "kaazing" );
+    card.appendChild( img );
+
+    // Remove petrol image
+    card.removeChild( card.children[3] );
+
+    // Petrol
+    img = document.createElement( "img" );
+    img.height = 52;
+    img.src = "img/" + data.getAttribute( "data-petrol" ) + ".svg";
+    img.classList.add( "petrol" );
+    card.appendChild( img );
+
+    // Remove bank image
+    card.removeChild( card.children[3] );
+
+    // Petrol
+    img = document.createElement( "img" );
+    img.height = 52;
+    img.src = "img/" + data.getAttribute( "data-bank" ) + ".svg";
+    img.classList.add( "bank" );
+    card.appendChild( img );
+
+    /*
+    clone.style.backgroundImage = "url( 'img/" + page.children[incoming].getAttribute( "data-card" ) + ".png' )";
+    clone.children[4].src = "img/" + page.children[incoming].getAttribute( "data-petrol" ) + ".svg";
+    clone.children[5].src = "img/" + page.children[incoming].getAttribute( "data-bank" ) + ".svg";
+    clone.style.left = window.innerWidth + "px";
+    document.body.appendChild( clone );
+    */
+
+    // Rebuild logo image
+    // SVG placed into SVG scales down
+    // Rebuilding from scratch keep scale
+    /*
+    img = document.createElement( "img" );
+    img.width = 52;
+    img.height = 52;
+    img.src = "https://s3.amazonaws.com/kaazingwallet/img/" + data.getAttribute( "data-vendor" ) + ".svg";
+    img.classList.add( "logo" );
+    */
+
+    card.style.backgroundImage = "url( 'img/" + data.getAttribute( "data-card" ) + ".png' )";
+    card.style.left = Math.round( ( window.innerWidth - card.clientWidth ) / 2 ) + "px";
+
+    document.body.removeChild( clone );
+
+    // Allow preload at register
+    // sendCardChange( card, data );
+}
+
+function doCardDown( event )
+{
+    event.preventDefault();
+
+    if( touch )
+    {
+        down = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+        };
+    } else {
+        down = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+
+    console.log( "Down at: " + down );
+
+    document.addEventListener( touch ? "touchmove" : "mousemove", doCardMove );
+    document.addEventListener( touch ? "touchend" : "mouseup", doCardUp );
+}
+
+function doCardLeft()
+{
+    var card = null;
+    var clone = null;
+    var incoming = null;
+    var message = null;
+    var page = null;
+    var selected = null;
+
+    console.log( "Swipe card left." );
+
+    page = document.querySelector( ".payment .holder" );
+
+    for( var c = 0; c < page.children.length; c++ )
+    {
+        if( page.children[c].classList.contains( "selected" ) )
+        {
+            selected = c;
+            break;
+        }
+    }
+
+    if( selected == ( page.children.length - 1 ) )
+    {
+        incoming = 0;
+    } else {
+        incoming = selected + 1;
+    }
+
+    card = document.querySelector( ".card" );
+
+    clone = card.cloneNode( true );
+    clone.style.backgroundImage = "url( 'img/" + page.children[incoming].getAttribute( "data-card" ) + ".png' )";
+    clone.children[4].src = "img/" + page.children[incoming].getAttribute( "data-petrol" ) + ".svg";
+    clone.children[5].src = "img/" + page.children[incoming].getAttribute( "data-bank" ) + ".svg";
+    clone.style.left = window.innerWidth + "px";
+    document.body.appendChild( clone );
+
+    page.children[selected].classList.remove( "selected" );
+    page.children[incoming].classList.add( "selected" );
+
+    TweenMax.to( card, 0.50, {
+        left: 0 - window.innerWidth,
+        onComplete: doCardComplete,
+        onCompleteParams: [card, clone, page.children[incoming]]
+    } );
+
+    TweenMax.to( clone, 0.50, {
+        left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+    } );
+}
+
+function doCardMove( event )
+{
+    event.preventDefault();
+
+    if( touch )
+    {
+        move = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+        };
+    } else {
+        move = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+}
+
+function doCardRight()
+{
+    var card = null;
+    var clone = null;
+    var incoming = null;
+    var message = null;
+    var page = null;
+    var selected = null;
+
+    console.log( "Card swipe right." );
+
+    page = document.querySelector( ".payment > .page > .holder" );
+
+    for( var c = 0; c < page.children.length; c++ )
+    {
+        if( page.children[c].classList.contains( "selected" ) )
+        {
+            selected = c;
+            break;
+        }
+    }
+
+    if( selected == 0 )
+    {
+        incoming = page.children.length - 1;
+    } else {
+        incoming = selected - 1;
+    }
+
+    card = document.querySelector( ".card" );
+
+    clone = card.cloneNode( true );
+    clone.style.backgroundImage = "url( 'img/" + page.children[incoming].getAttribute( "data-card" ) + ".png' )";
+    clone.children[4].src = "img/" + page.children[incoming].getAttribute( "data-petrol" ) + ".svg";
+    clone.children[5].src = "img/" + page.children[incoming].getAttribute( "data-bank" ) + ".svg";
+    clone.style.left = ( 0 - window.innerWidth ) + "px";
+    document.body.appendChild( clone );
+
+    page.children[selected].classList.remove( "selected" );
+    page.children[incoming].classList.add( "selected" );
+
+    TweenMax.to( card, TIMING_SCREEN_MOVE, {
+        left: window.innerWidth,
+        onComplete: doCardComplete,
+        onCompleteParams: [card, clone, page.children[incoming]]
+    } );
+
+    TweenMax.to( clone, TIMING_SCREEN_MOVE, {
+        left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+    } );
+}
+
+function doCardUp( event )
+{
+    var card = null;
+    var distance = null;
+    var distanceX = null;
+    var distanceY = null;
+    var status = null;
+    var up = null;
+
+    event.preventDefault();
+
+    console.log( "Moved to: " + move );
+
+    distance = Math.sqrt( Math.pow( move.x - down.x, 2 ) + Math.pow( move.y - down.y, 2 ) );
+
+    console.log( "Distance: " + distance );
+
+    if( distance < CLICK_DISTANCE )
+    {
+        console.log( "Card clicked." );
+    } else {
+        distanceX = Math.max( down.x, move.x ) - Math.min( down.x, move.x );
+        distanceY = Math.max( down.y, move.y ) - Math.min( down.y, move.y );
+
+        if( distanceX > distanceY )
+        {
+            console.log( "Horizontal swipe." );
+
+            if( down.x < move.x )
+            {
+                doCardRight();
+            } else if( down.x > move.x ) {
+                doCardLeft();
+            }
+        } else if( distanceY > distanceX ) {
+            console.log( "Vertical swipe." );
+
+            if( down.y < move.y )
+            {
+                console.log( "Down" );
+            } else if( down.y > move.y ) {
+                // Debug
+                console.log( "Up" );
+
+                status = document.querySelector( ".payment > .status" );
+                status.innerHTML = "AUTHORIZING CARD";
+
+                card = document.querySelector( ".card" );
+                card.setAttribute( "data-top", "false" );
+
+                TweenMax.to( card, 1, {
+                    top: 0 - card.clientWidth,
+                    onUpdate: doCardAnimation,
+                    onUpdateScope: card
+                } );
+            }
+        }
+    }
+
+    document.removeEventListener( touch ? "touchmove" : "mousemove", doCardMove );
+    document.removeEventListener( touch ? "touchend" : "mouseup", doCardUp );
+
+    down = null;
+    move = null;
+}
+
+function doConnected()
+{
+    // Connection
+    connection = future.getValue();
+
+    // Start broker session
+    connection.start( doSessionStart );
+}
+
+function doManualAdvance()
+{
+    showPosition( {
+        coords: {
+            latitude: KAAZING_LATITUDE,
+            longitude: KAAZING_LONGITUDE
+        }
+    } );
+}
+
+function doMessageArrived( message )
+{
+    var card = null;
+    var data = null;
+    var gallons = null;
+    var purchase = null;
+
+    console.log( "Message arrived." );
+
+    data = JSON.parse( message.getText() );
+
+    if( data.action == "pump" )
+    {
+        console.log( "Pumping ..." );
+
+        purchase = document.querySelector( ".fill > p:nth-of-type( 1 )" );
+        purchase.innerHTML = data.purchase.toFixed( 2 );
+
+        gallons = document.querySelector( ".fill > p:nth-of-type( 3 )" );
+        gallons.innerHTML = data.gallons.toFixed( 2 );
+    } else if( data.action == "authorized" ) {
+        card = document.querySelector( ".card" );
+        card.style.top = window.innerHeight + ( card.clientHeight / 2 ) + "px";
+
+        TweenMax.to( card, 1, {
+            top: Math.round( ( ( window.innerHeight - card.clientHeight ) / 2 ) - 15 ),
+            onComplete: doAuthorizationComplete,
+            onCompleteScope: card
+        } );
+    }
+}
+
+function doMessageSent()
+{
+    console.log( "Message sent." );
+}
+
+function doPaymentClick()
+{
+    var card = null;
+    var fill = null;
+    var page = null;
+
+    page = document.querySelector( ".payment > .page > .holder > .indicator.selected" );
+
+    // Tell pump
+    producer.send(
+        session.createTextMessage( JSON.stringify( {
+            action: "payment",
+            company: page.getAttribute( "data-company" )
+        } ) ),
+        doMessageSent
+    );
+
+    // Show fill screen
+    fill = document.querySelector( ".fill" );
+    fill.style.left = window.innerWidth + "px";
+    fill.style.visibility = "visible";
+
+    card = document.querySelector( ".card" );
+
+    TweenMax.to( fill, TIMING_SCREEN_MOVE, {
+        left: 0
+    } );
+
+    TweenMax.to( card, TIMING_SCREEN_MOVE, {
+        left: 0 - window.innerWidth
+    } );
+}
+
+function doPumpChange()
+{
+    var button = null;
+
+    button = document.querySelector( ".details > .panel > .pump > button" );
+
+    if( this.value.trim().length == 1 )
+    {
+        button.classList.add( "ready" );
+        button.classList.remove( "pending" );
+        button.addEventListener( touch ? "touchstart" : "click", doPumpContinue );
+    } else {
+        button.classList.add( "pending" );
+        button.classList.remove( "ready" );
+        button.removeEventListener( touch ? "touchstart" : "click", doPumpContinue );
+    }
+}
+
+function doPumpClear()
+{
+    var button = null;
+    var input = null;
+
+    input = document.querySelector( ".details > .panel > .pump > .code > input" );
+    input.value = "";
+
+    button = document.querySelector( ".details > .panel > .pump > button" );
+    button.classList.add( "pending" );
+    button.classList.remove( "ready" );
+    button.removeEventListener( touch ? "touchstart" : "click", doPumpContinue );
+}
+
+function doPumpContinue()
+{
+    var payment = null;
+    var pump = null;
+
+    pump = document.querySelector( ".details > .panel > .pump > .code > input" );
+    pump.blur();
+
+    topic = session.createTopic( KAAZING_TOPIC + "." + petrol_selection.id + "." + pump.value );
+
+    // Consumer
+    // Set listener
+    consumer = session.createConsumer( topic );
+    consumer.setMessageListener( doMessageArrived );
+
+    // Producer
+    producer = session.createProducer( topic );
+
+    producer.send(
+        session.createTextMessage( JSON.stringify( {
+            action: "handshake"
+        } ) ),
+        doMessageSent
+    );
+
+    // Position card
+    var card = document.querySelector( ".card" );
+    card.style.left = window.innerWidth + "px";
+    card.style.visibility = "visible";
+
+    TweenMax.to( card, TIMING_SCREEN_MOVE, {
+        left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+    } );
+
+    // Transition to payment method
+    payment = document.querySelector( ".payment.screen" );
+    payment.style.left = window.innerWidth + "px";
+    payment.style.visibility = "visible";
+
+    TweenMax.to( payment, TIMING_SCREEN_MOVE,  {
+        left: 0
+    } );
+}
+
+function doQueueComplete()
+{
+    console.log( "Card images loaded." );
+}
+
+function doQueueProgress( event )
+{
+    console.log( "Loading cards (" + Math.round( event.progress * 100 ) + "%)." );
+}
+
+function doSessionStart()
+{
+    session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+}
+
+function doStationClick()
+{
+    var center_place = null;
+    var details = null;
+    var latlng = null;
+    var map_area = null;
+    var marker = null;
+    var match = null;
+    var new_place = null;
+    var panel = null;
+    var prices = null;
+
+    // Clean up
+    if( map_detail_marker != null )
+    {
+        map_detail_marker.setMap( null );
+        map_detail_marker = null;
+    }
+
+    // Get details
+    petrol_selection = stationFind( parseInt( this.getAttribute( "data-id" ) ) );
+
+    // Center on selected location
+    // Based on screen placement
+    details = document.querySelector( ".details" );
+    panel = document.querySelector( ".details > .panel" );
+
+    // Location
+    latlng = new google.maps.LatLng( petrol_selection.lat, petrol_selection.lng );
+
+    // Fit in offset viewport
+    map_area = details.clientHeight - panel.clientHeight;
+    center_place = details.clientHeight / 2;
+    new_place = center_place - ( map_area / 2 );
+
+    map_detail.setCenter( latlng );
+    map_detail.panBy( 0, new_place );
+
+    // Station logo
+    match = stationGraphic( petrol_selection.station );
+
+    // Station location
+    marker = new RichMarker( {
+        position: latlng,
+        map: map_detail,
+        draggable: false,
+        flat: true,
+        content: "<div class=\"marker\" style=\"background-image: url( '" + match + "' );\"></div>"
+    } );
+
+    // Name and location
+    panel.querySelector( "p:nth-of-type( 1 )").innerHTML = petrol_selection.station;
+    panel.querySelector( "p:nth-of-type( 2 )").innerHTML = petrol_selection.address;
+
+    // Prices
+    prices = document.querySelector( ".details > .panel > .prices" );
+    prices.querySelector( "div:nth-of-type( 1 ) > p" ).innerHTML = "$" + petrol_selection.reg_price;
+    prices.querySelector( "div:nth-of-type( 2 ) > p" ).innerHTML = "$" + petrol_selection.mid_price;
+    prices.querySelector( "div:nth-of-type( 3 ) > p" ).innerHTML = "$" + petrol_selection.pre_price;
+
+    if( petrol_selection.diesel_price == "N/A" )
+    {
+        prices.querySelector( "div:nth-of-type( 4 ) > p" ).innerHTML = petrol_selection.diesel_price;
+    } else {
+        prices.querySelector( "div:nth-of-type( 4 ) > p" ).innerHTML = "$" + petrol_selection.diesel_price;
+    }
+
+    details.style.left = window.innerWidth + "px";
+    details.style.visibility = "visible";
+
+    TweenMax.to( details, TIMING_SCREEN_MOVE, {
+        left: 0
+    } );
+
+    history.pushState( {
+        id: petrol_selection.id
+    }, petrol_selection.station );
+}
+
+function doWindowLoad()
+{
+    var card = null;
+    var factory = null;
+    var input = null;
+    var status = null;
+    var screens = null;
+
+    // Preload card images in background
+    queue = new createjs.LoadQueue();
+    queue.on( "progress", doQueueProgress, this );
+    queue.on( "complete", doQueueComplete, this );
+    queue.loadManifest( [
+        {id: "gold-card", src: "img/gold-card.png"},
+        {id: "blue-card", src: "img/blue-card.png"},
+        {id: "red-card", src: "img/red-card.png"}
+    ] );
+
+    // Gateway
+    factory = new JmsConnectionFactory( KAAZING_GATEWAY );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+
+    // Touch support
+    touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+
+    // Size screens
+    screens = document.querySelectorAll( ".screen" );
+
+    for( var s = 0; s < screens.length; s++ )
+    {
+        screens[s].style.height = window.innerHeight + "px";
+        screens[s].style.width = window.innerWidth + "px";
+
+        if( s == 0 )
+        {
+            screens[s].style.left = "0px";
+            screens[s].style.top = "0px";
+        } else {
+            // screens[s].style.display = "none";
+        }
+    }
+
+    // Size credit card
+    card = document.querySelector( ".card" );
+    card.addEventListener( touch ? "touchstart" : "mousedown", doCardDown );
+    card.style.width = ( window.innerHeight - ( 75 + 50 ) ) + "px";
+    card.style.height = Math.round( ( window.innerHeight - ( 75 + 50 ) ) * CARD_RATIO ) + "px";
+    card.style.top = Math.round( ( ( window.innerHeight - card.clientHeight ) / 2 ) - 15 ) + "px";
+
+    // Manually advance
+    // Use Kaazing HQ
+    status = document.querySelector( ".splash > p:last-of-type" );
+    status.addEventListener( touch ? "touchstart" : "click", doManualAdvance );
+
+    // Pump number
+    input = document.querySelector( ".details > .panel > .pump > .code > input" );
+    input.addEventListener( "keyup", doPumpChange );
+
+    // Payment continue
+    // input = document.querySelector( ".payment > button" );
+    // input.addEventListener( touch ? "touchstart" : "click", doPaymentClick );
+
+    // Map for list
+    map_list = new google.maps.Map(
+        document.querySelector( ".locations > .map" ),
+        {
+            center: {
+                lat: KAAZING_LATITUDE,
+                lng: KAAZING_LONGITUDE
+            },
+            mapTypeControl: false,
+            streetViewControl: false,
+            zoom: 12,
+            zoomControl: false
+        }
+    );
+
+    // Map for details
+    map_detail = new google.maps.Map(
+        document.querySelector( ".details > .map" ),
+        {
+            center: {
+                lat: KAAZING_LATITUDE,
+                lng: KAAZING_LONGITUDE
+            },
+            mapTypeControl: false,
+            streetViewControl: false,
+            zoom: 16,
+            zoomControl: false
+        }
+    );
+
+    // Get location
+    navigator.geolocation.getCurrentPosition( showPosition );
+}
+
+function doWindowState()
+{
+    var details = null;
+
+    details = document.querySelector( ".details" );
+
+    TweenMax.to( details, TIMING_SCREEN_MOVE, {
+        left: window.innerWidth,
+        onComplete: doPumpClear
+    } );
+}
+
+window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "popstate", doWindowState );
+</script>
+
+</head>
+<body>
+
+<div id="viewport">
+
+    <div class="splash screen">
+        <p>petrol pal</p>
+        <p>Determining location ...</p>
+    </div>
+
+    <div class="locations screen">
+        <div class="map"></div>
+        <div class="list"></div>
+    </div>
+
+    <div class="details screen">
+        <div class="map"></div>
+        <div class="panel">
+            <p>Hoyt House</p>
+            <p>16220 Martingale Drive</p>
+            <div class="prices">
+                <div>
+                    <p>$9.99</p>
+                    <p>Regular</p>
+                </div>
+                <div>
+                    <p>$9.99</p>
+                    <p>Midgrade</p>
+                </div>
+                <div>
+                    <p>$9.99</p>
+                    <p>Premium</p>
+                </div>
+                <div>
+                    <p>$9.99</p>
+                    <p>Diesel</p>
+                </div>
+            </div>
+            <div class="pump">
+                <div class="code">
+                    <p>I am using pump #</p>
+                    <input type="tel">
+                </div>
+                <button class="pending">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment screen">
+        <div class="status">PAYMENT METHOD</div>
+        <div class="wallet"></div>
+        <div class="page">
+            <div class="holder">
+                <div class="indicator selected" data-card="gold-card" data-petrol="shell" data-bank="citigroup"></div>
+                <div class="indicator" data-card="red-card" data-petrol="bp" data-bank="hsbc"></div>
+                <div class="indicator" data-card="blue-card" data-petrol="walmart" data-bank="empty"></div>
+            </div>
+        </div>
+        <p>Swipe the selected card upwards.</p>
+        <!-- <button class="ready">Fill 'er Up</button> -->
+    </div>
+
+    <div class="fill screen">
+        <p>0.00</p>
+        <p>Purchase</p>
+        <p>0.00</p>
+        <p>Gallons</p>
+        <div>
+            <div></div>
+            <p>Delicious hot dogs are waiting for you inside! Only $1.99 each.</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Credit card -->
+<!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
+<div class="card">
+    <div class="member">Member since</div>
+    <div class="since">2010</div>
+    <div class="holder">VIKRAM MEHTA</div>
+    <img class="kaazing" height="52" src="img/kaazing.svg">
+    <img class="petrol" height="52" src="img/shell.svg">
+    <img class="bank" height="52" src="img/citigroup.svg">
+</div>
+
+<!-- Templates -->
+<div class="item template">
+    <div class="price">
+        <p>$9.99</p>
+        <p>0.25km</p>
+    </div>
+    <div class="station">
+        <p>Hoyt House</p>
+        <p>16220 Martingale Drive</p>
+    </div>
+</div>
+
+</body>
+</html>
