@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" type="image/ico" href="images/favicon.ico">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">
+
+	<title>Mobile Wallet Dashboard - KAAZING</title>
+	<link rel="stylesheet" href="css/jquery.dataTables_kaazing.css">
+	<link rel="stylesheet" href="css/demo.css">
+	<style type="text/css" class="init"></style>
+
+	<script src="js/jquery.js"></script>
+	<!-- // <script src="js/jquery.dataTables.min.js"></script> -->
+	<script src="js/jquery.dataTables.js"></script>
+  <script src="../script/URLParser.js"></script>
+	<script class="init"></script>
+
+	<!-- Emulation -->
+	<!-- <script src="/lib/client/javascript/WebSocket.js"></script> -->
+	<script src="http://wallet.kaazing.com/lib/client/javascript/WebSocket.js"></script>
+
+	<!-- JMS -->
+	<!-- <script src="/lib/client/javascript/jms/JmsClient.js"></script> -->
+	<script src="http://wallet.kaazing.com/lib/client/javascript/jms/JmsClient.js"></script>
+	<script src="js/simdashboard.js"></script>
+
+  <!-- Parse -->
+	<script src="//www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+
+</head>
+
+<body class="dt-example">
+	<!-- <div class="container"> -->
+	<div id="innerContainer">
+		<section>
+			<div id="dashboardTitle"></div>
+
+			<table id="dashboard" class="display" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Date</th>
+						<th>Description</th>
+						<th>Details</th>
+					</tr>
+				</thead>
+
+				<tfoot>
+					<tr>
+						<th></th>
+						<th>Date</th>
+						<th>Description</th>
+						<th>Details</th>
+					</tr>
+				</tfoot>
+
+				<tbody>
+				</tbody>
+</table>
+
+</section>
+</div>
+
+<div id="alertDiv" class="alertContainer">
+	<h1>Fraud Alert!</h1>
+	Transaction ID: 8y9EAD87
+	<p>
+	Merchant ID: 8274910
+	<p>
+	Location: Bogota, Colombia
+
+</div>
+
+</body>
+</html>

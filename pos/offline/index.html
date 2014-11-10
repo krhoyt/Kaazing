@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Register</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Application styles -->
+<link href="style/register.css" rel="stylesheet" type="text/css">
+
+<!-- Date and time formatting -->
+<script src="script/moment.js" type="text/javascript"></script>
+
+<!-- Data storage (memory model) -->
+<script src="script/dao.js" type="text/javascript"></script>
+
+<!-- Asset preload -->
+<script src="script/preloadjs/preloadjs-0.4.1.min.js" type="text/javascript"></script>
+
+<!-- QR code generation -->
+<script src="script/qrcode/qrcode.min.js" type="text/javascript"></script>
+
+<!-- Animation -->
+<script src="script/greensock/TweenMax.min.js" type="text/javascript"></script>
+
+<!-- Emulation -->
+<script src="http://localhost:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://localhost:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<!-- URL parsing -->
+<script src="script/URLParser.js" type="text/javascript"></script>
+
+<!-- Local data model -->
+<script src="script/model.js" type="text/javascript"></script>
+
+<!-- Actions -->
+<script src="script/actions.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">
+var LOCATION_ADDRESS = "America Center Terminal, San Jose, CA 94089, USA";
+var LOCATION_LATITUDE = 37.417603;
+var LOCATION_LONGITUDE = -121.978863;
+var LOCATION_POSTAL_CODE = "94089";
+var REGISTER_DEFAULT = "chad";
+
+// Gateway variables
+var connection = null;
+var consumer = null;
+var future = null;
+var producer = null;
+var session = null;
+var topicConsume = null;
+var topicDashboard = null;
+var topicProduce = null;
+
+// Application variables
+var concurrent = null;
+var dashboard = null;
+var demoNotify = null;
+var geocoder = null;
+var interval = null;
+var queue = null;
+var reply = null;
+var sending = null;
+var start = null;
+var temporary = {
+    id: null,
+    product: null
+};
+var touch = null;
+var watch = null;
+
+function broadcast( message )
+{
+    // Debug
+    console.log( "Broadcast: " + message.client.action );
+
+    // Initialize concurrency if needed
+    if( sending == null )
+    {
+        concurrent = [];
+        sending = false;
+    }
+
+    // Do not allow concurrent sending
+    if( !sending )
+    {
+        sending = true;
+
+        if( message.client.hasOwnProperty( "dashboard" ) )
+        {
+            dashboard.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        } else {
+            producer.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        }
+    } else {
+        // Queue for retry later
+        concurrent.push( message );
+    }
+}
+
+function buildLayout()
+{
+    var clone = null;
+    var itemHeight = null;
+    var itemWidth = null;
+    var layout = null;
+    var product = null;
+    var template = null;
+
+    // Debug
+    console.log( "Building layout." );
+
+    // Reference template
+    template = document.querySelector( ".item.template" );
+
+    // Layout holder
+    layout = document.querySelector( ".layout" );
+
+    // Iterate over layout
+    for( var v = 0; v < model.layout.length; v++ )
+    {
+        // Find matching product detail
+        for( var p = 0; p < model.products.length; p++ )
+        {
+            if( model.products[p].objectId == model.layout[v].productId )
+            {
+                product = model.products[p];
+                break;
+            }
+        }
+
+        // MAGIC NUMBERS
+        itemWidth = Math.floor( ( layout.clientWidth - 60 - 8 ) / 4 );
+        itemHeight = Math.floor( ( layout.clientHeight - 60 - 8 ) / 4 );
+
+        // Clone template
+        clone = template.cloneNode( true );
+        clone.setAttribute( "data-id", product.objectId );
+        clone.setAttribute( "data-name", product.name );
+        clone.setAttribute( "data-price", product.price );
+        clone.setAttribute( "data-image", product.image );
+        clone.setAttribute( "data-path", product.imagePath );
+        clone.classList.remove( "template" );
+        clone.children[0].style.backgroundImage = "url( '" + product.imagePath + "/" + product.image + "' )";
+        clone.children[1].innerHTML = product.name;
+        clone.style.width = itemWidth + "px";
+        clone.style.height = itemHeight + "px";
+        // MAGIC NUMBERS
+        clone.style.left = ( ( ( itemWidth + 20 + 2 ) * model.layout[v].column ) + 1 ) + "px";
+        clone.style.top = ( ( ( itemHeight + 20 + 2 ) * model.layout[v].row ) + 1) + "px";
+        clone.addEventListener( touch ? "touchstart" : "click", doProductClick );
+
+        // Add to user interface
+        layout.appendChild( clone );
+    }
+}
+
+function buildLineItem( purchase, product )
+{
+    var bubble = null;
+    var clear = null;
+    var clone = null;
+    var count = null;
+    var ending = null;
+    var found = null;
+    var list = null;
+    var tax = null;
+    var template = null;
+
+    // Debug
+    console.log( "Building line item." );
+
+    // Reference elements
+    template = document.querySelector( ".line.template" );
+    list = document.querySelector( ".list" );
+    tax = document.querySelector( ".tax" );
+    clear = document.querySelector( ".clear" );
+
+    // Handle interface differences
+    // Mainly event handling
+    if( clear == null )
+    {
+        bubble = false;
+    } else {
+        bubble = true;
+    }
+
+    // Account for interface differences
+    // Code reused in register and wallet
+    if( bubble == true )
+    {
+        ending = 2;
+    } else {
+        ending = 1;
+    }
+
+    found = false;
+    count = 0;
+
+    for( var c = 0; c < list.children.length - ending; c++ )
+    {
+        if( list.children[c].getAttribute( "data-id" ) == product.objectId )
+        {
+            found = true;
+            count = parseInt( list.children[c].children[2].innerHTML );
+            clone = list.children[c];
+            break;
+        }
+    }
+
+    if( found )
+    {
+        count = count + 1;
+        clone.children[2].innerHTML = count;
+        clone.children[2].style.visibility = "visible";
+        clone.children[3].innerHTML = model.configuration.currencySymbol + ( count * product.price ).toFixed( 2 );
+    } else {
+        // Build new line item
+        clone = template.cloneNode( true );
+        clone.setAttribute( "data-purchase", purchase );
+        clone.setAttribute( "data-id", product.objectId );
+        clone.setAttribute( "data-name", product.name );
+        clone.setAttribute( "data-price", product.price );
+        clone.setAttribute( "data-image", product.image );
+        clone.setAttribute( "data-path", product.imagePath );
+        clone.classList.remove( "template" );
+        clone.children[0].style.backgroundImage = "url( '" + product.imagePath + "/" + product.image + "' )";
+        clone.children[1].innerHTML = product.name;
+        clone.children[2].innerHTML = "1";
+        clone.children[2].style.visibility = "hidden";
+        clone.children[3].innerHTML = model.configuration.currencySymbol + product.price.toFixed( 2 );
+
+        if( bubble == true )
+        {
+            clone.addEventListener( touch ? "touchstart" : "click", doItemClick );
+        }
+
+        // Add to line item list
+        list.insertBefore( clone, tax );
+    }
+
+    // Calculate new total
+    calculateTotal();
+}
+
+function buildTransaction()
+{
+    var footer = null;
+    var message = null;
+    var now = null;
+    var pin = null;
+    var qr = null;
+
+    // Debug
+    console.log( "Placing transaction on screen." );
+
+    // Easy PIN for URL access
+    pin = model.configuration.objectId.substr( model.configuration.objectId.length - 4 );
+
+    // Handle transaction shortcuts
+    footer = document.querySelector( ".footer" );
+    footer.innerHTML = "Transaction #" + pin;
+
+    // Load QR code
+    qr = document.querySelector( ".qr" );
+
+    var working = document.querySelector( ".working" );
+
+    var qrcode = new QRCode( working, {
+        text: model.configuration.qrCode + "?id=" + pin,
+        width: 165,
+        height: 165,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.M
+    } );
+
+    qr.style.backgroundImage = "url( \"" + document.querySelector( ".working > canvas" ).toDataURL( "image/png" ) + "\" )";
+
+    /*
+    qr.style.backgroundImage =
+        "url( \"http://zxing.org/w/chart?cht=qr&chs=230x230&chld=M&choe=UTF-8&chl=" +
+        encodeURIComponent( model.configuration.qrCode ) +
+        "%3Fid%3D" +
+        pin +
+        "\" )";
+    */
+
+    if( model.purchase == null )
+    {
+        // Determine connection duration
+        now = new Date();
+
+        if( ( now.getTime() - start.getTime() ) < model.configuration.splashDelay )
+        {
+            console.log( "Forced pause for effect..." );
+            interval = setInterval( showRegister, model.configuration.splashDelay - ( now.getTime() - start.getTime() ) );
+        } else {
+            showRegister();
+        }
+    } else {
+        model.purchase = null;
+    }
+
+    // Send notification
+    // Initial screen in demo mode
+    // Not on repeat transactions
+    if( demoNotify == false )
+    {
+        // Dashboard
+        console.log( "Sending notification to dashboard." );
+
+        message = {
+            client: {
+                action: NOTIFICATION_CREATE,
+                reply: reply,
+                dashboard: true
+            },
+            content: {
+                clerk: model.clerk.objectId,
+                transaction: model.transaction.objectId,
+                send: model.configuration.notification
+            }
+        };
+
+        broadcast( message );
+
+        /*
+        dashboard.send(
+            session.createTextMessage( JSON.stringify( message ) ),
+            doMessageSent
+        );
+        */
+
+        /*
+        // No notifications in offline mode
+        Parse.Cloud.run( "notification", {
+            clerk: model.clerk.authorization,
+            transaction: pin,
+            send: model.configuration.notification,
+            wallet: model.configuration.qrCode
+        }, {
+            success: doNotificationSuccess,
+            error: doNotificationError
+        } );
+        */
+
+        // Demo mode hack
+        demoNotify = true;
+    }
+}
+
+function calculateTotal()
+{
+    var charge = null;
+    var clear = null;
+    var ending = null;
+    var list = null;
+    var tax = null;
+    var taxes = null;
+    var total = null;
+
+    console.log( "Calculating total amount." );
+
+    // References
+    list = document.querySelector( ".list" );
+    charge = document.querySelector( ".charge" );
+    tax = document.querySelector( ".tax" );
+    clear = document.querySelector( ".clear" );
+
+    // Account for different interfaces
+    // No clear button on wallet
+    if( clear == null )
+    {
+        ending = 1;
+    } else {
+        ending = 2;
+    }
+
+    // Nothing yet
+    total = 0;
+
+    // Iterate through children
+    // Do not include tax and clear buttons in iteration
+    for( var c = 0; c < list.children.length - ending; c++ )
+    {
+        total = total + ( parseInt( list.children[c].children[2].innerHTML ) * parseFloat( list.children[c].getAttribute( "data-price" ) ) );
+    }
+
+    // Manage interface visibility
+    // Charge button
+    // Taxes
+    // Clear list button
+    if( total == 0 )
+    {
+        // Change button appearance
+        charge.classList.add( "pending" );
+        charge.classList.remove( "ready" );
+        charge.classList.remove( "waiting" );
+        charge.classList.remove( "accepted" );
+
+        // Disable charge button click
+        if( clear != null )
+        {
+            charge.removeEventListener( touch ? "touchstart" : "click", doChargeClick );
+        }
+
+        // Hide list controls
+        tax.style.visibility = "hidden";
+
+        // May or may not have a clear button
+        if( clear != null )
+        {
+            clear.style.visibility = "hidden";
+        }
+    } else {
+        // Enable charge button
+        // Different rules for different interfaces
+        if( clear != null )
+        {
+            charge.classList.add( "ready" );
+            charge.classList.remove( "pending" );
+            charge.classList.remove( "waiting" );
+            charge.classList.remove( "accepted" );
+            charge.addEventListener( touch ? "touchstart" : "click", doChargeClick );
+        }
+
+        // Show list controls
+        tax.style.visibility = "visible";
+
+        // May or may not have a clear button
+        if( clear != null )
+        {
+            clear.style.visibility = "visible";
+        }
+    }
+
+    // Calculate taxes
+    taxes = total * model.configuration.taxRate;
+    total = total + taxes;
+
+    // Display taxes and update total
+    tax.children[3].innerHTML = model.configuration.currencySymbol + taxes.toFixed( 2 );
+
+    if( clear != null )
+    {
+        charge.innerHTML = model.configuration.currencyCharge + total.toFixed( 2 );
+    } else {
+        charge.innerHTML = model.configuration.currencyTotal + total.toFixed( 2 );
+    }
+}
+
+function clearLineItems()
+{
+    var clear = null;
+    var ending = null;
+    var list = null;
+
+    // Debug
+    console.log( "Clear items from list." );
+
+    // References
+    list = document.querySelector( ".list" );
+    clear = document.querySelector( ".clear" );
+
+    // Account for interface difference
+    // Between register and wallet
+    if( clear == null )
+    {
+        ending = 1;
+    } else {
+        ending = 2;
+    }
+
+    // Remove all product children
+    // Always from zero element
+    // Number of children will vary
+    while( list.children.length > ending )
+    {
+        list.removeChild( list.children[0] );
+    }
+
+    // Update running total
+    calculateTotal();
+}
+
+function generateRandomString()
+{
+    var now = null;
+    var random = null;
+    var result = null;
+
+    // Random with date seed
+    now = new Date();
+    random = Math.floor( Math.random() * now.getTime() );
+    result = random.toString( 16 );
+
+    console.log( "Random string generation (" + result + ")." );
+
+    // Hex version
+    return result;
+}
+
+function initializeClient()
+{
+    var authorization = null;
+    var button = null;
+    var dialog = null;
+    var element = null;
+    var layout = null;
+    var login = null;
+    var qr = null;
+
+    // Debug
+    console.log( "Initializing client." );
+
+    // Touch support
+    touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+    console.log( "Touch is " + ( touch ? " " : "not " ) + "supported." );
+
+    // Easter egg
+    chad = document.querySelector( ".chad" );
+    chad.addEventListener( touch ? "touchstart" : "click", doTheChad )
+
+    demoNotify = false;
+
+    // **
+    // Login
+    // **
+
+    // Make sure authorization field has content
+    authorization = document.querySelector( ".login input" );
+    authorization.addEventListener( "keyup", doAuthorizationChange );
+
+    button = document.querySelector( ".login .dialog > div:nth-of-type( 2 )" );
+
+    // Development flag
+    if( model.configuration.notification == true )
+    {
+        button.classList.add( "disabled" );
+    } else {
+        authorization.value = model.configuration.authorization;
+        button.addEventListener( touch ? "touchstart" : "click", doLoginClick );
+    }
+
+    // Position dialog
+    dialog = document.querySelector( ".dialog" );
+    dialog.style.opacity = 0;
+    dialog.style.visibility = "visible";
+
+    // Cool animation
+    TweenMax.to( dialog, 1, {
+        opacity: 1
+    } );
+
+    // Status bar
+    updateStatus();
+
+    // **
+    // Register
+    // **
+
+    // Layout
+    layout = document.querySelector( ".layout" );
+
+    for( var r = 0; r < 4; r++ )
+    {
+        for( var c = 0; c < 4; c++ )
+        {
+            // MAGIC NUMBERS
+            element = document.createElement( "div" );
+            element.style.width = Math.floor( ( layout.clientWidth - 60 - 8 ) / 4 ) + "px";
+            element.style.height = Math.floor( ( layout.clientHeight - 60 - 8 ) / 4 ) + "px";
+            element.classList.add( "product" );
+
+            if( c < 3 )
+            {
+                element.style.marginRight = "20px";
+            }
+
+            if( r < 3 )
+            {
+                element.style.marginBottom = "20px";
+            }
+
+            if( r > 1 && c > 1 )
+            {
+                element.style.visibility = "hidden";
+            }
+
+            layout.appendChild( element );
+        }
+    }
+
+    // MAGIC NUMBERS
+    qr = document.querySelector( ".qr" );
+    qr.style.width = ( ( element.clientWidth * 2 ) + 22 ) + "px";
+    qr.style.height = ( ( element.clientHeight * 2 ) + 22 ) + "px";
+
+    // Clear button
+    clear = document.querySelector( ".clear" );
+    clear.addEventListener( touch ? "touchstart" : "click", doClearClick );
+
+    // Footer button
+    footer = document.querySelector( ".footer" );
+    footer.addEventListener( touch ? "touchstart" : "click", doFooterClick );
+
+    // Place at top for good measure
+    window.scrollTo( 0, 0 );
+}
+
+function nextTransaction()
+{
+    var clerk = null;
+    var register = null;
+
+    // TODO: Potentially new consumer/producer
+
+    console.log( "Creating next transaction." );
+
+    dao.createTransaction( {
+        clerkId: model.clerk.objectId,
+        registerId: model.register.objectId
+    }, {
+        success: doTransactionCreateSuccess,
+        error: doTransactionCreateError
+    } );
+
+    /*
+    // Pointer objects
+    clerk = new Clerk();
+    clerk.id = model.clerk.objectId;
+
+    register = new Register();
+    register.id = model.register.objectId;
+
+    // Transaction
+    transaction = new Transaction();
+    transaction.set( "clerkId", clerk );
+    transaction.set( "registerId", register );
+    transaction.save( null, {
+        success: doTransactionCreateSuccess,
+        error: doTransactionCreateError
+    } );
+    */
+}
+
+function removeLineItem( productId )
+{
+    var clear = null;
+    var count = null;
+    var ending = null;
+    var list = null;
+
+    // Debug
+    console.log( "Remove purchase from list." );
+
+    // References
+    list = document.querySelector( ".list" );
+    clear = document.querySelector( ".clear" );
+
+    if( clear == null )
+    {
+        ending = 1;
+    } else {
+        ending = 2;
+    }
+
+    // Iterate through line items
+    for( var c = 0; c < list.children.length - ending; c++ )
+    {
+        // Look for matching line item
+        if( list.children[c].getAttribute( "data-id" ) == productId )
+        {
+            // Determine current quantity
+            count = parseInt( list.children[c].children[2].innerHTML );
+
+            // If only one
+            if( count == 1 )
+            {
+                // Outright remove line item
+                list.removeChild( list.children[c] );
+            } else {
+                // Decrement quantity for all others
+                list.children[c].children[2].innerHTML = count - 1;
+                list.children[c].children[3].innerHTML = model.configuration.currencySymbol + ( ( count - 1 ) * parseFloat( list.children[c].getAttribute( "data-price" ) ) ).toFixed( 2 );
+
+                // Hide quantity for single item
+                if( count == 2 )
+                {
+                    list.children[c].children[2].style.visibility = "hidden";
+                }
+            }
+
+            break;
+        }
+    }
+
+    // Update interface totals
+    calculateTotal();
+}
+
+function showRegister()
+{
+    var chad = null;
+    var landing = null;
+    var qr = null;
+    var register = null;
+
+    console.log( "All systems are go." );
+    console.log( "Showing the register screen." );
+
+    // Clear intentional delay if needed
+    if( interval != null )
+    {
+        clearInterval( interval );
+        interval = null;
+    }
+
+    // Clear duration counter
+    start = null;
+
+    // Remove Easter egg
+    chad = document.querySelector( ".chad" );
+    chad.style.visibility = "hidden";
+    chad.style.display = "none";
+    chad.removeEventListener( touch ? "touchstart" : "click", doTheChad );
+
+    // Remove the login screen
+    landing = document.querySelector( ".login" );
+    landing.style.display = "none";
+
+    // Show register screen
+    window.scrollTo( 0, 0 );
+    register = document.querySelector( ".register" );
+    register.style.visibility = "visible";
+
+    // Show QR code
+    qr = document.querySelector( ".qr" );
+    qr.style.visibility = "visible";
+}
+
+function updateLineItem( temporaryId, purchaseId )
+{
+    var line = null;
+
+    // Debug
+    console.log( "Updating line item." );
+
+    // Update line item
+    // Assign actual purchase ID
+    line = document.querySelector( ".line[data-purchase=\"" + temporaryId + "\"]" );
+
+    // May not need updating
+    if( line != null )
+    {
+        line.setAttribute( "data-purchase", purchaseId );
+    }
+}
+
+function updateStatus( message )
+{
+    var clock = null;
+    var status = null;
+
+    console.log( "Status bar clock is ticking." );
+
+    status = document.querySelector( ".dialog .message" );
+
+    if( arguments.length == 0 )
+    {
+        // Start updating clock if needed
+        if( interval == null )
+        {
+            interval = setInterval( updateStatus, 1000 );
+        }
+
+        // Update clock text
+        clock = moment().format( "MMMM Do YYYY, h:mm:ss A" );
+    } else {
+        clearInterval( interval );
+        interval = null;
+    }
+
+    status.innerHTML = clock;
+}
+
+function doAuthorizationChange()
+{
+    var button = null;
+
+    console.log( "Login ID has changed (" + this.value.trim() + ")." );
+
+    // Login button
+    button = document.querySelector( ".login .dialog > div:nth-of-type( 2 )" );
+
+    // Make sure there is content
+    if( this.value.trim().length > 0 )
+    {
+        button.classList.remove( "disabled" );
+        button.addEventListener( touch ? "touchstart" : "click", doLoginClick );
+    } else {
+        button.classList.add( "disabled" );
+        button.removeEventListener( touch ? "touchstart" : "click", doLoginClick );
+    }
+}
+
+function doCardChange( card )
+{
+    var element = null;
+
+    console.log( "New card selected in wallet." );
+
+    element = document.querySelector( ".card" );
+    element.setAttribute( "data-edge", "false" );
+    element.setAttribute( "data-center", "false" );
+    element.children[0].innerHTML = card.name;
+    element.children[1].innerHTML = card.expires;
+    element.children[2].innerHTML = card.number;
+    element.children[3].src = "https://s3.amazonaws.com/kaazingwallet/img/" + card.vendor + ".svg";
+    element.style.width = card.width + "px";
+    element.style.height = card.height + "px";
+    element.style.backgroundImage = "url( 'img/" + card.background + ".png' )";
+    element.style.left = Math.round( ( window.innerWidth - parseInt( card.width ) ) / 2 ) + "px";
+    element.style.top = window.innerHeight + "px";
+}
+
+function doCardSwipe( data )
+{
+    var element = null;
+
+    console.log( "Sending card across screen." );
+
+    element = document.querySelector( ".card" );
+    element.style.visibility = "visible";
+
+    TweenMax.to( element, model.configuration.animationDelay, {
+        top: 0 - element.clientWidth - 10,
+        onComplete: doCardSwipeComplete,
+        onCompleteScope: element,
+        onUpdate: doCardSwipeUpdate,
+        onUpdateScope: element
+    } );
+}
+
+function doCardSwipeComplete()
+{
+    console.log( "Card has traversed screen." );
+
+    this.style.visibility = "hidden";
+
+    // Kick off a new transaction
+    nextTransaction();
+}
+
+function doCardSwipeUpdate()
+{
+    var center = null;
+    var message = null;
+    var top = null;
+
+    console.log( "Crossing the screen." );
+
+    // Determine placement
+    center = Math.round( window.innerHeight / 2 );
+    top = parseInt( this.style.top.substr( this.style.top - 2 ) );
+
+    // If at center
+    if( top < center && this.getAttribute( "data-center" ) == "false" )
+    {
+        console.log( "Clear line item at half way point." );
+
+        // Mark as point reached
+        this.setAttribute( "data-center", "true" );
+
+        // Clear register interface
+        clearLineItems();
+    }
+
+    // If at top but not off screen
+    if( top < 0 && this.getAttribute( "data-edge" ) == "false" )
+    {
+        console.log( "Tell wallet card was charged." );
+
+        // Mark as point reached
+        this.setAttribute( "data-edge", "true" );
+
+        // Construct message
+        message = {
+            client: {
+                action: CARD_CHARGED,
+                reply: reply
+            },
+            content: null
+        };
+
+        // Send message return trip
+        broadcast( message );
+
+        // Dashboard
+        console.log( "Sending charge to dashboard." );
+
+        message.client.dashboard = true;
+        broadcast( message );
+
+        /*
+        dashboard.send(
+            session.createTextMessage( JSON.stringify( message ) ),
+            doMessageSent
+        );
+        */
+    }
+}
+
+function doChargeClick()
+{
+    var amount = null;
+    var index = null;
+    var message = null;
+
+    // Debug
+    console.log( "Ready to charge." );
+
+    // Determine charge amount
+    // Calculation takes place on clients
+    // Passed for dashboard purposes
+    index = this.innerHTML.indexOf( model.configuration.currencySymbol ) + 1;
+    amount = parseFloat( this.innerHTML.substr( index ) );
+
+    // Update the interface
+    this.classList.remove( "ready" );
+    this.classList.add( "waiting" );
+    this.innerHTML = model.configuration.currencyPending + amount.toFixed( 2 );
+
+    // Construct message
+    message = {
+        client: {
+            action: TRANSACTION_CHARGE,
+            reply: reply
+        },
+        content: {
+            total: amount
+        }
+    };
+
+    // Send notification of charge
+    broadcast( message );
+}
+
+function doClearClick()
+{
+    var transaction = null;
+
+    console.log( "Reset client purchases." );
+
+    // Remove from user interface
+    clearLineItems();
+
+    console.log( "Resetting database purchases..." );
+
+    dao.findPurchaseAll( model.transaction, {
+        success: doPurchaseFindSuccess,
+        error: doPurchaseFindError
+    } );
+}
+
+function doClerkFindError( error )
+{
+    console.log( "Failed reading clerk (" + error.message + ")." );
+}
+
+function doClerkFindSuccess( result )
+{
+    var clerk = null;
+    var input = null;
+
+    if( result == null )
+    {
+        input = document.querySelector( ".login input" );
+
+        // Debug
+        console.log( "Clerk does not exist." );
+        console.log( "Creating new clerk (" + input.value.trim() + ")." );
+
+        // Create clerk entry with new value
+        clerk = {
+            authorization: input.value.trim()
+        };
+
+        dao.createClerk( clerk, {
+            success: doClerkReadSuccess,
+            error: doClerkReadError
+        } );
+    } else {
+        console.log( "Matching clerk entry found (" + result.get( "authorization" ) + ")." );
+
+        doClerkReadSuccess( result );
+    }
+}
+
+function doClerkReadError( result, error )
+{
+    console.log( "Error creating clerk (" + error.message + ")." );
+}
+
+function doClerkReadSuccess( clerk )
+{
+    var login = null;
+
+    console.log( "Clerk resolved." );
+
+    // Store in memory model
+    model.clerk.authorization = clerk.authorization;
+    model.clerk.createdAt = clerk.createdAt;
+    model.clerk.objectId = clerk.objectId;
+    model.clerk.updatedAt = clerk.updatedAt;
+
+    login = {
+        clerkId: clerk,
+        registerId: model.register
+    };
+
+    dao.createLogin( login, {
+        success: doLoginCreateSuccess,
+        error: doLoginCreateError
+    } );
+}
+
+function doClientSync( data )
+{
+    var message = null;
+
+    message = {
+        client: {
+            action: CLIENT_SYNC_RESPONSE,
+            reply: reply
+        },
+        content: dao
+    };
+
+    broadcast( message );
+}
+
+function doConfigurationError( error )
+{
+    console.log( "Error loading configuration." );
+}
+
+function doConfigurationSuccess( result )
+{
+    var factory = null;
+
+    // Debug
+    console.log( "Configuration loaded." );
+
+    // Store in memory model
+    model.configuration.objectId = result.objectId;
+    model.configuration.animationDelay = result.animationDelay;
+    model.configuration.authorization = result.authorization;
+    model.configuration.connecting = result.connecting;
+    model.configuration.createdAt = result.createdAt;
+    model.configuration.currencyAccepted = result.currencyAccepted;
+    model.configuration.currencyCharge = result.currencyCharge;
+    model.configuration.currencyPayment = result.currencyPayment;
+    model.configuration.currencyPending = result.currencyPending;
+    model.configuration.currencySymbol = result.currencySymbol;
+    model.configuration.currencyTotal = result.currencyTotal;
+    model.configuration.endpoint = result.endpoint;
+    model.configuration.notification = result.notification;
+    model.configuration.shortCode = result.shortCode;
+    model.configuration.splashDelay = result.splashDelay;
+    model.configuration.taxRate = result.taxRate;
+    model.configuration.topic = result.topic;
+    model.configuration.updatedAt = result.updatedAt;
+    model.configuration.vendorLogo = result.vendorLogo;
+    model.configuration.vendorName = result.vendorName;
+    model.configuration.vendorPath = result.vendorPath;
+    model.configuration.customerPin = result.customerPin;
+    model.configuration.qrCode = result.qrCode;
+    model.configuration.fakeGPS = result.fakeGPS;
+
+    // Use JMS as broker
+    factory = new JmsConnectionFactory( model.configuration.endpoint );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+}
+
+function doConnected()
+{
+    // Debug
+    console.log( "Client connection established." );
+
+    // Connection
+    connection = future.getValue();
+
+    // Start broker session
+    connection.start( doSessionStart );
+}
+
+function doFooterClick()
+{
+    var pin = null;
+
+    console.log( "Footer shortcut clicked." );
+
+    // Only use part of object ID
+    pin = model.configuration.objectId.substr( model.configuration.objectId.length - 4 );
+
+    // Open window
+    window.open( "wallet.html?id=" + pin, "_blank" );
+}
+
+function doHandshakeCreateError( error )
+{
+    console.log( "Error creating handshake (" + error.message + ")." );
+}
+
+function doHandshakeCreateSuccess( result )
+{
+    console.log( "Handshake created." );
+
+    // Separated for reuse
+    // Also called after checkout
+    buildTransaction();
+}
+
+function doItemClick()
+{
+    var purchaseId = null;
+
+    // Debug
+    console.log( "Item click." );
+
+    // Get purchase record
+    for( var p = 0; p < model.purchase.length; p++ )
+    {
+        if( model.purchase[p].productId == this.getAttribute( "data-id" ) )
+        {
+            purchaseId = model.purchase[p].objectId;
+            break;
+        }
+    }
+
+    // Remove from user interface
+    removeLineItem( this.getAttribute( "data-id" ) );
+
+    dao.destroyPurchase( purchaseId, {
+        success: doPurchaseDeleteSuccess,
+        error: doPurchaseDeleteError
+    } );
+}
+
+function doLayoutFindError( error )
+{
+    console.log( "Error reading layout (" + error.message + ")." );
+}
+
+function doLayoutFindSuccess( results )
+{
+    var found = null;
+    var manifest = null;
+    var register = null;
+    var transaction = null;
+
+    console.log( "Found layout and product details." );
+
+    model.layout = [];
+    model.products = [];
+
+    manifest = [];
+
+    // Populate layout
+    for( var r = 0; r < results.length; r++ )
+    {
+        model.layout.push( {
+            objectId: results[r].objectId,
+            createdAt: results[r].createdAt,
+            updatedAt: results[r].updatedAt,
+            productId: results[r].productId.objectId,
+            row: results[r].row,
+            column: results[r].column,
+            configurationId: results[r].configurationId
+        } );
+
+        // Build product list
+        found = false;
+
+        for( var p = 0; p < model.products.length; p++ )
+        {
+            if( model.products[p].objectId == results[r].productId.objectId )
+            {
+                found = true;
+                break;
+            }
+        }
+
+        // Not found
+        // Add to list
+        model.products.push( {
+            objectId: results[r].productId.objectId,
+            name: results[r].productId.name,
+            createdAt: results[r].productId.createdAt,
+            updatedAt: results[r].productId.updatedAt,
+            price: results[r].productId.price,
+            imagePath: results[r].productId.imagePath,
+            image: results[r].productId.image
+        } );
+
+        manifest.push( {
+            id: results[r].productId.objectId,
+            src: results[r].productId.imagePath + "/" + results[r].productId.image
+        } );
+    }
+
+    console.log( "Found layout (" + model.products.length + " products)." );
+
+    // Preload card images in background
+    if( queue == null )
+    {
+        queue = new createjs.LoadQueue();
+        queue.on( "progress", doQueueProgress, this );
+        queue.on( "complete", doQueueComplete, this );
+    }
+
+    // Cards
+    manifest.push( {
+        id: "gold-card",
+        src: "img/gold-card.png"
+    } );
+
+    manifest.push( {
+        id: "blue-card",
+        src: "img/blue-card.png"
+    } );
+
+    manifest.push( {
+        id: "red-card",
+        src: "img/red-card.png"
+    } );
+
+    queue.loadManifest( manifest );
+
+    // Populate the layout
+    buildLayout();
+
+    console.log( "Creating transaction." );
+
+    transaction = {
+        clerkId: model.clerk,
+        registerId: model.register
+    };
+
+    dao.createTransaction( transaction, {
+        success: doTransactionCreateSuccess,
+        error: doTransactionCreateError
+    } );
+}
+
+function doLoginClick()
+{
+    var input = null;
+    var status = null;
+
+    // Debug
+    console.log( "Login clicked." );
+
+    // Position window at top
+    window.scrollTo( 0, 0 );
+
+    // Stop status bar clock
+    clearInterval( interval );
+    interval = null;
+
+    // Track start time
+    // Make sure message displays for duration
+    start = new Date();
+
+    // Show user what is going on
+    status = document.querySelector( ".dialog .message" );
+    status.innerHTML = "Connecting to a " + model.configuration.vendorName + " certified card holder ...";
+
+    // Get login value
+    input = document.querySelector( ".login input" );
+
+    dao.findClerk( input.value.trim(), {
+        success: doClerkFindSuccess,
+        error: doClerkFindError
+    } );
+}
+
+function doLoginCreateError( result, error )
+{
+    console.log( "Error creating login (" + error.message + ")." );
+}
+
+function doLoginCreateSuccess( result )
+{
+    console.log( "Login recorded." );
+
+    // Store in memory model
+    model.login.clerkId = result.clerkId.objectId;
+    model.login.createdAt = result.createdAt;
+    model.login.objectId = result.objectId;
+    model.login.registerId = result.registerId.objectId;
+    model.login.updatedAt = result.updatedAt;
+
+    dao.findLayout( model.configuration.objectId, {
+        success: doLayoutFindSuccess,
+        error: doLayoutFindError
+    } );
+}
+
+function doMessageArrived( message )
+{
+    var data = null;
+
+    // Parse incoming data
+    data = JSON.parse( message.getText() );
+
+    // Debug
+    console.log( "Action \"" + data.client.action + "\" arrived." );
+
+    // Decision tree
+    if( data.client.action == TRANSACTION_ACCEPTED ) {
+        doTransactionAccepted( data );
+    } else if( data.client.action == CARD_CHANGE ) {
+        doCardChange( data.content );
+    } else if( data.client.action == CARD_SWIPE ) {
+        doCardSwipe( data );
+    } else if( data.client.action == CLIENT_SYNC_REQUEST ) {
+        doClientSync( data );
+    }
+
+    /*
+    if( data.server.action == GEOCODE )
+    {
+        doWatchResponse( data );
+    } else if( data.server.action == REGISTER_CREATE ) {
+        doRegisterCreate( data );
+    } else if( data.server.action == CLERK_READ || data.server.action == CLERK_CREATE ) {
+        doClerkRead( data );
+    } else if( data.server.action == LOGIN_CREATE ) {
+        doLoginCreate( data );
+    } else if( data.server.action == LAYOUT_READ ) {
+        doLayoutRead( data );
+    } else if( data.server.action == TRANSACTION_CREATE ) {
+        doTransactionCreate( data );
+    } else if( data.server.action == NOTIFICATION_CREATE ) {
+        doNotificationCreate( data );
+    } else if( data.server.action == PURCHASE_CREATE ) {
+        doPurchaseCreate( data );
+    } else if( data.server.action == PURCHASE_DELETE ) {
+        doPurchaseDelete( data );
+    } else if( data.server.action == PURCHASE_DESTROY ) {
+        doPurchaseDestroy( data );
+    } else if( data.server.action == TRANSACTION_ACCEPTED ) {
+        doTransactionAccepted( data );
+    } else if( data.server.action == CARD_CHANGE ) {
+        doCardChange( data.content );
+    } else if( data.server.action == CARD_SWIPE ) {
+        doCardSwipe( data );
+    }
+    */
+}
+
+function doMessageSent()
+{
+    // Debug
+    console.log( "Message sent." );
+
+    // Not sending any longer
+    sending = false;
+
+    // Check for next messages
+    // Send first-in-first-out
+    if( concurrent.length > 0 )
+    {
+        broadcast( concurrent[0] );
+        concurrent.splice( 0, 1 );
+    }
+}
+
+function doNotificationError( error )
+{
+    console.log( "Error sending notification (" + error.message + ")." );
+}
+
+function doNotificationSuccess( response )
+{
+    console.log( "Notification sent successfully (" + response + ")." );
+}
+
+function doProductClick()
+{
+    var purchase = null;
+
+    // Debug
+    console.log( "Product clicked." );
+
+    // Temporary purchase ID
+    // Allows UI to move while waiting for data storage
+    temporary.id = generateRandomString();
+
+    temporary.product = {
+        objectId: this.getAttribute( "data-id" ),
+        name: this.getAttribute( "data-name" ),
+        price: parseFloat( this.getAttribute( "data-price" ) ),
+        image: this.getAttribute( "data-image" ),
+        imagePath: this.getAttribute( "data-path" )
+    };
+
+    // Add to line item user interface
+    buildLineItem( temporary.id, temporary.product );
+
+    // Store purchase in database
+    console.log( "Storing purchase in database." );
+
+    purchase = {
+        transactionId: model.transaction.objectId,
+        productId: this.getAttribute( "data-id" ),
+        price: parseFloat( this.getAttribute( "data-price" ) )
+    };
+
+    dao.createPurchase( purchase, {
+        success: doPurchaseCreateSuccess,
+        error: doPurchaseCreateError
+    } );
+}
+
+function doPurchaseCreateError( result, error )
+{
+    console.log( "Error creating purchase (" + error.message + ")." );
+}
+
+function doPurchaseCreateSuccess( result )
+{
+    var message = null;
+    var purchase = null;
+
+    // Debug
+    console.log( "Purchase created." );
+
+    // Check application data model
+    if( model.purchase == null )
+    {
+        model.purchase = [];
+    }
+
+    // Build relative purchase
+    purchase = {
+        objectId: result.objectId,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
+        price: result.price,
+        transactionId: result.transactionId,
+        productId: result.productId.objectId
+    };
+
+    // Add purchase to application data model
+    model.purchase.push( purchase );
+
+    // Update the line item
+    updateLineItem( temporary.id, result.objectId );
+
+    // Assemble message
+    console.log( "Notifying digital wallet." );
+
+    message = {
+        client: {
+            action: PURCHASE_CREATE,
+            reply: reply
+        },
+        content: {
+            temporaryId: temporary.id,
+            purchase: purchase,
+            product: temporary.product
+        }
+    };
+
+    // Distribute to other clients
+    broadcast( message );
+}
+
+function doPurchaseDeleteError( error )
+{
+    console.log( "Error removing purchase (" + error.message + ")." );
+}
+
+function doPurchaseDeleteSuccess( result )
+{
+    var message = null;
+
+    // Debug
+    console.log( "Purchased removed." );
+
+    // Remove purchase from local model
+    for( var p = 0; p < model.purchase.length; p++ )
+    {
+        if( model.purchase[p].objectId == result.objectId )
+        {
+            model.purchase.splice( p, 1 );
+            break;
+        }
+    }
+
+    // Assemble message
+    console.log( "Sending remove to wallet." );
+
+    message = {
+        client: {
+            action: PURCHASE_DELETE,
+            reply: reply
+        },
+        content: {
+            purchaseId: result.objectId
+        }
+    };
+
+    // Send message to remove
+    broadcast( message );
+}
+
+function doPurchaseDestroyAllError( error )
+{
+    console.log( "Error destroying purchases (" + error.message + ")." );
+}
+
+function doPurchaseDestroyAllSuccess()
+{
+    var message = null;
+
+    console.log( "All related purchases destroyed." );
+
+    // TODO: Pull over to online branch
+    model.purchase = [];
+
+    // Construct message
+    message = {
+        client: {
+            action: PURCHASE_DESTROY,
+            reply: reply
+        },
+        content: {
+            transactionId: model.transaction.objectId
+        }
+    };
+
+    // Request destroy
+    broadcast( message );
+}
+
+function doPurchaseFindError( error )
+{
+    console.log( "Error reading purchases (" + error.message + ")." );
+}
+
+function doPurchaseFindSuccess( results )
+{
+    console.log( "Found all purchases." );
+
+    dao.destroyPurchaseAll( results, {
+        success: doPurchaseDestroyAllSuccess,
+        error: doPurchaseDestroyAllError
+    } );
+}
+
+function doQueueComplete()
+{
+    console.log( "Product images loaded." );
+}
+
+function doQueueProgress( event )
+{
+    console.log( "Loading products (" + Math.round( event.progress * 100 ) + "%)." );
+}
+
+function doRegisterCreate( register )
+{
+    var message = null;
+
+    console.log( "Register object created (" + register.objectId + ")." );
+
+    // Store in application model
+    model.register.objectId = register.objectId;
+    model.register.createdAt = register.createdAt;
+    model.register.updatedAt = register.updatedAt;
+    model.register.address = register.address;
+    model.register.postalCode = register.postalCode;
+    model.register.location = register.location;
+    model.register.topic = register.topic;
+    model.register.configurationId = register.configurationId;
+
+    // Initialize client side
+    initializeClient();
+
+    // Dashboard
+    console.log( "Sending register to dashboard." );
+
+    message = {
+        client: {
+            action: REGISTER_CREATE,
+            reply: reply,
+            dashboard: true
+        },
+        content: {
+            address: model.register.address,
+            postalCode: model.register.postalCode,
+            latitude: model.register.location.latitude,
+            longitude: model.register.location.longitude,
+            configurationId: model.register.configurationId
+        }
+    };
+
+    broadcast( message );
+
+    /*
+    dashboard.send(
+        session.createTextMessage( JSON.stringify( message ) ),
+        doMessageSent
+    );
+    */
+}
+
+function doRegisterError( register, error )
+{
+    console.log( "Failed to create register (" + error.message + ")." );
+}
+
+function doReverseGeocode( results, status )
+{
+    var globe = null;
+    var location = null;
+    var register = null;
+
+    console.log( "Reverse geocode." );
+
+    // Visual indication of geolocation
+    globe = document.querySelector( ".globe" );
+    globe.style.opacity = 0;
+    globe.style.visibility = "visible";
+
+    TweenMax.to( globe, 1, {
+        opacity: 0.60
+    } );
+
+    console.log( "Using Kaazing HQ for reference." );
+
+    // Populate values
+    register = {
+        topic: reply,
+        configurationId: model.configuration.objectId,
+        location: {
+            latitude: LOCATION_LATITUDE,
+            longitude: LOCATION_LONGITUDE
+        },
+        address: LOCATION_ADDRESS,
+        postalCode: LOCATION_POSTAL_CODE
+    };
+
+    // Perform save operation
+    dao.createRegister( register, {
+        success: doRegisterCreate,
+        error: doRegisterError
+    } );
+}
+
+function doTheChad()
+{
+    var login = null;
+
+    login = document.querySelector( ".login" );
+
+    console.log( "Is it The Chad?" );
+
+    if( login.style.backgroundImage.indexOf( "the-chad" ) >= 0 )
+    {
+        login.style.backgroundImage = "url( \"img/grocery-shopping.jpg\" )";
+    } else {
+        login.style.backgroundImage = "url( \"img/the-chad.jpg\" )";
+    }
+}
+
+function doSessionStart()
+{
+    // Debug
+    console.log( "Client session started." );
+
+    // Unique destination
+    reply = model.configuration.topic + "." + model.configuration.objectId.substr( model.configuration.objectId.length - 4 );
+    console.log( "Reply-To: " + reply );
+
+    // Session
+    // Topic
+    session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+    topicConsume = session.createTopic( reply );
+    // topicProduce = session.createTopic( model.configuration.topic );
+    topicProduce = session.createTopic( reply );
+
+    // Consumer
+    // Set listener
+    consumer = session.createConsumer( topicConsume );
+    consumer.setMessageListener( doMessageArrived );
+
+    // Producer
+    producer = session.createProducer( topicProduce );
+
+    // Dashboard
+    topicDashboard = session.createTopic( dao.configuration.topic );
+    dashboard = session.createProducer( topicDashboard );
+
+    // Fake the GPS coordinates
+    // Tired of waiting for them to load
+    if( model.configuration.fakeGPS == true )
+    {
+        console.log( "Faking geolocation." );
+        doWatchPosition( {
+            coords: {
+                latitude: LOCATION_LATITUDE,
+                longitude: LOCATION_LONGITUDE
+            }
+        } );
+
+        return;
+    }
+
+    // Start geolocation
+    if( navigator.geolocation )
+    {
+        // The getCurrentPosition tested unreliably to report results
+        // Using watchPosition as it always seems to come back with something
+        watch = navigator.geolocation.watchPosition( doWatchPosition );
+        console.log( "Waiting for device location..." );
+    } else {
+        console.log( "Geolocation not supported." );
+    }
+}
+
+function doTransactionAccepted( data )
+{
+    var amount = null;
+    var charge = null;
+    var index = null;
+
+    console.log( "Transaction accepted." );
+
+    charge = document.querySelector( ".charge" );
+    charge.classList.remove( "waiting" );
+    charge.classList.add( "accepted" );
+
+    index = charge.innerHTML.indexOf( model.configuration.currencySymbol ) + 1;
+    amount = parseFloat( charge.innerHTML.substr( index ) );
+
+    charge.innerHTML = model.configuration.currencyAccepted + amount.toFixed( 2 );
+
+    doCardChange( data.content.card );
+}
+
+function doTransactionCreateError( result, error )
+{
+    console.log( "Error creating transaction (" + error.message + ")." );
+}
+
+function doTransactionCreateSuccess( result )
+{
+    var handshake = null;
+
+    console.log( "Transaction created (" + result.objectId + ")." );
+
+    // Store transaction in model
+    model.transaction.objectId = result.objectId;
+    model.transaction.createdAt = result.createdAt;
+    model.transaction.updatedAt = result.updatedAt;
+    model.transaction.clerkId = result.clerkId.objectId;
+    model.transaction.registerId = result.registerId.objectId;
+
+    // TODO: message here
+
+    // Create handshake for wallet
+    console.log( "Creating handshake." );
+
+    // Dashboard
+    console.log( "Sending transaction to dashboard." );
+
+    message = {
+        client: {
+            action: TRANSACTION_READ,
+            reply: reply,
+            dashboard: true
+        },
+        content: {
+            transactionId: model.transaction.objectId
+        }
+    };
+
+    broadcast( message );
+
+    /*
+    dashboard.send(
+        session.createTextMessage( JSON.stringify( message ) ),
+        doMessageSent
+    );
+    */
+
+    // Handshake
+    handshake = {
+        configurationId: model.configuration,
+        transactionId: result.objectId,
+        registerId: model.register,
+        endpoint: model.configuration.endpoint,
+        topic: model.configuration.topic,
+        replyTo: reply
+    };
+
+    dao.createHandshake( handshake, {
+        success: doHandshakeCreateSuccess,
+        error: doHandshakeCreateError
+    } );
+}
+
+function doWatchPosition( position )
+{
+    var latlng = null;
+
+    // Debug
+    console.log( "Geolocation successful (" + position.coords.latitude + ", " + position.coords.longitude + ")." );
+
+    // Leave alone once we have a fix
+    navigator.geolocation.clearWatch( watch );
+    watch = null;
+
+    doReverseGeocode( {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+    }, "Is it The Chad?" );
+
+    // Reverse geocoding
+    // latlng = new google.maps.LatLng( position.coords.latitude, position.coords.longitude );
+
+    // geocoder = new google.maps.Geocoder();
+    // geocoder.geocode( {latLng: latlng}, doReverseGeocode );
+}
+
+function doWindowLoad()
+{
+    var chad = null;
+    var configuration = null;
+
+    console.log( "Window loaded." );
+
+    // Desired configuration if any
+    if( !URLParser( window.location.href ).hasParam( "id" ) )
+    {
+        configuration = REGISTER_DEFAULT;
+        console.log( "Using default configuration (" + configuration + ")." );
+    } else {
+        configuration = URLParser( window.location.href ).getParam( "id" );
+        console.log( "Configured as \"" + configuration + "\"." );
+
+    }
+
+    // Load desired configuration
+    dao.loadConfiguration( configuration, {
+        success: doConfigurationSuccess,
+        error: doConfigurationError
+    } );
+
+    // Layout
+    doWindowResize();
+}
+
+function doWindowResize()
+{
+    var dialog = null;
+    var login = null;
+    var register = null;
+
+    console.log( "Window resize." );
+
+    // Whole login screen
+    login = document.querySelector( ".login" );
+    login.style.width = window.innerWidth + "px";
+    login.style.height = window.innerHeight + "px";
+
+    // Position dialog
+    dialog = document.querySelector( ".dialog" );
+    dialog.style.left = Math.round( ( window.innerWidth - dialog.clientWidth ) / 2 ) + "px";
+    dialog.style.top = Math.round( ( window.innerHeight - dialog.clientHeight ) / 2 ) + "px";
+
+    // Register
+    register = document.querySelector( ".register" );
+    register.style.width = window.innerWidth + "px";
+    register.style.height = window.innerHeight + "px";
+}
+
+window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "resize", doWindowResize );
+</script>
+
+</head>
+<body>
+
+<!-- Login screen -->
+<div class="login">
+
+    <!-- Dialog -->
+    <div class="dialog">
+
+        <!-- Clerk ID -->
+        <div class="clerk">Clerk ID:</div>
+        <input>
+        <div>Login</div>
+
+        <!-- Status -->
+        <div class="message"></div>
+
+    </div>
+
+    <!-- Ready indicator -->
+    <div class="globe"></div>
+
+</div>
+
+<!-- Register screen -->
+<div class="register">
+
+    <!-- Product listing -->
+    <div class="layout">
+
+        <!-- Product slots -->
+
+        <!-- Products -->
+
+        <!-- QR Code -->
+        <div class="qr">
+            <div>Scan here to pay digitally ...</div>
+        </div>
+
+    </div>
+
+    <!-- Right side summary -->
+    <div class="summary">
+
+        <!-- Header -->
+        <div class="total">
+            <div class="logo"></div>
+            <div class="charge pending">Charge: $0.00</div>
+        </div>
+
+        <!-- Item list -->
+        <div class="list">
+
+            <!-- Line items -->
+
+            <!-- Tax -->
+            <div class="line tax">
+                <div class="photo">%</div>
+                <div class="label">Tax</div>
+                <div class="rate">(8.25%)</div>
+                <div class="price">$1.65</div>
+            </div>
+
+            <!-- Clear -->
+            <div class="clear">
+                Clear List
+            </div>
+
+        </div>
+
+        <!-- Security -->
+        <div class="security">
+            <img src="img/padlock.svg" width="26" height="40">
+            <div>Connection is secure.</div>
+        </div>
+
+        <!-- Transaction -->
+        <div class="footer">Transaction #1234</div>
+
+    </div>
+
+</div>
+
+<!-- Credit card -->
+<!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
+<div class="card">
+    <div class="holder">KEVIN HOYT</div>
+    <div class="expiration">11/15</div>
+    <div class="number">1234 5678 9012 3456</div>
+    <img class="logo" width="70" height="70" src="img/american-express.svg">
+</div>
+
+<!-- Product template -->
+<div class="item template">
+    <div></div>
+    <div class="label"></div>
+</div>
+
+<!-- Line item template -->
+<div class="line template">
+    <div class="photo" style="background-image: url( 'img/apple-biscuit.jpg' );"></div>
+    <div class="label">Apple Biscuit</div>
+    <div class="duplicate">0</div>
+    <div class="price">$4.50</div>
+</div>
+
+<!-- QR code working space -->
+<div class="working" style="display: none;"></div>
+
+<!-- The Chad -->
+<div class="chad"></div>
+
+</body>
+</html>

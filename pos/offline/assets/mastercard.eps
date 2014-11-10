@@ -1,0 +1,6907 @@
+%!PS-Adobe-3.0
+%%Title: (3-10037_04_PlatDebit_GTB.v3)
+%%Version: 1 4
+%%Creator: (QuarkXPress 4.1: AdobePS 8.8 8.8.0 \(301\))
+%%CreationDate: (D:20050802135957-04'00')
+%%For: (MCMFG16)
+%%DocumentData: Clean7Bit
+%%LanguageLevel: 3
+%%BoundingBox: 0 0 500 500
+%%Pages: 1
+%%DocumentProcessColors: (atend)
+%%DocumentCustomColors:
+%%+ (CMYK silver)
+%%CMYKCustomColor: 0.0500031 0 0 0.149994 (CMYK silver)
+%%DocumentSuppliedResources:
+%%+ procset (Adobe Acrobat - PDF operators) 1.2 0
+%%EndComments
+%%BeginDefaults
+%%EndDefaults
+%%BeginProlog
+%%EndProlog
+%%BeginSetup
+%%BeginResource: l3check
+%%Version: 4.0 1
+%%Copyright: Copyright 1998 Adobe Systems Incorporated. All Rights Reserved.
+systemdict /languagelevel known
+{ systemdict /languagelevel get 3 lt }
+{ true }
+ifelse
+{
+initgraphics /Helvetica findfont 18 scalefont setfont
+72 600 moveto (Error: Your printer driver needs to be configured) dup show ==
+72 580 moveto (for printing to a PostScript Language Level )dup show ==
+systemdict /languagelevel known {(2)}{(1)}ifelse dup show ==
+( printer.) dup show ==
+/Helvetica-Bold findfont 16 scalefont setfont
+72 520 moveto (Windows and Unix) show
+/Times-Roman findfont 16 scalefont setfont
+72 500 moveto (Select \252Language Level )show
+%% tell them exactly, since we know.
+systemdict /languagelevel known {(2)}{(1)}ifelse show
+(\272 in the PostScript options section) show
+72 480 moveto (of the Acrobat print dialog.) show
+/Helvetica-Bold findfont 16 scalefont setfont
+72 440 moveto (Macintosh) show
+/Times-Roman findfont 16 scalefont setfont
+72 420 moveto (In the Chooser, select your printer driver.) show
+72 400 moveto (Then select your printer and click the Setup button.) show
+72 380 moveto (Follow any on-screen dialogs that may appear.) show
+showpage
+quit
+}
+if
+%%EndResource
+/currentpacking where{pop currentpacking true setpacking}if
+%%BeginResource: procset pdfvars
+%%Copyright: Copyright 1987-2001 Adobe Systems Incorporated. All Rights Reserved.
+%%Version: 5.0 6
+%%Title: definition of dictionary of variables used by PDF & PDFText procsets
+userdict /PDF 160 dict put
+userdict /PDFVars 89 dict dup begin put
+/docSetupDone false def
+/InitAll 0 def
+/TermAll 0 def
+/DocInitAll 0 def
+/DocTermAll 0 def
+/_pdfEncodings 2 array def
+/_pdf_str1 1 string def
+/_pdf_i 0 def
+/_pdf_na 0 def
+/_pdf_showproc 0 def
+/_italMtx [1 0 .212557 1 0 0] def
+/_italMtx_WMode1 [1 -.212557 0 1 0 0] def
+/_italMtxType0 [1 0 .1062785 1 0 0] def
+/_italMtx_WMode1Type0 [1 -.1062785 0 1 0 0] def
+/_basefont 0 def
+/_basefonto 0 def
+/_pdf_oldCIDInit null def
+/_pdf_FontDirectory 30 dict def
+/_categories 10 dict def
+/_sa? true def
+/_ColorSep5044? false def
+/nulldict 0 dict def
+/_processColors 0 def
+/overprintstack null def
+/_defaulttransfer currenttransfer def
+/_defaultflatness currentflat def
+/_defaulthalftone null def
+/_defaultcolortransfer null def
+/_defaultblackgeneration null def
+/_defaultundercolorremoval null def
+/_defaultcolortransfer null def
+PDF begin
+[/c/cs/cm/d/d0/f/h/i/j/J/l/m/M/n/q/Q/re/ri/S/sc/sh/Tf/w/W
+/applyInterpFunc/applystitchFunc/domainClip/encodeInput
+/initgs/int/limit/rangeClip
+/defineRes/findRes/setSA/pl
+%% to keep CoolType entries in GlyphDirProcs safe from collisions with Win PS driver
+/? /! /| /: /+ /GetGlyphDirectory
+/pdf_flushFilters /pdf_readstring /pdf_dictOp /pdf_image /pdf_maskedImage
+/pdf_shfill /pdf_sethalftone
+] {null def} bind forall
+end
+end
+%%EndResource
+PDFVars begin PDF begin
+%%BeginResource: procset pdfutil
+%%Copyright: Copyright 1993-1999 Adobe Systems Incorporated. All Rights Reserved.
+%%Version: 4.0 2
+%%Title: Basic utilities used by other PDF procsets
+/bd {bind def} bind def
+/ld {load def} bd
+/bld {
+dup length dict begin
+{ null def } forall
+bind
+end
+def
+} bd
+/dd { PDFVars 3 1 roll put } bd
+/xdd { exch dd } bd
+/Level2?
+systemdict /languagelevel known
+{ systemdict /languagelevel get 2 ge } { false } ifelse
+def
+/Level1? Level2? not def
+/Level3?
+systemdict /languagelevel known
+{systemdict /languagelevel get 3 eq } { false } ifelse
+def
+/getifknown {
+2 copy known { get true } { pop pop false } ifelse
+} bd
+/here {
+currentdict exch getifknown
+} bd
+/isdefined? { where { pop true } { false } ifelse } bd
+%%EndResource
+%%BeginResource: procset pdf
+%%Version: 5.0 7
+%%Copyright: Copyright 1998-2001 Adobe Systems Incorporated. All Rights Reserved.
+%%Title: General operators for PDF, common to all Language Levels.
+/cm { matrix astore concat } bd
+/d /setdash ld
+/f /fill ld
+/h /closepath ld
+/i {dup 0 eq {pop _defaultflatness} if setflat} bd
+/j /setlinejoin ld
+/J /setlinecap ld
+/M /setmiterlimit ld
+/n /newpath ld
+/S /stroke ld
+/w /setlinewidth ld
+/W /clip ld
+/initgs {
+0 setgray
+[] 0 d
+0 j
+0 J
+10 M
+1 w
+false setSA
+/_defaulttransfer load settransfer
+0 i
+/RelativeColorimetric ri
+newpath
+} bd
+/int {
+dup 2 index sub 3 index 5 index sub div 6 -2 roll sub mul
+exch pop add exch pop
+} bd
+/limit {
+dup 2 index le { exch } if pop
+dup 2 index ge { exch } if pop
+} bd
+/domainClip {
+Domain aload pop 3 2 roll
+limit
+} [/Domain] bld
+/applyInterpFunc {
+0 1 DimOut 1 sub
+{
+dup C0 exch get exch
+dup C1 exch get exch
+3 1 roll
+1 index sub
+3 index
+N exp mul add
+exch
+currentdict /Range_lo known
+{
+dup Range_lo exch get exch
+Range_hi exch get
+3 2 roll limit
+}
+{
+pop
+}
+ifelse
+exch
+} for
+pop
+} [/DimOut /C0 /C1 /N /Range_lo /Range_hi] bld
+/encodeInput {
+NumParts 1 sub
+0 1 2 index
+{
+dup Bounds exch get
+2 index gt
+{ exit }
+{ dup
+3 index eq
+{ exit }
+{ pop } ifelse
+} ifelse
+} for
+3 2 roll pop
+dup Bounds exch get exch
+dup 1 add Bounds exch get exch
+2 mul
+dup Encode exch get exch
+1 add Encode exch get
+int
+} [/NumParts /Bounds /Encode] bld
+/rangeClip {
+exch dup Range_lo exch get
+exch Range_hi exch get
+3 2 roll
+limit
+} [/Range_lo /Range_hi] bld
+/applyStitchFunc {
+Functions exch get exec
+currentdict /Range_lo known {
+0 1 DimOut 1 sub {
+DimOut 1 add -1 roll
+rangeClip
+} for
+} if
+} [/Functions /Range_lo /DimOut] bld
+/pdf_flushfilters
+{
+aload length
+{ dup status
+1 index currentfile ne and
+{ dup flushfile closefile }
+{ pop }
+ifelse
+} repeat
+} bd
+/pdf_readstring
+{
+1 index dup length 1 sub get
+exch readstring pop
+exch pdf_flushfilters
+} bind def
+/pdf_dictOp
+{
+3 2 roll
+10 dict copy
+begin
+_Filters dup length 1 sub get def
+currentdict exch exec
+_Filters pdf_flushfilters
+end
+} [/_Filters] bld
+/pdf_image {{image} /DataSource pdf_dictOp} bd
+/pdf_imagemask {{imagemask} /DataSource pdf_dictOp} bd
+/pdf_shfill {{sh} /DataSource pdf_dictOp} bd
+/pdf_sethalftone {{sethalftone} /Thresholds pdf_dictOp} bd
+/pdf_maskedImage
+{
+10 dict copy begin
+/miDict currentdict def
+/DataDict DataDict 10 dict copy def
+DataDict begin
+/DataSource
+_Filters dup length 1 sub get
+def
+miDict image
+_Filters pdf_flushfilters
+end
+end
+} [/miDict /DataDict /_Filters] bld
+/RadialShade {
+40 dict begin
+/background exch def
+/ext1 exch def
+/ext0 exch def
+/BBox exch def
+/r2 exch def
+/c2y exch def
+/c2x exch def
+/r1 exch def
+/c1y exch def
+/c1x exch def
+/rampdict exch def
+gsave
+BBox length 0 gt {
+newpath
+BBox 0 get BBox 1 get moveto
+BBox 2 get BBox 0 get sub 0 rlineto
+0 BBox 3 get BBox 1 get sub rlineto
+BBox 2 get BBox 0 get sub neg 0 rlineto
+closepath
+clip
+newpath
+} if
+c1x c2x eq
+{
+c1y c2y lt {/theta 90 def}{/theta 270 def} ifelse
+}
+{
+/slope c2y c1y sub c2x c1x sub div def
+/theta slope 1 atan def
+c2x c1x lt c2y c1y ge and { /theta theta 180 sub def} if
+c2x c1x lt c2y c1y lt and { /theta theta 180 add def} if
+}
+ifelse
+gsave
+clippath
+c1x c1y translate
+theta rotate
+-90 rotate
+{ pathbbox } stopped
+{ 0 0 0 0 } if
+/yMax exch def
+/xMax exch def
+/yMin exch def
+/xMin exch def
+grestore
+xMax xMin eq yMax yMin eq or
+{
+grestore
+end
+}
+{
+rampdict begin
+40 dict begin
+background length 0 gt { background sssetbackground gsave clippath fill grestore } if
+gsave
+c1x c1y translate
+theta rotate
+-90 rotate
+/c2y c1x c2x sub dup mul c1y c2y sub dup mul add sqrt def
+/c1y 0 def
+/c1x 0 def
+/c2x 0 def
+ext0 {
+0 getrampcolor
+c2y r2 add r1 lt
+{
+c1x c1y r1 360 0 arcn
+xMin yMin moveto
+xMax yMin lineto
+xMax yMax lineto
+xMin yMax lineto
+xMin yMin lineto
+eofill
+}
+{
+c2y r1 add r2 le
+{
+c1x c1y r1 0 360 arc
+fill
+}
+{
+c2x c2y r2 0 360 arc fill
+r1 r2 eq
+{
+/p1x r1 neg def
+/p1y c1y def
+/p2x r1 def
+/p2y c1y def
+p1x p1y moveto p2x p2y lineto p2x yMin lineto p1x yMin lineto
+fill
+}
+{
+/AA r2 r1 sub c2y div def
+/theta AA 1 AA dup mul sub sqrt div 1 atan def
+/SS1 90 theta add dup sin exch cos div def
+/p1x r1 SS1 SS1 mul SS1 SS1 mul 1 add div sqrt mul neg def
+/p1y p1x SS1 div neg def
+/SS2 90 theta sub dup sin exch cos div def
+/p2x r1 SS2 SS2 mul SS2 SS2 mul 1 add div sqrt mul def
+/p2y p2x SS2 div neg def
+r1 r2 gt
+{
+/L1maxX p1x yMin p1y sub SS1 div add def
+/L2maxX p2x yMin p2y sub SS2 div add def
+}
+{
+/L1maxX 0 def
+/L2maxX 0 def
+}ifelse
+p1x p1y moveto p2x p2y lineto L2maxX L2maxX p2x sub SS2 mul p2y add lineto
+L1maxX L1maxX p1x sub SS1 mul p1y add lineto
+fill
+}
+ifelse
+}
+ifelse
+} ifelse
+} if
+c1x c2x sub dup mul
+c1y c2y sub dup mul
+add 0.5 exp
+0 dtransform
+dup mul exch dup mul add 0.5 exp 72 div
+0 72 matrix defaultmatrix dtransform dup mul exch dup mul add sqrt
+72 0 matrix defaultmatrix dtransform dup mul exch dup mul add sqrt
+1 index 1 index lt { exch } if pop
+/hires exch def
+hires mul
+/numpix exch def
+/numsteps NumSamples def
+/rampIndxInc 1 def
+/subsampling false def
+numpix 0 ne
+{
+NumSamples numpix div 0.5 gt
+{
+/numsteps numpix 2 div round cvi dup 1 le { pop 2 } if def
+/rampIndxInc NumSamples 1 sub numsteps div def
+/subsampling true def
+} if
+} if
+/xInc c2x c1x sub numsteps div def
+/yInc c2y c1y sub numsteps div def
+/rInc r2 r1 sub numsteps div def
+/cx c1x def
+/cy c1y def
+/radius r1 def
+newpath
+xInc 0 eq yInc 0 eq rInc 0 eq and and
+{
+0 getrampcolor
+cx cy radius 0 360 arc
+stroke
+NumSamples 1 sub getrampcolor
+cx cy radius 72 hires div add 0 360 arc
+0 setlinewidth
+stroke
+}
+{
+0
+numsteps
+{
+dup
+subsampling { round cvi } if
+getrampcolor
+cx cy radius 0 360 arc
+/cx cx xInc add def
+/cy cy yInc add def
+/radius radius rInc add def
+cx cy radius 360 0 arcn
+eofill
+rampIndxInc add
+}
+repeat
+pop
+} ifelse
+ext1 {
+c2y r2 add r1 lt
+{
+c2x c2y r2 0 360 arc
+fill
+}
+{
+c2y r1 add r2 le
+{
+c2x c2y r2 360 0 arcn
+xMin yMin moveto
+xMax yMin lineto
+xMax yMax lineto
+xMin yMax lineto
+xMin yMin lineto
+eofill
+}
+{
+c2x c2y r2 0 360 arc fill
+r1 r2 eq
+{
+/p1x r2 neg def
+/p1y c2y def
+/p2x r2 def
+/p2y c2y def
+p1x p1y moveto p2x p2y lineto p2x yMax lineto p1x yMax lineto
+fill
+}
+{
+/AA r2 r1 sub c2y div def
+/theta AA 1 AA dup mul sub sqrt div 1 atan def
+/SS1 90 theta add dup sin exch cos div def
+/p1x r2 SS1 SS1 mul SS1 SS1 mul 1 add div sqrt mul neg def
+/p1y c2y p1x SS1 div sub def
+/SS2 90 theta sub dup sin exch cos div def
+/p2x r2 SS2 SS2 mul SS2 SS2 mul 1 add div sqrt mul def
+/p2y c2y p2x SS2 div sub def
+r1 r2 lt
+{
+/L1maxX p1x yMax p1y sub SS1 div add def
+/L2maxX p2x yMax p2y sub SS2 div add def
+}
+{
+/L1maxX 0 def
+/L2maxX 0 def
+}ifelse
+p1x p1y moveto p2x p2y lineto L2maxX L2maxX p2x sub SS2 mul p2y add lineto
+L1maxX L1maxX p1x sub SS1 mul p1y add lineto
+fill
+}
+ifelse
+}
+ifelse
+} ifelse
+} if
+grestore
+grestore
+end
+end
+end
+} ifelse
+} bd
+/GenStrips {
+40 dict begin
+/background exch def
+/ext1 exch def
+/ext0 exch def
+/BBox exch def
+/y2 exch def
+/x2 exch def
+/y1 exch def
+/x1 exch def
+/rampdict exch def
+gsave
+BBox length 0 gt {
+newpath
+BBox 0 get BBox 1 get moveto
+BBox 2 get BBox 0 get sub 0 rlineto
+0 BBox 3 get BBox 1 get sub rlineto
+BBox 2 get BBox 0 get sub neg 0 rlineto
+closepath
+clip
+newpath
+} if
+x1 x2 eq
+{
+y1 y2 lt {/theta 90 def}{/theta 270 def} ifelse
+}
+{
+/slope y2 y1 sub x2 x1 sub div def
+/theta slope 1 atan def
+x2 x1 lt y2 y1 ge and { /theta theta 180 sub def} if
+x2 x1 lt y2 y1 lt and { /theta theta 180 add def} if
+}
+ifelse
+gsave
+clippath
+x1 y1 translate
+theta rotate
+{ pathbbox } stopped
+{ 0 0 0 0 } if
+/yMax exch def
+/xMax exch def
+/yMin exch def
+/xMin exch def
+grestore
+xMax xMin eq yMax yMin eq or
+{
+grestore
+end
+}
+{
+rampdict begin
+20 dict begin
+background length 0 gt { background sssetbackground gsave clippath fill grestore } if
+gsave
+x1 y1 translate
+theta rotate
+/xStart 0 def
+/xEnd x2 x1 sub dup mul y2 y1 sub dup mul add 0.5 exp def
+/ySpan yMax yMin sub def
+/numsteps NumSamples def
+/rampIndxInc 1 def
+/subsampling false def
+xStart 0 transform
+xEnd 0 transform
+3 -1 roll
+sub dup mul
+3 1 roll
+sub dup mul
+add 0.5 exp 72 div
+0 72 matrix defaultmatrix dtransform dup mul exch dup mul add sqrt
+72 0 matrix defaultmatrix dtransform dup mul exch dup mul add sqrt
+1 index 1 index lt { exch } if pop
+mul
+/numpix exch def
+numpix 0 ne
+{
+NumSamples numpix div 0.5 gt
+{
+/numsteps numpix 2 div round cvi dup 1 le { pop 2 } if def
+/rampIndxInc NumSamples 1 sub numsteps div def
+/subsampling true def
+} if
+} if
+ext0 {
+0 getrampcolor
+xMin xStart lt
+{ xMin yMin xMin neg ySpan rectfill } if
+} if
+/xInc xEnd xStart sub numsteps div def
+/x xStart def
+0
+numsteps
+{
+dup
+subsampling { round cvi } if
+getrampcolor
+x yMin xInc ySpan rectfill
+/x x xInc add def
+rampIndxInc add
+}
+repeat
+pop
+ext1 {
+xMax xEnd gt
+{ xEnd yMin xMax xEnd sub ySpan rectfill } if
+} if
+grestore
+grestore
+end
+end
+end
+} ifelse
+} bd
+%%EndResource
+%%BeginResource: procset pdflev3
+%%Version: 5.0 13
+%%Copyright: Copyright 1987-2001 Adobe Systems Incorporated. All Rights Reserved.
+%%LanguageLevel: 3
+%%Title: PDF operators, with code specific for Level 3
+/docinitialize {
+PDF begin
+/_defaulthalftone currenthalftone dd
+/_defaultblackgeneration currentblackgeneration dd
+/_defaultundercolorremoval currentundercolorremoval dd
+/_defaultcolortransfer [currentcolortransfer] dd
+/_defaulttransfer currenttransfer dd
+end
+PDFVars /docSetupDone true put
+} bd
+/_processColors
+currentpagedevice /ProcessColorModel getifknown
+{ << /DeviceGray [/Gray]
+/DeviceRGB [/Red /Green /Blue]
+/DeviceCMYK [/Cyan /Magenta /Yellow /Black]
+/DeviceCMY [/Cyan /Magenta /Yellow]
+/DeviceRGBK [/Red /Green /Blue /Black]
+>> exch getifknown {} {[]} ifelse }
+{[]}
+ifelse
+def
+/initialize {
+PDFVars /docSetupDone get
+{
+_defaulthalftone sethalftone
+/_defaultblackgeneration load setblackgeneration
+/_defaultundercolorremoval load setundercolorremoval
+_defaultcolortransfer aload pop setcolortransfer
+}if
+false setoverprint
+} bd
+/terminate { } bd
+/c /curveto ld
+/cs /setcolorspace ld
+/l /lineto ld
+/m /moveto ld
+/q /gsave ld
+/Q /grestore ld
+/sc /setcolor ld
+/setSA/setstrokeadjust ld
+/re {
+4 2 roll m
+1 index 0 rlineto
+0 exch rlineto
+neg 0 rlineto
+h
+} bd
+/rssds
+{
+/Shading get /DataSource get resetfile
+} bd
+/sh
+{ dup /DataSource known
+{ dup begin
+DataSource type /filetype eq { DataSource resetfile } if
+end
+} if
+shfill
+} [/DataSource] bld
+/concattransferfuncs {
+[ 3 1 roll /exec load exch /exec load ] cvx
+} bd
+/concatandsettransfer {
+/_defaulttransfer load concattransferfuncs settransfer
+} bd
+/concatandsetcolortransfer {
+_defaultcolortransfer aload pop
+8 -1 roll 5 -1 roll concattransferfuncs 7 1 roll
+6 -1 roll 4 -1 roll concattransferfuncs 5 1 roll
+4 -1 roll 3 -1 roll concattransferfuncs 3 1 roll
+concattransferfuncs
+setcolortransfer
+} bd
+/defineRes/defineresource ld
+/findRes/findresource ld
+currentglobal
+true systemdict /setglobal get exec
+[/Function /ExtGState /Form /Shading /FunctionDictionary /MadePattern /PatternPrototype /DataSource /Image]
+{ /Generic /Category findresource dup length dict copy /Category defineresource pop }
+forall
+systemdict /setglobal get exec
+/ri {
+/findcolorrendering isdefined?
+{
+mark exch
+findcolorrendering
+counttomark 2 eq
+{ type /booleantype eq
+{ dup type /nametype eq
+{ dup /ColorRendering resourcestatus
+{ pop pop
+dup /DefaultColorRendering ne
+{
+/ColorRendering findresource
+setcolorrendering
+} if
+} if
+} if
+} if
+} if
+cleartomark
+}
+{ pop
+} ifelse
+} bd
+/CMYKDeviceNColorspaces [
+[/Separation /None /DeviceCMYK {0 0 0}] bind
+[/Separation (Black)
+/DeviceCMYK {0 0 0 4 -1 roll}] bind
+[/Separation (Yellow)
+/DeviceCMYK {0 0 3 -1 roll 0}] bind
+[/DeviceN [(Yellow) (Black)]
+/DeviceCMYK {0 0 4 2 roll}] bind
+[/Separation (Magenta)
+/DeviceCMYK {0 exch 0 0}] bind
+[/DeviceN [(Magenta) (Black)]
+/DeviceCMYK {0 3 1 roll 0 exch}] bind
+[/DeviceN [(Magenta) (Yellow)]
+/DeviceCMYK {0 3 1 roll 0}] bind
+[/DeviceN [(Magenta) (Yellow) (Black)]
+/DeviceCMYK {0 4 1 roll}] bind
+[/Separation (Cyan)
+/DeviceCMYK {0 0 0}] bind
+[/DeviceN [(Cyan) (Black)]
+/DeviceCMYK {0 0 3 -1 roll}] bind
+[/DeviceN [(Cyan) (Yellow)]
+/DeviceCMYK {0 exch 0}] bind
+[/DeviceN [(Cyan) (Yellow) (Black)]
+/DeviceCMYK {0 3 1 roll}] bind
+[/DeviceN [(Cyan) (Magenta)]
+/DeviceCMYK {0 0}] bind
+[/DeviceN [(Cyan) (Magenta) (Black)]
+/DeviceCMYK {0 exch}] bind
+[/DeviceN [(Cyan) (Magenta) (Yellow)]
+/DeviceCMYK {0}] bind
+[/DeviceCMYK] bind
+] def
+/nzopmsc {
+6 dict begin
+/kk exch def
+/yy exch def
+/mm exch def
+/cc exch def
+/sum 0 def
+cc 0 ne {/sum sum 2#1000 or def cc} if
+mm 0 ne {/sum sum 2#0100 or def mm} if
+yy 0 ne {/sum sum 2#0010 or def yy} if
+kk 0 ne {/sum sum 2#0001 or def kk} if
+CMYKDeviceNColorspaces sum get setcolorspace
+sum 0 eq {0} if
+end
+setcolor
+} [/cc /mm /yy /kk /sum] bld
+/every? {
+true
+3 2 roll
+{ 2 index exec not {pop false exit} if } forall
+exch pop
+} bd
+/knownColorants? {
+3 dict begin
+/colorants exch def
+{
+/DeviceN /ColorSpaceFamily findresource pop
+/cpd currentpagedevice def
+/dc 10 dict def
+cpd /SeparationColorNames getifknown
+{ { dc exch 0 put } forall } if
+_processColors { dc exch 0 put } forall
+colorants {dc exch known} every?
+} stopped
+{ false }
+if
+end
+} [/colorants /dc /cpd] bld
+%%EndResource
+%%BeginResource: procset pdftext
+%%Version: 5.0 6
+%%Copyright: Copyright 1987-2001 Adobe Systems Incorporated. All Rights Reserved.
+%%Title: Text operators for PDF
+PDF /PDFText 78 dict dup begin put
+/docinitialize
+{
+/resourcestatus where {
+pop
+/CIDParams /ProcSet resourcestatus {
+pop pop
+false /CIDParams /ProcSet findresource /SetBuildCompatible get exec
+} if
+} if
+PDF begin
+PDFText /_pdfDefineIdentity-H known
+{ PDFText /_pdfDefineIdentity-H get exec}
+if
+end
+} bd
+/initialize {
+PDFText begin
+} bd
+/terminate { end } bd
+Level2?
+{
+/_safeput
+{
+3 -1 roll load 3 1 roll put
+}
+bd
+}
+{
+/_safeput
+{
+2 index load dup dup length exch maxlength ge
+{ dup length 5 add dict copy
+3 index xdd
+}
+{ pop }
+ifelse
+3 -1 roll load 3 1 roll put
+}
+bd
+}
+ifelse
+/pdf_has_composefont? systemdict /composefont known def
+/CopyFont {
+{
+1 index /FID ne 2 index /UniqueID ne and
+{ def } { pop pop } ifelse
+} forall
+} bd
+/Type0CopyFont
+{
+exch
+dup length dict
+begin
+CopyFont
+[
+exch
+FDepVector
+{
+dup /FontType get 0 eq
+{
+1 index Type0CopyFont
+/_pdfType0 exch definefont
+}
+{
+/_pdfBaseFont exch
+2 index exec
+}
+ifelse
+exch
+}
+forall
+pop
+]
+/FDepVector exch def
+currentdict
+end
+} bd
+Level2? {currentglobal true setglobal} if
+/cHexEncoding
+[/c00/c01/c02/c03/c04/c05/c06/c07/c08/c09/c0A/c0B/c0C/c0D/c0E/c0F/c10/c11/c12
+/c13/c14/c15/c16/c17/c18/c19/c1A/c1B/c1C/c1D/c1E/c1F/c20/c21/c22/c23/c24/c25
+/c26/c27/c28/c29/c2A/c2B/c2C/c2D/c2E/c2F/c30/c31/c32/c33/c34/c35/c36/c37/c38
+/c39/c3A/c3B/c3C/c3D/c3E/c3F/c40/c41/c42/c43/c44/c45/c46/c47/c48/c49/c4A/c4B
+/c4C/c4D/c4E/c4F/c50/c51/c52/c53/c54/c55/c56/c57/c58/c59/c5A/c5B/c5C/c5D/c5E
+/c5F/c60/c61/c62/c63/c64/c65/c66/c67/c68/c69/c6A/c6B/c6C/c6D/c6E/c6F/c70/c71
+/c72/c73/c74/c75/c76/c77/c78/c79/c7A/c7B/c7C/c7D/c7E/c7F/c80/c81/c82/c83/c84
+/c85/c86/c87/c88/c89/c8A/c8B/c8C/c8D/c8E/c8F/c90/c91/c92/c93/c94/c95/c96/c97
+/c98/c99/c9A/c9B/c9C/c9D/c9E/c9F/cA0/cA1/cA2/cA3/cA4/cA5/cA6/cA7/cA8/cA9/cAA
+/cAB/cAC/cAD/cAE/cAF/cB0/cB1/cB2/cB3/cB4/cB5/cB6/cB7/cB8/cB9/cBA/cBB/cBC/cBD
+/cBE/cBF/cC0/cC1/cC2/cC3/cC4/cC5/cC6/cC7/cC8/cC9/cCA/cCB/cCC/cCD/cCE/cCF/cD0
+/cD1/cD2/cD3/cD4/cD5/cD6/cD7/cD8/cD9/cDA/cDB/cDC/cDD/cDE/cDF/cE0/cE1/cE2/cE3
+/cE4/cE5/cE6/cE7/cE8/cE9/cEA/cEB/cEC/cED/cEE/cEF/cF0/cF1/cF2/cF3/cF4/cF5/cF6
+/cF7/cF8/cF9/cFA/cFB/cFC/cFD/cFE/cFF] def
+Level2? {setglobal} if
+/modEnc {
+/_enc xdd
+/_icode 0 dd
+counttomark 1 sub -1 0
+{
+index
+dup type /nametype eq
+{
+_enc _icode 3 -1 roll put
+_icode 1 add
+}
+if
+/_icode xdd
+} for
+cleartomark
+_enc
+} bd
+/trEnc {
+/_enc xdd
+255 -1 0 {
+exch dup -1 eq
+{ pop /.notdef }
+{ Encoding exch get }
+ifelse
+_enc 3 1 roll put
+} for
+pop
+_enc
+} bd
+/TE {
+/_i xdd
+StandardEncoding 256 array copy modEnc
+_pdfEncodings exch _i exch put
+} bd
+/TZ
+{
+/_usePDFEncoding xdd
+findfont
+dup length 6 add dict
+begin
+{
+1 index /FID ne { def } { pop pop } ifelse
+} forall
+/pdf_origFontName FontName def
+/FontName exch def
+currentdict /PaintType known
+{ PaintType 2 eq {/PaintType 0 def} if }
+if
+_usePDFEncoding 0 ge
+{
+/Encoding _pdfEncodings _usePDFEncoding get def
+pop
+}
+{
+_usePDFEncoding -1 eq
+{
+counttomark 0 eq
+{ pop }
+{
+Encoding 256 array copy
+modEnc /Encoding exch def
+}
+ifelse
+}
+{
+256 array
+trEnc /Encoding exch def
+}
+ifelse
+}
+ifelse
+pdf_EuroProcSet pdf_origFontName known
+{
+pdf_origFontName pdf_AddEuroGlyphProc
+} if
+Level2?
+{
+currentdict /pdf_origFontName undef
+} if
+FontName currentdict
+end
+definefont pop
+}
+bd
+Level2?
+{
+/TZG
+{
+currentglobal true setglobal
+2 index _pdfFontStatus
+{
+2 index findfont
+false setglobal
+3 index findfont
+true setglobal
+ne
+{
+2 index findfont dup rcheck
+{
+dup length dict begin
+{
+1 index /FID ne { def } { pop pop } ifelse
+} forall
+currentdict end
+}
+if
+3 index exch definefont pop
+}
+if
+} if
+setglobal
+TZ
+} bd
+}
+{
+/TZG {TZ} bd
+} ifelse
+Level2?
+{
+currentglobal false setglobal
+userdict /pdftext_data 5 dict put
+pdftext_data
+begin
+/saveStacks
+{
+pdftext_data
+begin
+/vmmode currentglobal def
+false setglobal
+count array astore /os exch def
+end
+countdictstack array dictstack pdftext_data exch /ds exch put
+cleardictstack pdftext_data /dscount countdictstack put
+pdftext_data /vmmode get setglobal
+} bind def
+/restoreStacks
+{
+pdftext_data /vmmode currentglobal put false setglobal
+clear cleardictstack
+pdftext_data /ds get dup
+pdftext_data /dscount get 1 2 index length 1 sub
+{ get begin dup } for
+pop pop
+pdftext_data /os get aload pop
+pdftext_data /vmmode get setglobal
+} bind def
+/testForClonePrinterBug
+{
+currentglobal true setglobal
+/undefinedCategory /Generic /Category findresource
+dup length dict copy /Category defineresource pop
+setglobal
+pdftext_data /saveStacks get exec
+pdftext_data /vmmode currentglobal put false setglobal
+/undefined /undefinedCategory { resourcestatus } stopped
+pdftext_data exch /bugFound exch put
+pdftext_data /vmmode get setglobal
+pdftext_data /restoreStacks get exec
+pdftext_data /bugFound get
+} bind def
+end
+setglobal
+/pdf_resourcestatus
+pdftext_data /testForClonePrinterBug get exec
+{
+{
+pdftext_data /saveStacks get exec
+pdftext_data /os get dup dup length 1 sub
+dup 1 sub dup 0 lt { pop 0 } if
+exch 1 exch { get exch dup } for
+pop pop
+{ resourcestatus }
+stopped
+{
+clear cleardictstack pdftext_data /restoreStacks get exec
+{ pop pop } stopped pop false
+}
+{
+count array astore pdftext_data exch /results exch put
+pdftext_data /restoreStacks get exec pop pop
+pdftext_data /results get aload pop
+}
+ifelse
+}
+}
+{ { resourcestatus } }
+ifelse
+bd
+}
+if
+Level2?
+{
+/_pdfUndefineResource
+{
+currentglobal 3 1 roll
+_pdf_FontDirectory 2 index 2 copy known
+{undef}
+{pop pop}
+ifelse
+1 index (pdf) exch _pdfConcatNames 1 index
+1 index 1 _pdfConcatNames 1 index
+5 index 1 _pdfConcatNames 1 index
+4
+{
+2 copy pdf_resourcestatus
+{
+pop 2 lt
+{2 copy findresource gcheck setglobal undefineresource}
+{pop pop}
+ifelse
+}
+{ pop pop}
+ifelse
+} repeat
+setglobal
+} bd
+}
+{
+/_pdfUndefineResource { pop pop} bd
+}
+ifelse
+Level2?
+{
+/_pdfFontStatus
+{
+currentglobal exch
+/Font pdf_resourcestatus
+{pop pop true}
+{false}
+ifelse
+exch setglobal
+} bd
+}
+{
+/_pdfFontStatusString 50 string def
+_pdfFontStatusString 0 (fonts/) putinterval
+/_pdfFontStatus
+{
+FontDirectory 1 index known
+{ pop true }
+{
+_pdfFontStatusString 6 42 getinterval
+cvs length 6 add
+_pdfFontStatusString exch 0 exch getinterval
+{ status } stopped
+{pop false}
+{
+{ pop pop pop pop true}
+{ false }
+ifelse
+}
+ifelse
+}
+ifelse
+} bd
+}
+ifelse
+Level2?
+{
+/_pdfCIDFontStatus
+{
+/CIDFont /Category pdf_resourcestatus
+{
+pop pop
+/CIDFont pdf_resourcestatus
+{pop pop true}
+{false}
+ifelse
+}
+{ pop false }
+ifelse
+} bd
+}
+if
+/_pdfString100 100 string def
+/_pdfComposeFontName
+{
+dup length 1 eq
+{
+0 get
+1 index
+type /nametype eq
+{
+_pdfString100 cvs
+length dup dup _pdfString100 exch (-) putinterval
+_pdfString100 exch 1 add dup _pdfString100 length exch sub getinterval
+2 index exch cvs length
+add 1 add _pdfString100 exch 0 exch getinterval
+exch pop
+true
+}
+{
+pop pop
+false
+}
+ifelse
+}
+{
+false
+}
+ifelse
+dup {exch cvn exch} if
+} bd
+/_pdfConcatNames
+{
+exch
+_pdfString100 cvs
+length dup dup _pdfString100 exch (-) putinterval
+_pdfString100 exch 1 add dup _pdfString100 length exch sub getinterval
+3 -1 roll exch cvs length
+add 1 add _pdfString100 exch 0 exch getinterval
+cvn
+} bind def
+/_pdfTextTempString 50 string def
+/_pdfRegOrderingArray [(Adobe-Japan1) (Adobe-CNS1) (Adobe-Korea1) (Adobe-GB1)] def
+/_pdf_CheckCIDSystemInfo
+{
+1 index _pdfTextTempString cvs
+(Identity) anchorsearch
+{
+pop pop pop pop true
+}
+{
+false
+_pdfRegOrderingArray
+{
+2 index exch
+anchorsearch
+{ pop pop pop true exit}
+{ pop }
+ifelse
+}
+forall
+exch pop
+exch /CIDFont findresource
+/CIDSystemInfo get
+3 -1 roll /CMap findresource
+/CIDSystemInfo get
+exch
+3 -1 roll
+{
+2 copy
+/Supplement get
+exch
+dup type /dicttype eq
+{/Supplement get}
+{pop 0 }
+ifelse
+ge
+}
+{ true }
+ifelse
+{
+dup /Registry get
+2 index /Registry get eq
+{
+/Ordering get
+exch /Ordering get
+dup type /arraytype eq
+{
+1 index type /arraytype eq
+{
+true
+1 index length 1 sub -1 0
+{
+dup 2 index exch get exch 3 index exch get ne
+{ pop false exit}
+if
+} for
+exch pop exch pop
+}
+{ pop pop false }
+ifelse
+}
+{
+eq
+}
+ifelse
+}
+{ pop pop false }
+ifelse
+}
+{ pop pop false }
+ifelse
+}
+ifelse
+} bind def
+pdf_has_composefont?
+{
+/_pdfComposeFont
+{
+2 copy _pdfComposeFontName not
+{
+2 index
+}
+if
+(pdf) exch _pdfConcatNames
+dup _pdfFontStatus
+{ dup findfont 5 2 roll pop pop pop true}
+{
+4 1 roll
+1 index /CMap pdf_resourcestatus
+{
+pop pop
+true
+}
+{false}
+ifelse
+1 index true exch
+{
+_pdfCIDFontStatus not
+{pop false exit}
+if
+}
+forall
+and
+{
+1 index 1 index 0 get _pdf_CheckCIDSystemInfo
+{
+3 -1 roll pop
+2 index 3 1 roll
+composefont true
+}
+{
+pop pop exch pop false
+}
+ifelse
+}
+{
+_pdfComposeFontName
+{
+dup _pdfFontStatus
+{
+exch pop
+1 index exch
+findfont definefont true
+}
+{
+pop exch pop
+false
+}
+ifelse
+}
+{
+exch pop
+false
+}
+ifelse
+}
+ifelse
+{ true }
+{
+dup _pdfFontStatus
+{ dup findfont true }
+{ pop false }
+ifelse
+}
+ifelse
+}
+ifelse
+} bd
+}
+{
+/_pdfComposeFont
+{
+_pdfComposeFontName not
+{
+dup
+}
+if
+dup
+_pdfFontStatus
+{exch pop dup findfont true}
+{
+1 index
+dup type /nametype eq
+{pop}
+{cvn}
+ifelse
+eq
+{pop false}
+{
+dup _pdfFontStatus
+{dup findfont true}
+{pop false}
+ifelse
+}
+ifelse
+}
+ifelse
+} bd
+}
+ifelse
+/_pdfStyleDicts 4 dict dup begin
+/Adobe-Japan1 4 dict dup begin
+Level2?
+{
+/Serif
+/HeiseiMin-W3-83pv-RKSJ-H _pdfFontStatus
+{/HeiseiMin-W3}
+{
+/HeiseiMin-W3 _pdfCIDFontStatus
+{/HeiseiMin-W3}
+{/Ryumin-Light}
+ifelse
+}
+ifelse
+def
+/SansSerif
+/HeiseiKakuGo-W5-83pv-RKSJ-H _pdfFontStatus
+{/HeiseiKakuGo-W5}
+{
+/HeiseiKakuGo-W5 _pdfCIDFontStatus
+{/HeiseiKakuGo-W5}
+{/GothicBBB-Medium}
+ifelse
+}
+ifelse
+def
+/HeiseiMaruGo-W4-83pv-RKSJ-H _pdfFontStatus
+{/HeiseiMaruGo-W4}
+{
+/HeiseiMaruGo-W4 _pdfCIDFontStatus
+{/HeiseiMaruGo-W4}
+{
+/Jun101-Light-RKSJ-H _pdfFontStatus
+{ /Jun101-Light }
+{ SansSerif }
+ifelse
+}
+ifelse
+}
+ifelse
+/RoundSansSerif exch def
+/Default Serif def
+}
+{
+/Serif /Ryumin-Light def
+/SansSerif /GothicBBB-Medium def
+{
+(fonts/Jun101-Light-83pv-RKSJ-H) status
+}stopped
+{pop}{
+{ pop pop pop pop /Jun101-Light }
+{ SansSerif }
+ifelse
+/RoundSansSerif exch def
+}ifelse
+/Default Serif def
+}
+ifelse
+end
+def
+/Adobe-Korea1 4 dict dup begin
+/Serif /HYSMyeongJo-Medium def
+/SansSerif /HYGoThic-Medium def
+/RoundSansSerif SansSerif def
+/Default Serif def
+end
+def
+/Adobe-GB1 4 dict dup begin
+/Serif /STSong-Light def
+/SansSerif /STHeiti-Regular def
+/RoundSansSerif SansSerif def
+/Default Serif def
+end
+def
+/Adobe-CNS1 4 dict dup begin
+/Serif /MKai-Medium def
+/SansSerif /MHei-Medium def
+/RoundSansSerif SansSerif def
+/Default Serif def
+end
+def
+end
+def
+/TZzero
+{
+/_wmode xdd
+/_styleArr xdd
+/_regOrdering xdd
+3 copy
+_pdfComposeFont
+{
+5 2 roll pop pop pop
+}
+{
+[
+0 1 _styleArr length 1 sub
+{
+_styleArr exch get
+_pdfStyleDicts _regOrdering 2 copy known
+{
+get
+exch 2 copy known not
+{ pop /Default }
+if
+get
+}
+{
+pop pop pop /Unknown
+}
+ifelse
+}
+for
+]
+exch pop
+2 index 3 1 roll
+_pdfComposeFont
+{3 -1 roll pop}
+{
+findfont dup /FontName get exch
+}
+ifelse
+}
+ifelse
+dup /WMode 2 copy known
+{ get _wmode ne }
+{ pop pop _wmode 1 eq}
+ifelse
+{
+exch _wmode _pdfConcatNames
+dup _pdfFontStatus
+{ exch pop dup findfont false}
+{ exch true }
+ifelse
+}
+{
+dup /FontType get 0 ne
+}
+ifelse
+{
+dup /FontType get 3 eq _wmode 1 eq and
+{
+_pdfVerticalRomanT3Font dup length 10 add dict copy
+begin
+/_basefont exch
+dup length 3 add dict
+begin
+{1 index /FID ne {def}{pop pop} ifelse }
+forall
+/Encoding Encoding dup length array copy
+dup 16#27 /quotesingle put
+dup 16#60 /grave put
+_regOrdering /Adobe-Japan1 eq
+{dup 16#5c /yen put dup 16#a5 /yen put dup 16#b4 /yen put}
+if
+def
+FontName
+currentdict
+end
+definefont
+def
+/Encoding _basefont /Encoding get def
+/_fauxfont true def
+}
+{
+dup length 3 add dict
+begin
+{1 index /FID ne {def}{pop pop} ifelse }
+forall
+FontType 0 ne
+{
+/Encoding Encoding dup length array copy
+dup 16#27 /quotesingle put
+dup 16#60 /grave put
+_regOrdering /Adobe-Japan1 eq
+{dup 16#5c /yen put}
+if
+def
+/_fauxfont true def
+} if
+} ifelse
+/WMode _wmode def
+dup dup /FontName exch def
+currentdict
+end
+definefont pop
+}
+{
+pop
+}
+ifelse
+/_pdf_FontDirectory 3 1 roll _safeput
+}
+bd
+Level2?
+{
+/Tf {
+_pdf_FontDirectory 2 index 2 copy known
+{get exch 3 -1 roll pop}
+{pop pop}
+ifelse
+selectfont
+} bd
+}
+{
+/Tf {
+_pdf_FontDirectory 2 index 2 copy known
+{get exch 3 -1 roll pop}
+{pop pop}
+ifelse
+exch findfont exch
+dup type /arraytype eq
+{makefont}
+{scalefont}
+ifelse
+setfont
+} bd
+}
+ifelse
+/cshow where
+{
+pop /pdf_cshow /cshow load dd
+/pdf_remove2 {pop pop} dd
+}
+{
+/pdf_cshow {exch forall} dd
+/pdf_remove2 {} dd
+} ifelse
+/pdf_xshow
+{
+/_pdf_na xdd
+/_pdf_i 0 dd
+currentpoint
+/_pdf_y xdd
+/_pdf_x xdd
+{
+pdf_remove2
+_pdf_str1 exch 0 exch put
+_pdf_str1 /_pdf_showproc load exec
+{_pdf_na _pdf_i get} stopped
+{ pop pop }
+{
+_pdf_x _pdf_y moveto
+0
+rmoveto
+}
+ifelse
+_pdf_i 1 add /_pdf_i xdd
+currentpoint
+/_pdf_y xdd
+/_pdf_x xdd
+}
+exch
+pdf_cshow
+} bd
+/pdf_yshow
+{
+/_pdf_na xdd
+/_pdf_i 0 dd
+currentpoint
+/_pdf_y xdd
+/_pdf_x xdd
+{
+pdf_remove2
+_pdf_str1 exch 0 exch put
+_pdf_str1 /_pdf_showproc load exec
+{_pdf_na _pdf_i get} stopped
+{ pop pop }
+{
+_pdf_x _pdf_y moveto
+0 exch
+rmoveto
+}
+ifelse
+_pdf_i 1 add /_pdf_i xdd
+currentpoint
+/_pdf_y xdd
+/_pdf_x xdd
+}
+exch
+pdf_cshow
+} bd
+/pdf_xyshow
+{
+/_pdf_na xdd
+/_pdf_i 0 dd
+currentpoint
+/_pdf_y xdd
+/_pdf_x xdd
+{
+pdf_remove2
+_pdf_str1 exch 0 exch put
+_pdf_str1 /_pdf_showproc load exec
+{_pdf_na _pdf_i get} stopped
+{ pop pop }
+{
+{_pdf_na _pdf_i 1 add get} stopped
+{ pop pop pop}
+{
+_pdf_x _pdf_y moveto
+rmoveto
+}
+ifelse
+}
+ifelse
+_pdf_i 2 add /_pdf_i xdd
+currentpoint
+/_pdf_y xdd
+/_pdf_x xdd
+}
+exch
+pdf_cshow
+} bd
+/pdfl1xs {/_pdf_showproc /show load dd pdf_xshow} bd
+/pdfl1ys {/_pdf_showproc /show load dd pdf_yshow} bd
+/pdfl1xys {/_pdf_showproc /show load dd pdf_xyshow} bd
+Level2? _ColorSep5044? not and
+{
+/pdfxs {{xshow} stopped {pdfl1xs} if} bd
+/pdfys {{yshow} stopped {pdfl1ys} if} bd
+/pdfxys {{xyshow} stopped {pdfl1xys} if} bd
+}
+{
+/pdfxs /pdfl1xs load dd
+/pdfys /pdfl1ys load dd
+/pdfxys /pdfl1xys load dd
+} ifelse
+/pdf_charpath {false charpath} bd
+/pdf_xcharpath {/_pdf_showproc /pdf_charpath load dd pdf_xshow} bd
+/pdf_ycharpath {/_pdf_showproc /pdf_charpath load dd pdf_yshow} bd
+/pdf_xycharpath {/_pdf_showproc /pdf_charpath load dd pdf_xyshow} bd
+/pdf_strokepath
+{
+{
+pdf_remove2
+_pdf_str1 exch 0 exch put
+_pdf_str1 false charpath
+currentpoint S moveto
+} bind
+exch pdf_cshow
+} bd
+/pdf_xstrokepath {/_pdf_showproc {pdf_charpath S} dd pdf_xshow} bd
+/pdf_ystrokepath {/_pdf_showproc {pdf_charpath S} dd pdf_yshow} bd
+/pdf_xystrokepath {/_pdf_showproc {pdf_charpath S} dd pdf_xyshow} bd
+Level2? {currentglobal true setglobal} if
+/d0/setcharwidth ld
+/nND {{/.notdef} repeat} bd
+/T3Defs {
+/BuildChar
+{
+1 index /Encoding get exch get
+1 index /BuildGlyph get exec
+}
+def
+/BuildGlyph {
+exch begin
+GlyphProcs exch get exec
+end
+} def
+/_pdfT3Font true def
+} bd
+/_pdfBoldRomanWidthProc
+{
+stringwidth 1 index 0 ne { exch .03 add exch }if setcharwidth
+0 0
+} bd
+/_pdfType0WidthProc
+{
+dup stringwidth 0 0 moveto
+2 index true charpath pathbbox
+0 -1
+7 index 2 div .88
+setcachedevice2
+pop
+0 0
+} bd
+/_pdfType0WMode1WidthProc
+{
+dup stringwidth
+pop 2 div neg -0.88
+2 copy
+moveto
+0 -1
+5 -1 roll true charpath pathbbox
+setcachedevice
+} bd
+/_pdfBoldBaseFont
+11 dict begin
+/FontType 3 def
+/FontMatrix[1 0 0 1 0 0]def
+/FontBBox[0 0 1 1]def
+/Encoding cHexEncoding def
+/_setwidthProc /_pdfBoldRomanWidthProc load def
+/_bcstr1 1 string def
+/BuildChar
+{
+exch begin
+_basefont setfont
+_bcstr1 dup 0 4 -1 roll put
+dup
+_setwidthProc
+3 copy
+moveto
+show
+_basefonto setfont
+moveto
+show
+end
+}bd
+currentdict
+end
+def
+pdf_has_composefont?
+{
+/_pdfBoldBaseCIDFont
+11 dict begin
+/CIDFontType 1 def
+/CIDFontName /_pdfBoldBaseCIDFont def
+/FontMatrix[1 0 0 1 0 0]def
+/FontBBox[0 0 1 1]def
+/_setwidthProc /_pdfType0WidthProc load def
+/_bcstr2 2 string def
+/BuildGlyph
+{
+exch begin
+_basefont setfont
+_bcstr2 1 2 index 256 mod put
+_bcstr2 0 3 -1 roll 256 idiv put
+_bcstr2 dup _setwidthProc
+3 copy
+moveto
+show
+_basefonto setfont
+moveto
+show
+end
+}bd
+currentdict
+end
+def
+/_pdfDefineIdentity-H
+{
+/Identity-H /CMap PDFText /pdf_resourcestatus get exec
+{
+pop pop
+}
+{
+/CIDInit/ProcSet findresource begin 12 dict begin
+begincmap
+/CIDSystemInfo
+3 dict begin
+/Registry (Adobe) def
+/Ordering (Identity) def
+/Supplement 0 def
+currentdict
+end
+def
+/CMapName /Identity-H def
+/CMapVersion 1 def
+/CMapType 1 def
+1 begincodespacerange
+<0000> <ffff>
+endcodespacerange
+1 begincidrange
+<0000> <ffff> 0
+endcidrange
+endcmap
+CMapName currentdict/CMap defineresource pop
+end
+end
+} ifelse
+} def
+} if
+/_pdfVerticalRomanT3Font
+10 dict begin
+/FontType 3 def
+/FontMatrix[1 0 0 1 0 0]def
+/FontBBox[0 0 1 1]def
+/_bcstr1 1 string def
+/BuildChar
+{
+exch begin
+_basefont setfont
+_bcstr1 dup 0 4 -1 roll put
+dup
+_pdfType0WidthProc
+moveto
+show
+end
+}bd
+currentdict
+end
+def
+Level2? {setglobal} if
+/MakeBoldFont
+{
+dup /ct_SyntheticBold known
+{
+dup length 3 add dict begin
+CopyFont
+/ct_StrokeWidth .03 0 FontMatrix idtransform pop def
+/ct_SyntheticBold true def
+currentdict
+end
+definefont
+}
+{
+dup dup length 3 add dict
+begin
+CopyFont
+/PaintType 2 def
+/StrokeWidth .03 0 FontMatrix idtransform pop def
+/dummybold currentdict
+end
+definefont
+dup /FontType get dup 9 ge exch 11 le and
+{
+_pdfBoldBaseCIDFont
+dup length 3 add dict copy begin
+dup /CIDSystemInfo get /CIDSystemInfo exch def
+/_Type0Identity /Identity-H 3 -1 roll [ exch ] composefont
+/_basefont exch def
+/_Type0Identity /Identity-H 3 -1 roll [ exch ] composefont
+/_basefonto exch def
+currentdict
+end
+/CIDFont defineresource
+}
+{
+_pdfBoldBaseFont
+dup length 3 add dict copy begin
+/_basefont exch def
+/_basefonto exch def
+currentdict
+end
+definefont
+}
+ifelse
+}
+ifelse
+} bd
+/MakeBold {
+1 index
+_pdf_FontDirectory 2 index 2 copy known
+{get}
+{exch pop}
+ifelse
+findfont
+dup
+/FontType get 0 eq
+{
+dup /WMode known {dup /WMode get 1 eq }{false} ifelse
+version length 4 ge
+and
+{version 0 4 getinterval cvi 2015 ge }
+{true}
+ifelse
+{/_pdfType0WidthProc}
+{/_pdfType0WMode1WidthProc}
+ifelse
+_pdfBoldBaseFont /_setwidthProc 3 -1 roll load put
+{MakeBoldFont} Type0CopyFont definefont
+}
+{
+dup /_fauxfont known not 1 index /SubstMaster known not and
+{
+_pdfBoldBaseFont /_setwidthProc /_pdfBoldRomanWidthProc load put
+MakeBoldFont
+}
+{
+2 index 2 index eq
+{ exch pop }
+{
+dup length dict begin
+CopyFont
+currentdict
+end
+definefont
+}
+ifelse
+}
+ifelse
+}
+ifelse
+pop pop
+dup /dummybold ne
+{/_pdf_FontDirectory exch dup _safeput }
+{ pop }
+ifelse
+}bd
+/MakeItalic {
+_pdf_FontDirectory exch 2 copy known
+{get}
+{exch pop}
+ifelse
+dup findfont
+dup /FontInfo 2 copy known
+{
+get
+/ItalicAngle 2 copy known
+{get 0 eq }
+{ pop pop true}
+ifelse
+}
+{ pop pop true}
+ifelse
+{
+exch pop
+dup /FontType get 0 eq Level2? not and
+{ dup /FMapType get 6 eq }
+{ false }
+ifelse
+{
+dup /WMode 2 copy known
+{
+get 1 eq
+{ _italMtx_WMode1Type0 }
+{ _italMtxType0 }
+ifelse
+}
+{ pop pop _italMtxType0 }
+ifelse
+}
+{
+dup /WMode 2 copy known
+{
+get 1 eq
+{ _italMtx_WMode1 }
+{ _italMtx }
+ifelse
+}
+{ pop pop _italMtx }
+ifelse
+}
+ifelse
+makefont
+dup /FontType get 42 eq Level2? not or
+{
+dup length dict begin
+CopyFont
+currentdict
+end
+}
+if
+1 index exch
+definefont pop
+/_pdf_FontDirectory exch dup _safeput
+}
+{
+pop
+2 copy ne
+{
+/_pdf_FontDirectory 3 1 roll _safeput
+}
+{ pop pop }
+ifelse
+}
+ifelse
+}bd
+/MakeBoldItalic {
+/dummybold exch
+MakeBold
+/dummybold
+MakeItalic
+}bd
+Level2?
+{
+/pdf_CopyDict
+{1 index length add dict copy}
+def
+}
+{
+/pdf_CopyDict
+{
+1 index length add dict
+1 index wcheck
+{ copy }
+{ begin
+{def} forall
+currentdict
+end
+}
+ifelse
+}
+def
+}
+ifelse
+/pdf_AddEuroGlyphProc
+{
+currentdict /CharStrings known
+{
+CharStrings /Euro known not
+{
+dup
+/CharStrings
+CharStrings 1 pdf_CopyDict
+begin
+/Euro pdf_EuroProcSet 4 -1 roll get def
+currentdict
+end
+def
+/pdf_PSBuildGlyph /pdf_PSBuildGlyph load def
+/pdf_PathOps /pdf_PathOps load def
+/Symbol eq
+{
+/Encoding Encoding dup length array copy
+dup 160 /Euro put def
+}
+if
+}
+{ pop
+}
+ifelse
+}
+{ pop
+}
+ifelse
+}
+def
+Level2? {currentglobal true setglobal} if
+/pdf_PathOps 4 dict dup begin
+/m {moveto} def
+/l {lineto} def
+/c {curveto} def
+/cp {closepath} def
+end
+def
+/pdf_PSBuildGlyph
+{
+gsave
+8 -1 roll pop
+7 1 roll
+currentdict /PaintType 2 copy known {get 2 eq}{pop pop false} ifelse
+dup 9 1 roll
+{
+currentdict /StrokeWidth 2 copy known
+{
+get 2 div
+5 1 roll
+4 -1 roll 4 index sub
+4 1 roll
+3 -1 roll 4 index sub
+3 1 roll
+exch 4 index add exch
+4 index add
+5 -1 roll pop
+}
+{
+pop pop
+}
+ifelse
+}
+if
+setcachedevice
+pdf_PathOps begin
+exec
+end
+{
+currentdict /StrokeWidth 2 copy known
+{ get }
+{ pop pop 0 }
+ifelse
+setlinewidth stroke
+}
+{
+fill
+}
+ifelse
+grestore
+} def
+/pdf_EuroProcSet 13 dict def
+pdf_EuroProcSet
+begin
+/Courier-Bold
+{
+600 0 6 -12 585 612
+{
+385 274 m
+180 274 l
+179 283 179 293 179 303 c
+179 310 179 316 180 323 c
+398 323 l
+423 404 l
+197 404 l
+219 477 273 520 357 520 c
+409 520 466 490 487 454 c
+487 389 l
+579 389 l
+579 612 l
+487 612 l
+487 560 l
+449 595 394 612 349 612 c
+222 612 130 529 98 404 c
+31 404 l
+6 323 l
+86 323 l
+86 304 l
+86 294 86 284 87 274 c
+31 274 l
+6 193 l
+99 193 l
+129 77 211 -12 359 -12 c
+398 -12 509 8 585 77 c
+529 145 l
+497 123 436 80 356 80 c
+285 80 227 122 198 193 c
+360 193 l
+cp
+600 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Courier-BoldOblique /Courier-Bold load def
+/Courier
+{
+600 0 17 -12 578 584
+{
+17 204 m
+97 204 l
+126 81 214 -12 361 -12 c
+440 -12 517 17 578 62 c
+554 109 l
+501 70 434 43 366 43 c
+266 43 184 101 154 204 c
+380 204 l
+400 259 l
+144 259 l
+144 270 143 281 143 292 c
+143 299 143 307 144 314 c
+418 314 l
+438 369 l
+153 369 l
+177 464 249 529 345 529 c
+415 529 484 503 522 463 c
+522 391 l
+576 391 l
+576 584 l
+522 584 l
+522 531 l
+473 566 420 584 348 584 c
+216 584 122 490 95 369 c
+37 369 l
+17 314 l
+87 314 l
+87 297 l
+87 284 88 272 89 259 c
+37 259 l
+cp
+600 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Courier-Oblique /Courier load def
+/Helvetica
+{
+556 0 24 -19 541 703
+{
+541 628 m
+510 669 442 703 354 703 c
+201 703 117 607 101 444 c
+50 444 l
+25 372 l
+97 372 l
+97 301 l
+49 301 l
+24 229 l
+103 229 l
+124 67 209 -19 350 -19 c
+435 -19 501 25 509 32 c
+509 131 l
+492 105 417 60 343 60 c
+267 60 204 127 197 229 c
+406 229 l
+430 301 l
+191 301 l
+191 372 l
+455 372 l
+479 444 l
+194 444 l
+201 531 245 624 348 624 c
+433 624 484 583 509 534 c
+cp
+556 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Helvetica-Oblique /Helvetica load def
+/Helvetica-Bold
+{
+556 0 12 -19 563 710
+{
+563 621 m
+537 659 463 710 363 710 c
+216 710 125 620 101 462 c
+51 462 l
+12 367 l
+92 367 l
+92 346 l
+92 337 93 328 93 319 c
+52 319 l
+12 224 l
+102 224 l
+131 58 228 -19 363 -19 c
+417 -19 471 -12 517 18 c
+517 146 l
+481 115 426 93 363 93 c
+283 93 254 166 246 224 c
+398 224 l
+438 319 l
+236 319 l
+236 367 l
+457 367 l
+497 462 l
+244 462 l
+259 552 298 598 363 598 c
+425 598 464 570 486 547 c
+507 526 513 517 517 509 c
+cp
+556 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Helvetica-BoldOblique /Helvetica-Bold load def
+/Symbol
+{
+750 0 20 -12 714 685
+{
+714 581 m
+650 645 560 685 465 685 c
+304 685 165 580 128 432 c
+50 432 l
+20 369 l
+116 369 l
+115 356 115 347 115 337 c
+115 328 115 319 116 306 c
+50 306 l
+20 243 l
+128 243 l
+165 97 300 -12 465 -12 c
+560 -12 635 25 685 65 c
+685 155 l
+633 91 551 51 465 51 c
+340 51 238 131 199 243 c
+555 243 l
+585 306 l
+184 306 l
+183 317 182 326 182 336 c
+182 346 183 356 184 369 c
+614 369 l 644 432 l
+199 432 l
+233 540 340 622 465 622 c
+555 622 636 580 685 520 c
+cp
+750 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Times-Bold
+{
+500 0 16 -14 478 700
+{
+367 308 m
+224 308 l
+224 368 l
+375 368 l
+380 414 l
+225 414 l
+230 589 257 653 315 653 c
+402 653 431 521 444 457 c
+473 457 l
+473 698 l
+444 697 l
+441 679 437 662 418 662 c
+393 662 365 700 310 700 c
+211 700 97 597 73 414 c
+21 414 l
+16 368 l
+69 368 l
+69 359 68 350 68 341 c
+68 330 68 319 69 308 c
+21 308 l
+16 262 l
+73 262 l
+91 119 161 -14 301 -14 c
+380 -14 443 50 478 116 c
+448 136 l
+415 84 382 40 323 40 c
+262 40 231 77 225 262 c
+362 262 l
+cp
+500 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Times-BoldItalic
+{
+500 0 9 -20 542 686
+{
+542 686 m
+518 686 l
+513 673 507 660 495 660 c
+475 660 457 683 384 683 c
+285 683 170 584 122 430 c
+58 430 l
+34 369 l
+105 369 l
+101 354 92 328 90 312 c
+34 312 l
+9 251 l
+86 251 l
+85 238 84 223 84 207 c
+84 112 117 -14 272 -14 c
+326 -14 349 9 381 9 c
+393 9 393 -10 394 -20 c
+420 -20 l
+461 148 l
+429 148 l
+416 109 362 15 292 15 c
+227 15 197 55 197 128 c
+197 162 204 203 216 251 c
+378 251 l
+402 312 l
+227 312 l
+229 325 236 356 241 369 c
+425 369 l
+450 430 l
+255 430 l
+257 435 264 458 274 488 c
+298 561 337 654 394 654 c
+437 654 484 621 484 530 c
+484 516 l
+516 516 l
+cp
+500 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Times-Italic
+{
+500 0 23 -10 595 692
+{
+399 317 m
+196 317 l
+199 340 203 363 209 386 c
+429 386 l
+444 424 l
+219 424 l
+246 514 307 648 418 648 c
+448 648 471 638 492 616 c
+529 576 524 529 527 479 c
+549 475 l
+595 687 l
+570 687 l
+562 674 558 664 542 664 c
+518 664 474 692 423 692 c
+275 692 162 551 116 424 c
+67 424 l
+53 386 l
+104 386 l
+98 363 93 340 90 317 c
+37 317 l
+23 279 l
+86 279 l
+85 266 85 253 85 240 c
+85 118 137 -10 277 -10 c
+370 -10 436 58 488 128 c
+466 149 l
+424 101 375 48 307 48 c
+212 48 190 160 190 234 c
+190 249 191 264 192 279 c
+384 279 l
+cp
+500 0 m
+}
+pdf_PSBuildGlyph
+} def
+/Times-Roman
+{
+500 0 10 -12 484 692
+{
+347 298 m
+171 298 l
+170 310 170 322 170 335 c
+170 362 l
+362 362 l
+374 403 l
+172 403 l
+184 580 244 642 308 642 c
+380 642 434 574 457 457 c
+481 462 l
+474 691 l
+449 691 l
+433 670 429 657 410 657 c
+394 657 360 692 299 692 c
+204 692 94 604 73 403 c
+22 403 l
+10 362 l
+70 362 l
+69 352 69 341 69 330 c
+69 319 69 308 70 298 c
+22 298 l
+10 257 l
+73 257 l
+97 57 216 -12 295 -12 c
+364 -12 427 25 484 123 c
+458 142 l
+425 101 384 37 316 37 c
+256 37 189 84 173 257 c
+335 257 l
+cp
+500 0 m
+}
+pdf_PSBuildGlyph
+} def
+end
+Level2? {setglobal} if
+currentdict readonly pop end
+%%EndResource
+PDFText begin
+[39/quotesingle 96/grave 128/Adieresis/Aring/Ccedilla/Eacute/Ntilde/Odieresis
+/Udieresis/aacute/agrave/acircumflex/adieresis/atilde/aring/ccedilla/eacute
+/egrave/ecircumflex/edieresis/iacute/igrave/icircumflex/idieresis/ntilde
+/oacute/ograve/ocircumflex/odieresis/otilde/uacute/ugrave/ucircumflex
+/udieresis/dagger/degree/cent/sterling/section/bullet/paragraph/germandbls
+/registered/copyright/trademark/acute/dieresis/.notdef/AE/Oslash
+/.notdef/plusminus/.notdef/.notdef/yen/mu/.notdef/.notdef
+/.notdef/.notdef/.notdef/ordfeminine/ordmasculine/.notdef/ae/oslash
+/questiondown/exclamdown/logicalnot/.notdef/florin/.notdef/.notdef
+/guillemotleft/guillemotright/ellipsis/space/Agrave/Atilde/Otilde/OE/oe
+/endash/emdash/quotedblleft/quotedblright/quoteleft/quoteright/divide
+/.notdef/ydieresis/Ydieresis/fraction/currency/guilsinglleft/guilsinglright
+/fi/fl/daggerdbl/periodcentered/quotesinglbase/quotedblbase/perthousand
+/Acircumflex/Ecircumflex/Aacute/Edieresis/Egrave/Iacute/Icircumflex
+/Idieresis/Igrave/Oacute/Ocircumflex/.notdef/Ograve/Uacute/Ucircumflex
+/Ugrave/dotlessi/circumflex/tilde/macron/breve/dotaccent/ring/cedilla
+/hungarumlaut/ogonek/caron
+0 TE
+[1/dotlessi/caron 39/quotesingle 96/grave 
+127/bullet/Euro/bullet/quotesinglbase/florin/quotedblbase/ellipsis
+/dagger/daggerdbl/circumflex/perthousand/Scaron/guilsinglleft/OE
+/bullet/Zcaron/bullet/bullet/quoteleft/quoteright/quotedblleft
+/quotedblright/bullet/endash/emdash/tilde/trademark/scaron
+/guilsinglright/oe/bullet/zcaron/Ydieresis/space/exclamdown/cent/sterling
+/currency/yen/brokenbar/section/dieresis/copyright/ordfeminine
+/guillemotleft/logicalnot/hyphen/registered/macron/degree/plusminus
+/twosuperior/threesuperior/acute/mu/paragraph/periodcentered/cedilla
+/onesuperior/ordmasculine/guillemotright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex/Idieresis
+/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis/multiply/Oslash
+/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn/germandbls/agrave
+/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla/egrave/eacute
+/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis/eth/ntilde
+/ograve/oacute/ocircumflex/otilde/odieresis/divide/oslash/ugrave/uacute
+/ucircumflex/udieresis/yacute/thorn/ydieresis
+1 TE
+end
+currentdict readonly pop
+end end
+/currentpacking where {pop setpacking}if
+PDFVars/DocInitAll{[PDF PDFText]{/docinitialize get exec}forall }put
+PDFVars/InitAll{[PDF PDFText]{/initialize get exec}forall initgs}put
+PDFVars/TermAll{[PDFText PDF]{/terminate get exec}forall}put
+PDFVars begin PDF begin
+PDFVars/DocInitAll get exec PDFVars/InitAll get exec
+PDFVars/TermAll get exec end end
+
+%%EndSetup
+ PDF /docinitialize get exec
+%%Page: 1 1
+%%BeginPageSetup
+{<</PageSize [500 500] /Policies << /PageSize 1 >> >> setpagedevice} stopped pop
+userdict /pgsave save put
+PDFVars begin PDF begin PDFVars/InitAll get exec
+/N99 <</FunctionType 0
+/Domain [0 1 ]
+/Range [0 1 0 1 0 1 0 1 ]
+/Order 1
+/BitsPerSample 8
+/Encode [0 178 ]
+/Decode [0 1 0 1 0 1 0 1 ]
+/Size [179 ]
+/DataSource <~!42\*!3uP(!3lJ'!3cD&!3Z>%!3Q8$!3H2#!3?,"!36&!!3,tu!3#nt!2ohs!2fbr
+!2]\q!2TVp!2KPo!2BJn!29Dm!20>l!2'8k!1s2j!1j,i!1a&h!1Wug!1Nof!1Eie
+!1<cd!13]c!1*Wb!1!Qa!0mK`!0dE_!0[?^!0R9]!0I3\!0@-[!07'Z!0.!Y!0$pX
+!/pjW!/gdV!/^^U!/UXT!/LRS!/CLR!/:FQ!/1@P!/(:O!.t4N!.k.M!.b(L!.Y"K
+!.OqJ!.FkI!.=eH!.4_G!.+YF!."SE!-nMD!-eGC!-\AB!-S;A!-J5@!-A/?!-8)>
+!-/#=!-%r<!,ql;!,hf:!,_`9!,VZ8!,MT7!,DN6!,;H5!,2B4!,)<3!+u62!+l01
+!+c*0!+Z$/!+Ps.!+Gm-!+>g,!+5a+!+,[*!+#U)!*oO(!*fI'!*]C&!*T=%!*K7$
+!*B1#!*9+"!*0%!!*&su!)rmt!)igs!)`ar!)W[q!)NUp!)EOo!)<In!)3Cm!)*=l
+!)!7k!(m1j!(d+i!([%h!(Qtg!(Hnf!(?he!(6bd!(-\c!($Vb!'pPa!'gJ`!'^D_
+!'U>^!'L8]!'C2\!':,[!'1&Z!''uY!&soX!&jiW!&acV!&X]U!&OWT!&FQS!&=KR
+!&4EQ!&+?P!&"9O!%n3N!%e-M!%\'L!%S!K!%IpJ!%@jI!%7dH!%.^G!%%XF!$qRE
+!$hLD!$_FC!$V@B!$M:A!$D4@!$;.?!$2(>!$)"=!#tq<!#kk;!#be:!#Y_9!#PY8
+!#GS7!#>M6!#5G5!#,A4!##;3!"o52!"f/1!"])0!"T#/!"Jr.!"Al-!"8f,!"/`+
+!"&Z*!!rT)!!iN(!!`H'!!WB&!!N<%!!E6$!!<0#!!3*"!!*$!~> >>
+/FunctionDictionary defineRes pop
+
+/N100 <</FunctionType 3
+/Domain [0 1 ]
+/Bounds []
+/Functions [
+/N99 /FunctionDictionary findRes ]
+/Encode [0 1 ]
+>>
+/FunctionDictionary defineRes pop
+
+/N106 <</PatternType 1 /PaintType 1 /TilingType 2 /XStep 149.383 /YStep 25.047
+/BBox [0 0 149.383 25.047]
+/PaintProc {pop 
+q
+n
+0 25.047 m
+149.383 25.047 l
+149.383 0 l
+0 0 l
+h
+W
+n
+n
+88.406 10.463 m
+87.602 10.792 86.628 10.91 85.706 10.91 c
+82.454 10.91 80.439 8.72501 80.439 5.76199 c
+80.439 3.27299 81.769 1.40401 84.548 1.40401 c
+85.246 1.40401 85.957 1.47 86.628 1.65401 c
+86.918 3.418 l
+86.391 3.10201 85.759 2.85201 84.982 2.85201 c
+83.363 2.85201 82.362 4.22099 82.362 5.76199 c
+82.362 7.922 83.797 9.46201 85.838 9.46201 c
+86.826 9.46201 87.523 9.21201 87.945 8.922 c
+88.406 10.463 l
+[/DeviceCMYK] cs 1 0.5 0 0 sc
+f
+n
+91.836 1.562 m
+93.324 1.562 l
+93.482 2.839 94.153 5.49899 94.153 6.407 c
+94.153 8 92.876 8.50101 91.52 8.50101 c
+90.73 8.50101 89.966 8.356 89.216 8.093 c
+88.965 6.68401 l
+89.663 7.013 90.414 7.211 91.191 7.211 c
+91.81 7.211 92.547 7.013 92.547 6.328 c
+92.547 6.131 92.547 5.933 92.494 5.74899 c
+91.875 5.74899 l
+90.216 5.74899 87.715 5.578 87.715 3.339 c
+87.715 2.089 88.584 1.40401 89.808 1.40401 c
+90.783 1.40401 91.388 1.838 91.994 2.60201 c
+92.02 2.60201 l
+91.836 1.562 l
+h
+89.4 3.405 m
+89.4 4.55099 90.822 4.696 91.678 4.696 c
+92.297 4.696 l
+92.02 3.603 91.612 2.694 90.295 2.694 c
+89.848 2.694 89.4 2.931 89.4 3.405 c
+f
+n
+94.899 1.562 m
+96.663 1.562 l
+97.295 4.603 l
+97.519 5.696 98.125 6.81599 99.376 6.81599 c
+99.6 6.815 99.85 6.776 100.048 6.71001 c
+100.416 8.435 l
+100.206 8.48801 99.968 8.50101 99.744 8.50101 c
+98.928 8.50101 98.059 7.80299 97.743 7.06599 c
+97.717 7.06599 l
+97.954 8.343 l
+96.268 8.343 l
+96.215 8.02699 96.163 7.724 96.11 7.43401 c
+94.899 1.562 l
+f
+n
+106.509 11.437 m
+105.653 7.53999 l
+105.1 8.172 104.429 8.50101 103.56 8.50101 c
+101.255 8.50101 100.149 6.24899 100.149 4.22099 c
+100.149 2.74699 100.873 1.40401 102.48 1.40401 c
+103.507 1.40401 104.165 1.825 104.692 2.563 c
+104.718 2.562 l
+104.547 1.562 l
+106.193 1.562 l
+106.232 1.90401 106.338 2.48399 106.443 3.063 c
+108.273 11.437 l
+106.509 11.437 l
+h
+103.849 7.132 m
+104.745 7.132 105.126 6.315 105.126 5.52499 c
+105.126 4.274 104.363 2.77299 103.072 2.77299 c
+102.203 2.77299 101.993 3.69501 101.993 4.38 c
+101.993 5.39301 102.585 7.132 103.849 7.132 c
+f
+n
+-0.395996 4.377 m
+-0.289993 4.87801 -0.223999 5.37801 -0.223999 5.89101 c
+-0.223999 7.616 -1.33 8.472 -3.00301 8.472 c
+-5.228 8.472 -6.86099 6.44501 -6.86099 4.338 c
+-6.86099 2.323 -5.54401 1.375 -3.595 1.375 c
+-2.871 1.375 -2.12 1.54601 -1.436 1.757 c
+-1.21201 3.153 l
+-1.87 2.85001 -2.56799 2.66499 -3.29201 2.66499 c
+-4.504 2.66499 -5.175 3.12601 -5.175 4.377 c
+-0.395996 4.377 l
+h
+-4.938 5.589 m
+-4.59599 6.52299 -4.12199 7.18201 -3.02901 7.18201 c
+-2.29201 7.18201 -1.91 6.774 -1.91 6.05 c
+-1.91 5.89101 -1.923 5.74699 -1.94901 5.589 c
+-4.938 5.589 l
+f
+n
+0.179001 1.533 m
+1.94299 1.533 l
+2.575 4.575 l
+2.799 5.66701 3.405 6.787 4.65601 6.787 c
+4.879 6.787 5.13 6.74699 5.327 6.681 c
+5.696 8.40601 l
+5.485 8.459 5.248 8.472 5.024 8.472 c
+4.20799 8.472 3.339 7.774 3.02299 7.037 c
+2.996 7.037 l
+3.23399 8.314 l
+1.548 8.314 l
+1.495 7.998 1.44299 7.69501 1.39 7.40601 c
+0.179001 1.533 l
+f
+n
+112.3 1.55299 m
+114.051 1.55299 l
+115.736 9.16299 l
+115.763 9.16299 l
+116.5 1.55299 l
+118.264 1.55299 l
+122.425 9.16299 l
+122.452 9.16299 l
+120.714 1.55299 l
+122.662 1.55299 l
+124.624 10.743 l
+121.556 10.743 l
+117.935 4.12 l
+117.909 4.12 l
+117.29 10.743 l
+114.248 10.743 l
+112.3 1.55299 l
+f
+n
+128.579 1.55299 m
+130.067 1.55299 l
+130.225 2.83 130.896 5.49001 130.896 6.39799 c
+130.896 7.991 129.619 8.492 128.263 8.492 c
+127.473 8.492 126.709 8.347 125.958 8.084 c
+125.708 6.675 l
+126.406 7.004 127.157 7.201 127.934 7.201 c
+128.553 7.201 129.29 7.004 129.29 6.319 c
+129.29 6.12199 129.29 5.924 129.237 5.74001 c
+128.618 5.74001 l
+126.959 5.74001 124.457 5.569 124.457 3.33 c
+124.457 2.07899 125.327 1.395 126.551 1.395 c
+127.525 1.395 128.131 1.82899 128.737 2.593 c
+128.763 2.593 l
+128.579 1.55299 l
+h
+126.143 3.396 m
+126.143 4.54201 127.565 4.686 128.421 4.687 c
+129.04 4.687 l
+128.763 3.59399 128.355 2.685 127.038 2.685 c
+126.591 2.685 126.143 2.922 126.143 3.396 c
+f
+n
+137.185 8.215 m
+136.566 8.373 135.908 8.492 135.263 8.492 c
+133.867 8.492 132.326 7.92599 132.326 6.332 c
+132.326 4.634 134.618 4.52901 134.618 3.436 c
+134.618 2.883 133.999 2.685 133.406 2.685 c
+132.722 2.685 132.221 2.935 131.721 3.21201 c
+131.339 1.80299 l
+131.984 1.5 132.695 1.395 133.406 1.395 c
+134.92 1.395 136.461 1.92101 136.461 3.686 c
+136.461 5.345 134.17 5.661 134.17 6.517 c
+134.17 7.056 134.828 7.201 135.355 7.201 c
+135.855 7.201 136.342 7.056 136.803 6.88499 c
+137.185 8.215 l
+f
+n
+137.773 7.043 m
+139.05 7.043 l
+138.55 4.752 l
+138.431 4.21201 138.326 3.69901 138.326 3.172 c
+138.326 1.869 139.168 1.395 140.367 1.395 c
+140.669 1.395 141.012 1.487 141.315 1.55299 c
+141.617 2.922 l
+141.394 2.83 141.078 2.76401 140.762 2.76401 c
+140.367 2.76401 140.09 3.01401 140.09 3.422 c
+140.09 3.686 140.13 3.923 140.169 4.08099 c
+140.814 7.043 l
+142.394 7.043 l
+142.671 8.334 l
+141.091 8.334 l
+141.525 10.348 l
+139.629 9.73 l
+139.326 8.334 l
+138.049 8.334 l
+137.773 7.043 l
+f
+n
+148.948 4.397 m
+149.053 4.897 149.119 5.39799 149.119 5.911 c
+149.119 7.636 148.013 8.492 146.341 8.492 c
+144.115 8.492 142.483 6.464 142.483 4.35699 c
+142.483 2.343 143.799 1.395 145.748 1.395 c
+146.472 1.395 147.223 1.56599 147.908 1.776 c
+148.132 3.172 l
+147.473 2.869 146.775 2.685 146.051 2.685 c
+144.84 2.685 144.168 3.146 144.168 4.397 c
+148.948 4.397 l
+h
+144.405 5.608 m
+144.748 6.543 145.222 7.201 146.314 7.201 c
+147.052 7.201 147.434 6.793 147.434 6.069 c
+147.434 5.911 147.42 5.76601 147.394 5.608 c
+144.405 5.608 l
+f
+n
+149.522 1.55299 m
+151.287 1.55299 l
+151.919 4.59399 l
+152.142 5.687 152.748 6.806 153.999 6.806 c
+154.223 6.806 154.473 6.767 154.67 6.701 c
+155.039 8.42599 l
+154.828 8.479 154.592 8.492 154.368 8.492 c
+153.551 8.492 152.682 7.79401 152.366 7.05701 c
+152.34 7.056 l
+152.577 8.334 l
+150.891 8.334 l
+150.839 8.01801 150.786 7.715 150.734 7.425 c
+149.522 1.55299 l
+f
+n
+3.157 14.424 m
+4.909 14.424 l
+6.59399 22.034 l
+6.62 22.034 l
+7.358 14.424 l
+9.12199 14.424 l
+13.283 22.034 l
+13.309 22.034 l
+11.571 14.424 l
+13.52 14.424 l
+15.482 23.614 l
+12.414 23.614 l
+8.793 16.991 l
+8.76601 16.991 l
+8.14799 23.614 l
+5.106 23.614 l
+3.157 14.424 l
+f
+n
+19.437 14.424 m
+20.924 14.424 l
+21.082 15.701 21.754 18.361 21.754 19.269 c
+21.754 20.862 20.477 21.363 19.12 21.363 c
+18.33 21.363 17.567 21.218 16.816 20.954 c
+16.566 19.546 l
+17.264 19.875 18.014 20.072 18.791 20.072 c
+19.41 20.072 20.148 19.875 20.147 19.19 c
+20.147 18.993 20.147 18.795 20.095 18.611 c
+19.476 18.611 l
+17.817 18.611 15.315 18.44 15.315 16.201 c
+15.315 14.95 16.184 14.266 17.409 14.266 c
+18.383 14.266 18.989 14.7 19.595 15.464 c
+19.621 15.464 l
+19.437 14.424 l
+h
+17.001 16.267 m
+17.001 17.413 18.423 17.557 19.279 17.557 c
+19.897 17.557 l
+19.621 16.464 19.213 15.556 17.896 15.556 c
+17.448 15.556 17.001 15.793 17.001 16.267 c
+f
+n
+28.043 21.086 m
+27.424 21.244 26.766 21.363 26.12 21.363 c
+24.725 21.363 23.184 20.796 23.184 19.203 c
+23.184 17.505 25.475 17.399 25.475 16.307 c
+25.475 15.753 24.856 15.556 24.264 15.556 c
+23.579 15.556 23.079 15.806 22.578 16.083 c
+22.197 14.674 l
+22.842 14.371 23.553 14.266 24.264 14.266 c
+25.778 14.266 27.319 14.792 27.319 16.557 c
+27.318 18.216 25.028 18.532 25.028 19.387 c
+25.027 19.927 25.686 20.072 26.213 20.072 c
+26.713 20.072 27.2 19.927 27.661 19.756 c
+28.043 21.086 l
+f
+n
+28.63 19.914 m
+29.908 19.914 l
+29.407 17.623 l
+29.289 17.083 29.184 16.57 29.184 16.043 c
+29.184 14.74 30.026 14.266 31.224 14.266 c
+31.527 14.266 31.869 14.358 32.172 14.424 c
+32.475 15.793 l
+32.251 15.701 31.935 15.635 31.619 15.635 c
+31.224 15.635 30.948 15.885 30.948 16.293 c
+30.948 16.557 30.987 16.794 31.027 16.952 c
+31.672 19.914 l
+33.252 19.914 l
+33.528 21.205 l
+31.948 21.205 l
+32.383 23.219 l
+30.487 22.6 l
+30.184 21.205 l
+28.907 21.205 l
+28.63 19.914 l
+f
+n
+39.805 17.268 m
+39.911 17.768 39.977 18.268 39.977 18.782 c
+39.977 20.507 38.871 21.363 37.198 21.363 c
+34.973 21.363 33.34 19.335 33.34 17.228 c
+33.34 15.214 34.657 14.266 36.606 14.266 c
+37.33 14.266 38.081 14.437 38.765 14.647 c
+38.989 16.043 l
+38.331 15.74 37.633 15.556 36.909 15.556 c
+35.697 15.556 35.026 16.017 35.026 17.268 c
+39.805 17.268 l
+h
+35.263 18.479 m
+35.605 19.414 36.079 20.072 37.172 20.072 c
+37.909 20.072 38.291 19.664 38.291 18.94 c
+38.291 18.782 38.278 18.637 38.252 18.479 c
+35.263 18.479 l
+f
+n
+40.38 14.424 m
+42.144 14.424 l
+42.776 17.465 l
+43 18.558 43.606 19.677 44.857 19.677 c
+45.08 19.677 45.331 19.638 45.528 19.572 c
+45.897 21.297 l
+45.686 21.349 45.449 21.363 45.226 21.363 c
+44.409 21.363 43.54 20.665 43.224 19.927 c
+43.198 19.927 l
+43.435 21.205 l
+41.749 21.205 l
+41.697 20.889 41.644 20.586 41.591 20.296 c
+40.38 14.424 l
+f
+n
+53.965 23.325 m
+53.161 23.654 52.187 23.772 51.265 23.772 c
+48.013 23.772 45.998 21.587 45.998 18.624 c
+45.998 16.135 47.328 14.266 50.107 14.266 c
+50.804 14.266 51.515 14.331 52.187 14.516 c
+52.477 16.28 l
+51.95 15.964 51.318 15.714 50.541 15.714 c
+48.922 15.714 47.921 17.083 47.921 18.624 c
+47.921 20.783 49.356 22.324 51.397 22.324 c
+52.384 22.324 53.082 22.074 53.504 21.784 c
+53.965 23.325 l
+f
+n
+57.395 14.424 m
+58.883 14.424 l
+59.041 15.701 59.712 18.361 59.712 19.269 c
+59.712 20.862 58.435 21.363 57.079 21.363 c
+56.289 21.363 55.525 21.218 54.775 20.954 c
+54.525 19.546 l
+55.222 19.875 55.973 20.072 56.75 20.072 c
+57.369 20.072 58.106 19.875 58.106 19.19 c
+58.106 18.993 58.106 18.795 58.053 18.611 c
+57.434 18.611 l
+55.775 18.611 53.274 18.44 53.274 16.201 c
+53.274 14.95 54.143 14.266 55.367 14.266 c
+56.342 14.266 56.947 14.7 57.553 15.464 c
+57.579 15.464 l
+57.395 14.424 l
+h
+54.959 16.267 m
+54.959 17.413 56.381 17.557 57.237 17.557 c
+57.856 17.557 l
+57.579 16.464 57.171 15.556 55.854 15.556 c
+55.407 15.556 54.959 15.793 54.959 16.267 c
+f
+n
+60.458 14.424 m
+62.222 14.424 l
+62.854 17.465 l
+63.078 18.558 63.684 19.677 64.935 19.677 c
+65.159 19.677 65.409 19.638 65.606 19.572 c
+65.975 21.297 l
+65.764 21.349 65.527 21.363 65.303 21.363 c
+64.487 21.363 63.618 20.665 63.302 19.927 c
+63.276 19.927 l
+63.513 21.205 l
+61.827 21.205 l
+61.775 20.889 61.722 20.586 61.669 20.296 c
+60.458 14.424 l
+f
+n
+72.067 24.299 m
+71.212 20.401 l
+70.659 21.034 69.987 21.363 69.118 21.363 c
+66.814 21.363 65.708 19.111 65.708 17.083 c
+65.708 15.609 66.432 14.266 68.038 14.266 c
+69.065 14.266 69.724 14.687 70.25 15.424 c
+70.277 15.424 l
+70.106 14.424 l
+71.752 14.424 l
+71.791 14.766 71.896 15.345 72.002 15.925 c
+73.832 24.299 l
+72.067 24.299 l
+h
+69.408 19.993 m
+70.303 19.993 70.685 19.177 70.685 18.387 c
+70.685 17.136 69.921 15.635 68.631 15.635 c
+67.762 15.635 67.551 16.557 67.551 17.241 c
+67.551 18.255 68.144 19.993 69.408 19.993 c
+f
+Q
+} bind >> /PatternPrototype defineRes pop
+
+/N104 <</PatternType 1 /PaintType 1 /TilingType 2 /XStep 149.383 /YStep 25.047
+/BBox [0 0 149.383 25.047]
+/PaintProc {pop 
+q
+n
+0 25.047 m
+149.383 25.047 l
+149.383 0 l
+0 0 l
+h
+W
+n
+n
+88.406 10.463 m
+87.602 10.792 86.628 10.91 85.706 10.91 c
+82.454 10.91 80.439 8.72501 80.439 5.76199 c
+80.439 3.274 81.769 1.40401 84.548 1.40401 c
+85.246 1.40401 85.957 1.47 86.628 1.65401 c
+86.918 3.418 l
+86.391 3.10201 85.759 2.85201 84.982 2.85201 c
+83.363 2.85201 82.362 4.22099 82.362 5.76199 c
+82.362 7.922 83.797 9.46201 85.838 9.46201 c
+86.826 9.46201 87.523 9.21201 87.945 8.922 c
+88.406 10.463 l
+[/DeviceCMYK] cs 1 0 1 0 sc
+f
+n
+91.836 1.562 m
+93.324 1.562 l
+93.482 2.839 94.153 5.49899 94.153 6.407 c
+94.153 8 92.876 8.50101 91.52 8.50101 c
+90.73 8.50101 89.966 8.356 89.216 8.093 c
+88.965 6.68401 l
+89.663 7.013 90.414 7.211 91.191 7.211 c
+91.81 7.211 92.547 7.013 92.547 6.328 c
+92.547 6.131 92.547 5.933 92.494 5.74899 c
+91.875 5.74899 l
+90.216 5.74899 87.715 5.578 87.715 3.339 c
+87.715 2.089 88.584 1.40401 89.808 1.40401 c
+90.782 1.40401 91.388 1.838 91.994 2.60201 c
+92.02 2.60201 l
+91.836 1.562 l
+h
+89.4 3.405 m
+89.4 4.55099 90.822 4.696 91.678 4.696 c
+92.297 4.696 l
+92.02 3.603 91.612 2.694 90.295 2.694 c
+89.848 2.694 89.4 2.931 89.4 3.405 c
+f
+n
+94.899 1.562 m
+96.663 1.562 l
+97.295 4.603 l
+97.519 5.696 98.125 6.81599 99.376 6.81599 c
+99.6 6.815 99.85 6.776 100.048 6.71001 c
+100.416 8.435 l
+100.206 8.48801 99.968 8.50101 99.744 8.50101 c
+98.928 8.50101 98.059 7.80299 97.743 7.06599 c
+97.717 7.06599 l
+97.954 8.343 l
+96.268 8.343 l
+96.215 8.02699 96.163 7.724 96.11 7.43401 c
+94.899 1.562 l
+f
+n
+106.509 11.437 m
+105.653 7.53999 l
+105.1 8.172 104.429 8.50101 103.56 8.50101 c
+101.255 8.50101 100.149 6.24899 100.149 4.22099 c
+100.149 2.74699 100.873 1.40401 102.48 1.40401 c
+103.507 1.40401 104.165 1.825 104.692 2.563 c
+104.718 2.562 l
+104.547 1.562 l
+106.193 1.562 l
+106.232 1.90401 106.338 2.48399 106.443 3.063 c
+108.273 11.437 l
+106.509 11.437 l
+h
+103.849 7.132 m
+104.745 7.132 105.126 6.315 105.126 5.52499 c
+105.126 4.274 104.363 2.77299 103.072 2.77299 c
+102.203 2.77299 101.993 3.69501 101.993 4.38 c
+101.993 5.39301 102.585 7.132 103.849 7.132 c
+f
+n
+-0.395996 4.377 m
+-0.289993 4.87801 -0.223999 5.37801 -0.223999 5.89101 c
+-0.223999 7.616 -1.33 8.472 -3.00301 8.472 c
+-5.228 8.472 -6.86099 6.44501 -6.86099 4.338 c
+-6.86099 2.323 -5.54401 1.375 -3.595 1.375 c
+-2.871 1.375 -2.121 1.54601 -1.436 1.757 c
+-1.21201 3.153 l
+-1.87 2.85001 -2.56799 2.66499 -3.29201 2.66499 c
+-4.504 2.66499 -5.175 3.12601 -5.175 4.377 c
+-0.395996 4.377 l
+h
+-4.938 5.589 m
+-4.59599 6.52299 -4.12199 7.18201 -3.02901 7.18201 c
+-2.29201 7.18201 -1.91 6.774 -1.91 6.049 c
+-1.91 5.89101 -1.923 5.74699 -1.94901 5.589 c
+-4.938 5.589 l
+f
+n
+0.179001 1.533 m
+1.94299 1.533 l
+2.575 4.575 l
+2.799 5.66701 3.405 6.787 4.65601 6.787 c
+4.879 6.787 5.13 6.74699 5.327 6.681 c
+5.696 8.40601 l
+5.485 8.459 5.248 8.472 5.024 8.472 c
+4.20799 8.472 3.339 7.774 3.02299 7.037 c
+2.996 7.037 l
+3.23399 8.314 l
+1.548 8.314 l
+1.495 7.998 1.44299 7.69501 1.39 7.40601 c
+0.179001 1.533 l
+f
+n
+112.3 1.55299 m
+114.051 1.55299 l
+115.736 9.16299 l
+115.763 9.16299 l
+116.5 1.55299 l
+118.264 1.55299 l
+122.425 9.16299 l
+122.452 9.16299 l
+120.714 1.55299 l
+122.662 1.55299 l
+124.624 10.743 l
+121.556 10.743 l
+117.935 4.12 l
+117.909 4.12 l
+117.29 10.743 l
+114.248 10.743 l
+112.3 1.55299 l
+f
+n
+128.579 1.55299 m
+130.067 1.55299 l
+130.225 2.83 130.896 5.49001 130.896 6.39799 c
+130.896 7.991 129.619 8.492 128.263 8.492 c
+127.473 8.492 126.709 8.347 125.958 8.084 c
+125.708 6.675 l
+126.406 7.004 127.157 7.201 127.934 7.201 c
+128.553 7.201 129.29 7.004 129.29 6.319 c
+129.29 6.12199 129.29 5.924 129.237 5.74001 c
+128.618 5.74001 l
+126.959 5.74001 124.457 5.569 124.457 3.33 c
+124.457 2.07899 125.327 1.395 126.551 1.395 c
+127.525 1.395 128.131 1.82899 128.737 2.593 c
+128.763 2.593 l
+128.579 1.55299 l
+h
+126.143 3.396 m
+126.143 4.54201 127.565 4.686 128.421 4.687 c
+129.04 4.687 l
+128.763 3.59399 128.355 2.685 127.038 2.685 c
+126.591 2.685 126.143 2.922 126.143 3.396 c
+f
+n
+137.185 8.215 m
+136.566 8.373 135.908 8.492 135.263 8.492 c
+133.867 8.492 132.326 7.92599 132.326 6.332 c
+132.326 4.634 134.618 4.52901 134.618 3.436 c
+134.618 2.883 133.999 2.685 133.406 2.685 c
+132.722 2.685 132.221 2.935 131.721 3.21201 c
+131.339 1.80299 l
+131.984 1.5 132.695 1.395 133.406 1.395 c
+134.92 1.395 136.461 1.92101 136.461 3.686 c
+136.461 5.345 134.17 5.661 134.17 6.517 c
+134.17 7.05701 134.828 7.201 135.355 7.201 c
+135.855 7.201 136.342 7.05701 136.803 6.88499 c
+137.185 8.215 l
+f
+n
+137.773 7.043 m
+139.05 7.043 l
+138.55 4.752 l
+138.431 4.21201 138.326 3.69901 138.326 3.172 c
+138.326 1.869 139.168 1.395 140.367 1.395 c
+140.669 1.395 141.012 1.487 141.315 1.55299 c
+141.617 2.922 l
+141.394 2.83 141.078 2.76401 140.762 2.76401 c
+140.367 2.76401 140.09 3.01401 140.09 3.422 c
+140.09 3.686 140.13 3.923 140.169 4.08099 c
+140.814 7.043 l
+142.394 7.043 l
+142.671 8.334 l
+141.091 8.334 l
+141.525 10.348 l
+139.629 9.73 l
+139.326 8.334 l
+138.049 8.334 l
+137.773 7.043 l
+f
+n
+148.948 4.397 m
+149.053 4.897 149.119 5.39799 149.119 5.911 c
+149.119 7.636 148.013 8.492 146.341 8.492 c
+144.115 8.492 142.483 6.464 142.483 4.35699 c
+142.483 2.343 143.799 1.395 145.748 1.395 c
+146.472 1.395 147.223 1.56599 147.908 1.77699 c
+148.132 3.172 l
+147.473 2.869 146.775 2.685 146.051 2.685 c
+144.84 2.685 144.168 3.146 144.168 4.397 c
+148.948 4.397 l
+h
+144.405 5.608 m
+144.748 6.543 145.222 7.201 146.314 7.201 c
+147.052 7.201 147.434 6.793 147.434 6.069 c
+147.434 5.911 147.42 5.76601 147.394 5.608 c
+144.405 5.608 l
+f
+n
+149.522 1.55299 m
+151.287 1.55299 l
+151.919 4.59399 l
+152.142 5.687 152.748 6.806 153.999 6.806 c
+154.223 6.806 154.473 6.767 154.67 6.701 c
+155.039 8.42599 l
+154.828 8.479 154.592 8.492 154.368 8.492 c
+153.551 8.492 152.682 7.79401 152.366 7.05701 c
+152.34 7.05701 l
+152.577 8.334 l
+150.891 8.334 l
+150.839 8.01801 150.786 7.715 150.734 7.425 c
+149.522 1.55299 l
+f
+n
+3.157 14.424 m
+4.909 14.424 l
+6.59399 22.034 l
+6.62 22.034 l
+7.358 14.424 l
+9.12199 14.424 l
+13.283 22.034 l
+13.309 22.034 l
+11.571 14.424 l
+13.52 14.424 l
+15.482 23.614 l
+12.414 23.614 l
+8.793 16.991 l
+8.76601 16.991 l
+8.14799 23.614 l
+5.106 23.614 l
+3.157 14.424 l
+f
+n
+19.437 14.424 m
+20.924 14.424 l
+21.082 15.701 21.754 18.361 21.754 19.269 c
+21.754 20.862 20.477 21.363 19.121 21.363 c
+18.33 21.363 17.567 21.218 16.816 20.954 c
+16.566 19.546 l
+17.264 19.875 18.014 20.072 18.791 20.072 c
+19.41 20.072 20.147 19.875 20.147 19.19 c
+20.147 18.993 20.147 18.795 20.095 18.611 c
+19.476 18.611 l
+17.817 18.611 15.315 18.44 15.315 16.201 c
+15.315 14.95 16.184 14.266 17.409 14.266 c
+18.383 14.266 18.989 14.7 19.595 15.464 c
+19.621 15.464 l
+19.437 14.424 l
+h
+17.001 16.267 m
+17.001 17.413 18.423 17.557 19.279 17.557 c
+19.897 17.557 l
+19.621 16.464 19.213 15.556 17.896 15.556 c
+17.448 15.556 17.001 15.793 17.001 16.267 c
+f
+n
+28.043 21.086 m
+27.424 21.244 26.766 21.363 26.12 21.363 c
+24.725 21.363 23.184 20.796 23.184 19.203 c
+23.184 17.505 25.475 17.399 25.475 16.307 c
+25.475 15.754 24.856 15.556 24.264 15.556 c
+23.579 15.556 23.079 15.806 22.578 16.083 c
+22.196 14.674 l
+22.842 14.371 23.553 14.266 24.264 14.266 c
+25.778 14.266 27.319 14.792 27.318 16.557 c
+27.319 18.216 25.028 18.532 25.028 19.387 c
+25.027 19.927 25.686 20.072 26.213 20.072 c
+26.713 20.072 27.2 19.927 27.661 19.756 c
+28.043 21.086 l
+f
+n
+28.63 19.914 m
+29.908 19.914 l
+29.407 17.623 l
+29.289 17.083 29.184 16.57 29.183 16.043 c
+29.184 14.74 30.026 14.266 31.224 14.266 c
+31.527 14.266 31.869 14.358 32.172 14.424 c
+32.475 15.793 l
+32.251 15.701 31.935 15.635 31.619 15.635 c
+31.224 15.635 30.948 15.885 30.948 16.293 c
+30.948 16.557 30.987 16.794 31.027 16.952 c
+31.672 19.914 l
+33.252 19.914 l
+33.528 21.205 l
+31.948 21.205 l
+32.383 23.219 l
+30.487 22.601 l
+30.184 21.205 l
+28.907 21.205 l
+28.63 19.914 l
+f
+n
+39.805 17.268 m
+39.911 17.768 39.977 18.268 39.977 18.782 c
+39.977 20.507 38.871 21.363 37.198 21.363 c
+34.973 21.363 33.34 19.335 33.34 17.228 c
+33.34 15.214 34.657 14.266 36.606 14.266 c
+37.33 14.266 38.081 14.437 38.765 14.647 c
+38.989 16.043 l
+38.331 15.74 37.633 15.556 36.909 15.556 c
+35.697 15.556 35.026 16.017 35.026 17.268 c
+39.805 17.268 l
+h
+35.263 18.479 m
+35.605 19.414 36.079 20.072 37.172 20.072 c
+37.909 20.072 38.291 19.664 38.291 18.94 c
+38.291 18.782 38.278 18.637 38.252 18.479 c
+35.263 18.479 l
+f
+n
+40.38 14.424 m
+42.144 14.424 l
+42.776 17.465 l
+43 18.558 43.606 19.677 44.857 19.677 c
+45.08 19.677 45.331 19.638 45.528 19.572 c
+45.897 21.297 l
+45.686 21.349 45.449 21.363 45.225 21.363 c
+44.409 21.363 43.54 20.665 43.224 19.927 c
+43.198 19.927 l
+43.435 21.205 l
+41.749 21.205 l
+41.697 20.889 41.644 20.586 41.591 20.296 c
+40.38 14.424 l
+f
+n
+53.965 23.325 m
+53.161 23.654 52.187 23.772 51.265 23.772 c
+48.013 23.772 45.998 21.587 45.998 18.624 c
+45.998 16.135 47.328 14.266 50.107 14.266 c
+50.804 14.266 51.515 14.331 52.187 14.516 c
+52.477 16.28 l
+51.95 15.964 51.318 15.714 50.541 15.714 c
+48.922 15.714 47.921 17.083 47.921 18.624 c
+47.921 20.783 49.356 22.324 51.397 22.324 c
+52.384 22.324 53.082 22.074 53.504 21.784 c
+53.965 23.325 l
+f
+n
+57.395 14.424 m
+58.883 14.424 l
+59.041 15.701 59.712 18.361 59.712 19.269 c
+59.712 20.862 58.435 21.363 57.079 21.363 c
+56.289 21.363 55.525 21.218 54.775 20.954 c
+54.525 19.546 l
+55.222 19.875 55.973 20.072 56.75 20.072 c
+57.369 20.072 58.106 19.875 58.106 19.19 c
+58.106 18.993 58.106 18.795 58.053 18.611 c
+57.434 18.611 l
+55.775 18.611 53.274 18.44 53.274 16.201 c
+53.274 14.95 54.143 14.266 55.367 14.266 c
+56.342 14.266 56.947 14.7 57.553 15.464 c
+57.579 15.464 l
+57.395 14.424 l
+h
+54.959 16.267 m
+54.959 17.413 56.381 17.557 57.237 17.557 c
+57.856 17.557 l
+57.579 16.464 57.171 15.556 55.854 15.556 c
+55.407 15.556 54.959 15.793 54.959 16.267 c
+f
+n
+60.458 14.424 m
+62.222 14.424 l
+62.854 17.465 l
+63.078 18.558 63.684 19.677 64.935 19.677 c
+65.159 19.677 65.409 19.638 65.606 19.572 c
+65.975 21.297 l
+65.764 21.349 65.527 21.363 65.303 21.363 c
+64.487 21.363 63.618 20.665 63.302 19.927 c
+63.276 19.927 l
+63.513 21.205 l
+61.827 21.205 l
+61.775 20.889 61.722 20.586 61.669 20.296 c
+60.458 14.424 l
+f
+n
+72.067 24.299 m
+71.212 20.401 l
+70.659 21.034 69.987 21.363 69.118 21.363 c
+66.814 21.363 65.708 19.111 65.708 17.083 c
+65.708 15.609 66.432 14.266 68.038 14.266 c
+69.065 14.266 69.724 14.687 70.25 15.424 c
+70.277 15.424 l
+70.106 14.424 l
+71.752 14.424 l
+71.791 14.766 71.896 15.345 72.002 15.925 c
+73.832 24.299 l
+72.067 24.299 l
+h
+69.408 19.993 m
+70.303 19.993 70.685 19.177 70.685 18.387 c
+70.685 17.136 69.921 15.635 68.631 15.635 c
+67.762 15.635 67.551 16.557 67.551 17.241 c
+67.551 18.255 68.144 19.993 69.408 19.993 c
+f
+Q
+} bind >> /PatternPrototype defineRes pop
+
+/N47 [7 dict begin
+/Domain [0 1] def
+/C0 [0 0 0 0 ] def
+/C1 [0.0500031 0 0 0.149994 ] def
+/N 1 def
+/DimOut 4 def
+currentdict end {begin domainClip applyInterpFunc end} bind aload pop] cvx readonly
+/Function defineRes pop
+
+/N50 {5 3 roll pop pop } bind
+/Function defineRes pop
+
+%%EndPageSetup
+20 20 scale
+-7.9840695070294497085028582310713 rotate
+-60 -33 translate
+n
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.135 405.972 m
+79.124 405.409 l
+76.868 405.093 74.783 406.655 74.468 408.899 c
+74.154 411.142 75.728 413.217 77.984 413.534 c
+81.995 414.096 l
+84.252 414.413 86.336 412.851 86.651 410.607 c
+86.965 408.364 85.391 406.289 83.135 405.972 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+88.965 406.108 m
+87.639 415.566 l
+72.152 413.394 l
+73.478 403.936 l
+88.965 406.108 l
+[/DeviceCMYK] cs 0 0 0 1 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.135 405.972 m
+79.124 405.409 l
+76.868 405.093 74.783 406.655 74.468 408.899 c
+74.154 411.142 75.728 413.217 77.984 413.534 c
+81.995 414.096 l
+84.252 414.413 86.336 412.851 86.651 410.607 c
+86.965 408.364 85.391 406.289 83.135 405.972 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+89.792 406.452 m
+88.466 415.91 l
+73.378 413.794 l
+74.705 404.336 l
+89.792 406.452 l
+/N104 /PatternPrototype findRes 
+gsave
+0 w
+true setSA
+[0.0509949 0.00700378 -0.00700378 0.0509949 120.141 589.463] concat
+matrix makepattern
+grestore
+setpattern
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.135 405.972 m
+79.124 405.409 l
+76.868 405.093 74.783 406.655 74.468 408.899 c
+74.154 411.142 75.728 413.217 77.984 413.534 c
+81.995 414.096 l
+84.252 414.413 86.336 412.851 86.651 410.607 c
+86.965 408.364 85.391 406.289 83.135 405.972 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+89.428 406.401 m
+88.101 415.859 l
+73.378 413.794 l
+74.705 404.336 l
+89.428 406.401 l
+/N106 /PatternPrototype findRes 
+gsave
+0 w
+true setSA
+[0.0509949 0.00700378 -0.00700378 0.0509949 123.939 590.002] concat
+matrix makepattern
+grestore
+setpattern
+f
+Q
+Q
+
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+81.615 412.988 m
+81.078 412.913 80.593 412.704 80.19 412.4 c
+81.197 412.015 81.969 411.112 82.128 409.973 c
+82.288 408.836 81.795 407.756 80.935 407.109 c
+81.406 406.928 81.928 406.861 82.464 406.936 c
+84.145 407.172 85.317 408.718 85.083 410.389 c
+84.848 412.061 83.296 413.224 81.615 412.988 c
+[/DeviceCMYK] cs 0 0 0 1 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+78.996 409.536 m
+78.836 410.673 79.329 411.752 80.19 412.4 c
+79.718 412.58 79.196 412.647 78.66 412.572 c
+76.979 412.337 75.807 410.791 76.041 409.119 c
+76.275 407.448 77.828 406.284 79.509 406.52 c
+80.046 406.596 80.531 406.805 80.935 407.109 c
+79.927 407.494 79.156 408.397 78.996 409.536 c
+[/DeviceCMYK] cs 0 0 0 1 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+82.128 409.973 m
+81.969 411.112 81.197 412.015 80.19 412.4 c
+79.329 411.752 78.836 410.673 78.996 409.536 c
+79.156 408.397 79.927 407.494 80.935 407.109 c
+81.795 407.756 82.288 408.836 82.128 409.973 c
+[/DeviceCMYK] cs 0 0 0 1 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+76.56 410.887 m
+76.587 410.985 76.452 410.942 76.48 411.032 c
+76.483 411.13 76.716 411.081 76.566 411.173 c
+76.556 411.186 76.543 411.222 76.569 411.225 c
+76.623 411.241 76.668 411.228 76.715 411.259 c
+76.676 411.273 76.691 411.318 76.704 411.341 c
+76.75 411.399 76.836 411.4 76.908 411.402 c
+76.951 411.325 77.079 411.297 77.098 411.202 c
+77.302 411.15 77.585 411.247 77.699 411.014 c
+77.784 410.962 77.893 410.991 77.969 410.931 c
+78.002 410.944 78.052 410.956 78.087 410.939 c
+78.096 410.892 78.027 410.864 78.05 410.813 c
+78.089 410.77 78.193 410.776 78.152 410.703 c
+78.122 410.669 78.068 410.627 78.097 410.58 c
+78.117 410.547 78.152 410.496 78.187 410.495 c
+78.182 410.489 l
+78.229 410.463 l
+78.222 410.457 78.226 410.449 78.227 410.441 c
+78.263 410.43 78.261 410.406 78.298 410.395 c
+78.309 410.41 l
+78.439 410.309 l
+78.427 410.297 l
+78.443 410.283 78.459 410.301 78.472 410.309 c
+78.482 410.332 78.5 410.353 78.489 410.381 c
+78.518 410.382 78.548 410.419 78.562 410.451 c
+78.545 410.481 78.561 410.499 78.552 410.527 c
+78.528 410.562 l
+78.571 410.579 78.505 410.764 78.612 410.652 c
+78.654 410.642 78.7 410.68 78.737 410.623 c
+78.732 410.588 78.733 410.558 78.759 410.53 c
+78.807 410.531 78.833 410.578 78.892 410.581 c
+78.974 410.533 78.938 410.404 79.044 410.383 c
+79.055 410.415 79.084 410.384 79.096 410.377 c
+79.083 410.351 79.108 410.33 79.114 410.307 c
+79.039 410.28 78.962 410.197 78.874 410.249 c
+78.864 410.245 78.849 410.251 78.843 410.237 c
+78.876 410.217 78.903 410.172 78.891 410.127 c
+78.869 410.111 78.893 410.093 78.865 410.078 c
+78.807 410.073 78.772 410.124 78.734 410.054 c
+78.723 410.053 78.694 410.051 78.686 410.029 c
+78.687 410.021 l
+78.711 410.024 l
+78.7 410.009 78.694 409.989 78.68 409.977 c
+78.606 409.982 78.59 409.886 78.542 409.847 c
+78.566 409.809 78.521 409.784 78.498 409.757 c
+78.466 409.736 78.407 409.752 78.428 409.701 c
+78.422 409.681 78.379 409.662 78.416 409.648 c
+78.404 409.598 78.459 409.576 78.446 409.534 c
+78.356 409.54 78.39 409.696 78.274 409.68 c
+78.171 409.625 77.97 409.753 77.949 409.556 c
+77.918 409.489 77.945 409.429 77.971 409.365 c
+78.072 409.333 l
+78.172 409.347 l
+78.194 409.305 78.227 409.363 78.256 409.346 c
+78.241 409.281 78.171 409.32 78.162 409.249 c
+78.165 409.187 78.279 409.163 78.234 409.097 c
+78.215 409.1 78.201 409.09 78.192 409.072 c
+78.174 409.005 78.251 409.035 78.272 409.005 c
+78.332 409.016 78.354 409.092 78.415 409.098 c
+78.414 409.087 78.423 409.078 78.414 409.071 c
+78.42 409.066 l
+78.46 409.088 78.479 409.161 78.536 409.115 c
+78.555 409.118 78.573 409.12 78.59 409.101 c
+78.662 409.144 l
+78.66 409.1 l
+78.675 409.132 78.726 409.131 78.749 409.118 c
+78.779 409.095 78.823 409.05 78.855 409.095 c
+78.91 409.108 78.985 409.108 79.017 409.053 c
+79.047 409.09 79.075 409.029 79.098 409.032 c
+79.168 408.942 79.292 408.979 79.397 408.977 c
+79.41 408.96 79.421 408.962 79.435 408.974 c
+79.506 408.933 l
+79.517 408.948 l
+79.537 408.881 79.495 408.816 79.466 408.752 c
+79.468 408.666 79.466 408.58 79.437 408.503 c
+79.378 408.438 79.275 408.364 79.28 408.273 c
+79.259 408.214 79.176 408.17 79.189 408.099 c
+79.171 408.088 79.159 408.062 79.177 408.046 c
+79.113 407.926 78.981 407.813 79.024 407.663 c
+79.009 407.634 l
+79.051 407.624 79.036 407.592 79.045 407.569 c
+79.002 407.525 79.04 407.485 79.009 407.44 c
+79.017 407.384 79.159 407.369 79.073 407.314 c
+79.044 407.305 79.026 407.337 79.003 407.347 c
+78.996 407.341 78.992 407.33 78.981 407.333 c
+78.848 407.455 78.887 407.676 78.801 407.826 c
+78.812 407.884 78.8 407.971 78.774 408.016 c
+78.748 408.147 78.731 408.231 78.707 408.363 c
+78.606 408.451 78.468 408.469 78.378 408.575 c
+78.34 408.613 78.239 408.642 78.293 408.717 c
+78.322 408.74 78.28 408.737 78.282 408.761 c
+78.273 408.825 78.371 408.871 78.313 408.941 c
+78.274 408.949 78.213 408.997 78.184 408.936 c
+78.13 409.012 78.099 409.124 78.094 409.215 c
+78.046 409.227 78.056 409.309 78.001 409.318 c
+77.909 409.283 77.816 409.349 77.736 409.364 c
+77.684 409.427 77.704 409.556 77.585 409.575 c
+77.582 409.599 77.569 409.613 77.568 409.637 c
+77.551 409.648 77.526 409.607 77.504 409.636 c
+77.491 409.651 77.496 409.692 77.463 409.695 c
+77.455 409.681 l
+77.575 409.509 l
+77.556 409.495 l
+77.5 409.566 77.425 409.641 77.359 409.705 c
+77.343 409.821 77.219 409.855 77.239 409.969 c
+77.225 409.967 l
+77.236 410.006 77.157 410.03 77.197 410.078 c
+77.275 410.135 77.235 410.224 77.23 410.302 c
+77.19 410.374 77.093 410.412 77.073 410.495 c
+77.089 410.594 77.003 410.65 77.005 410.75 c
+76.933 410.805 76.929 410.912 76.817 410.899 c
+76.729 410.873 76.618 410.893 76.556 410.816 c
+76.498 410.808 76.453 410.745 76.396 410.767 c
+76.438 410.816 76.542 410.804 76.56 410.887 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+76.56 410.887 m
+76.587 410.985 76.452 410.942 76.48 411.032 c
+76.483 411.13 76.716 411.081 76.566 411.173 c
+76.556 411.186 76.543 411.222 76.569 411.225 c
+76.623 411.241 76.668 411.228 76.715 411.259 c
+76.676 411.273 76.691 411.318 76.704 411.341 c
+76.75 411.399 76.836 411.4 76.908 411.402 c
+76.951 411.325 77.079 411.297 77.098 411.202 c
+77.302 411.15 77.585 411.247 77.699 411.014 c
+77.784 410.962 77.893 410.991 77.969 410.931 c
+78.002 410.944 78.052 410.956 78.087 410.939 c
+78.096 410.892 78.027 410.864 78.05 410.813 c
+78.089 410.77 78.193 410.776 78.152 410.703 c
+78.122 410.669 78.068 410.627 78.097 410.58 c
+78.117 410.547 78.152 410.496 78.187 410.495 c
+78.182 410.489 l
+78.229 410.463 l
+78.222 410.457 78.226 410.449 78.227 410.441 c
+78.263 410.43 78.261 410.406 78.298 410.395 c
+78.309 410.41 l
+78.439 410.309 l
+78.427 410.297 l
+78.443 410.283 78.459 410.301 78.472 410.309 c
+78.482 410.332 78.5 410.353 78.489 410.381 c
+78.518 410.382 78.548 410.419 78.562 410.451 c
+78.545 410.481 78.561 410.499 78.552 410.527 c
+78.528 410.562 l
+78.571 410.579 78.505 410.764 78.612 410.652 c
+78.654 410.642 78.7 410.68 78.737 410.623 c
+78.732 410.588 78.733 410.558 78.759 410.53 c
+78.807 410.531 78.833 410.578 78.892 410.581 c
+78.974 410.533 78.938 410.404 79.044 410.383 c
+79.055 410.415 79.084 410.384 79.096 410.377 c
+79.083 410.351 79.108 410.33 79.114 410.307 c
+79.039 410.28 78.962 410.197 78.874 410.249 c
+78.864 410.245 78.849 410.251 78.843 410.237 c
+78.876 410.217 78.903 410.172 78.891 410.127 c
+78.869 410.111 78.893 410.093 78.865 410.078 c
+78.807 410.073 78.772 410.124 78.734 410.054 c
+78.723 410.053 78.694 410.051 78.686 410.029 c
+78.687 410.021 l
+78.711 410.024 l
+78.7 410.009 78.694 409.989 78.68 409.977 c
+78.606 409.982 78.59 409.886 78.542 409.847 c
+78.566 409.809 78.521 409.784 78.498 409.757 c
+78.466 409.736 78.407 409.752 78.428 409.701 c
+78.422 409.681 78.379 409.662 78.416 409.648 c
+78.404 409.598 78.459 409.576 78.446 409.534 c
+78.356 409.54 78.39 409.696 78.274 409.68 c
+78.171 409.625 77.97 409.753 77.949 409.556 c
+77.918 409.489 77.945 409.429 77.971 409.365 c
+78.072 409.333 l
+78.172 409.347 l
+78.194 409.305 78.227 409.363 78.256 409.346 c
+78.241 409.281 78.171 409.32 78.162 409.249 c
+78.165 409.187 78.279 409.163 78.234 409.097 c
+78.215 409.1 78.201 409.09 78.192 409.072 c
+78.174 409.005 78.251 409.035 78.272 409.005 c
+78.332 409.016 78.354 409.092 78.415 409.098 c
+78.414 409.087 78.423 409.078 78.414 409.071 c
+78.42 409.066 l
+78.46 409.088 78.479 409.161 78.536 409.115 c
+78.555 409.118 78.573 409.12 78.59 409.101 c
+78.662 409.144 l
+78.66 409.1 l
+78.675 409.132 78.726 409.131 78.749 409.118 c
+78.779 409.095 78.823 409.05 78.855 409.095 c
+78.91 409.108 78.985 409.108 79.017 409.053 c
+79.047 409.09 79.075 409.029 79.098 409.032 c
+79.168 408.942 79.292 408.979 79.397 408.977 c
+79.41 408.96 79.421 408.962 79.435 408.974 c
+79.506 408.933 l
+79.517 408.948 l
+79.537 408.881 79.495 408.816 79.466 408.752 c
+79.468 408.666 79.466 408.58 79.437 408.503 c
+79.378 408.438 79.275 408.364 79.28 408.273 c
+79.259 408.214 79.176 408.17 79.189 408.099 c
+79.171 408.088 79.159 408.062 79.177 408.046 c
+79.113 407.926 78.981 407.813 79.024 407.663 c
+79.009 407.634 l
+79.051 407.624 79.036 407.592 79.045 407.569 c
+79.002 407.525 79.04 407.485 79.009 407.44 c
+79.017 407.384 79.159 407.369 79.073 407.314 c
+79.044 407.305 79.026 407.337 79.003 407.347 c
+78.996 407.341 78.992 407.33 78.981 407.333 c
+78.848 407.455 78.887 407.676 78.801 407.826 c
+78.812 407.884 78.8 407.971 78.774 408.016 c
+78.748 408.147 78.731 408.231 78.707 408.363 c
+78.606 408.451 78.468 408.469 78.378 408.575 c
+78.34 408.613 78.239 408.642 78.293 408.717 c
+78.322 408.74 78.28 408.737 78.282 408.761 c
+78.273 408.825 78.371 408.871 78.313 408.941 c
+78.274 408.949 78.213 408.997 78.184 408.936 c
+78.13 409.012 78.099 409.124 78.094 409.215 c
+78.046 409.227 78.056 409.309 78.001 409.318 c
+77.909 409.283 77.816 409.349 77.736 409.364 c
+77.684 409.427 77.704 409.556 77.585 409.575 c
+77.582 409.599 77.569 409.613 77.568 409.637 c
+77.551 409.648 77.526 409.607 77.504 409.636 c
+77.491 409.651 77.496 409.692 77.463 409.695 c
+77.455 409.681 l
+77.575 409.509 l
+77.556 409.495 l
+77.5 409.566 77.425 409.641 77.359 409.705 c
+77.343 409.821 77.219 409.855 77.239 409.969 c
+77.225 409.967 l
+77.236 410.006 77.157 410.03 77.197 410.078 c
+77.275 410.135 77.235 410.224 77.23 410.302 c
+77.19 410.374 77.093 410.412 77.073 410.495 c
+77.089 410.594 77.003 410.65 77.005 410.75 c
+76.933 410.805 76.929 410.912 76.817 410.899 c
+76.729 410.873 76.618 410.893 76.556 410.816 c
+76.498 410.808 76.453 410.745 76.396 410.767 c
+76.438 410.816 76.542 410.804 76.56 410.887 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+76.56 410.887 m
+76.587 410.985 76.452 410.942 76.48 411.032 c
+76.483 411.13 76.716 411.081 76.566 411.173 c
+76.556 411.186 76.543 411.222 76.569 411.225 c
+76.623 411.241 76.668 411.228 76.715 411.259 c
+76.676 411.273 76.691 411.318 76.704 411.341 c
+76.75 411.399 76.836 411.4 76.908 411.402 c
+76.951 411.325 77.079 411.297 77.098 411.202 c
+77.302 411.15 77.585 411.247 77.699 411.014 c
+77.784 410.962 77.893 410.991 77.969 410.931 c
+78.002 410.944 78.052 410.956 78.087 410.939 c
+78.096 410.892 78.027 410.864 78.05 410.813 c
+78.089 410.77 78.193 410.776 78.152 410.703 c
+78.122 410.669 78.068 410.627 78.097 410.58 c
+78.117 410.547 78.152 410.496 78.187 410.495 c
+78.182 410.489 l
+78.229 410.463 l
+78.222 410.457 78.226 410.449 78.227 410.441 c
+78.263 410.43 78.261 410.406 78.298 410.395 c
+78.309 410.41 l
+78.439 410.309 l
+78.427 410.297 l
+78.443 410.283 78.459 410.301 78.472 410.309 c
+78.482 410.332 78.5 410.353 78.489 410.381 c
+78.518 410.382 78.548 410.419 78.562 410.451 c
+78.545 410.481 78.561 410.499 78.552 410.527 c
+78.528 410.562 l
+78.571 410.579 78.505 410.764 78.612 410.652 c
+78.654 410.642 78.7 410.68 78.737 410.623 c
+78.732 410.588 78.733 410.558 78.759 410.53 c
+78.807 410.531 78.833 410.578 78.892 410.581 c
+78.974 410.533 78.938 410.404 79.044 410.383 c
+79.055 410.415 79.084 410.384 79.096 410.377 c
+79.083 410.351 79.108 410.33 79.114 410.307 c
+79.039 410.28 78.962 410.197 78.874 410.249 c
+78.864 410.245 78.849 410.251 78.843 410.237 c
+78.876 410.217 78.903 410.172 78.891 410.127 c
+78.869 410.111 78.893 410.093 78.865 410.078 c
+78.807 410.073 78.772 410.124 78.734 410.054 c
+78.723 410.053 78.694 410.051 78.686 410.029 c
+78.687 410.021 l
+78.711 410.024 l
+78.7 410.009 78.694 409.989 78.68 409.977 c
+78.606 409.982 78.59 409.886 78.542 409.847 c
+78.566 409.809 78.521 409.784 78.498 409.757 c
+78.466 409.736 78.407 409.752 78.428 409.701 c
+78.422 409.681 78.379 409.662 78.416 409.648 c
+78.404 409.598 78.459 409.576 78.446 409.534 c
+78.356 409.54 78.39 409.696 78.274 409.68 c
+78.171 409.625 77.97 409.753 77.949 409.556 c
+77.918 409.489 77.945 409.429 77.971 409.365 c
+78.072 409.333 l
+78.172 409.347 l
+78.194 409.305 78.227 409.363 78.256 409.346 c
+78.241 409.281 78.171 409.32 78.162 409.249 c
+78.165 409.187 78.279 409.163 78.234 409.097 c
+78.215 409.1 78.201 409.09 78.192 409.072 c
+78.174 409.005 78.251 409.035 78.272 409.005 c
+78.332 409.016 78.354 409.092 78.415 409.098 c
+78.414 409.087 78.423 409.078 78.414 409.071 c
+78.42 409.066 l
+78.46 409.088 78.479 409.161 78.536 409.115 c
+78.555 409.118 78.573 409.12 78.59 409.101 c
+78.662 409.144 l
+78.66 409.1 l
+78.675 409.132 78.726 409.131 78.749 409.118 c
+78.779 409.095 78.823 409.05 78.855 409.095 c
+78.91 409.108 78.985 409.108 79.017 409.053 c
+79.047 409.09 79.075 409.029 79.098 409.032 c
+79.168 408.942 79.292 408.979 79.397 408.977 c
+79.41 408.96 79.421 408.962 79.435 408.974 c
+79.506 408.933 l
+79.517 408.948 l
+79.537 408.881 79.495 408.816 79.466 408.752 c
+79.468 408.666 79.466 408.58 79.437 408.503 c
+79.378 408.438 79.275 408.364 79.28 408.273 c
+79.259 408.214 79.176 408.17 79.189 408.099 c
+79.171 408.088 79.159 408.062 79.177 408.046 c
+79.113 407.926 78.981 407.813 79.024 407.663 c
+79.009 407.634 l
+79.051 407.624 79.036 407.592 79.045 407.569 c
+79.002 407.525 79.04 407.485 79.009 407.44 c
+79.017 407.384 79.159 407.369 79.073 407.314 c
+79.044 407.305 79.026 407.337 79.003 407.347 c
+78.996 407.341 78.992 407.33 78.981 407.333 c
+78.848 407.455 78.887 407.676 78.801 407.826 c
+78.812 407.884 78.8 407.971 78.774 408.016 c
+78.748 408.147 78.731 408.231 78.707 408.363 c
+78.606 408.451 78.468 408.469 78.378 408.575 c
+78.34 408.613 78.239 408.642 78.293 408.717 c
+78.322 408.74 78.28 408.737 78.282 408.761 c
+78.273 408.825 78.371 408.871 78.313 408.941 c
+78.274 408.949 78.213 408.997 78.184 408.936 c
+78.13 409.012 78.099 409.124 78.094 409.215 c
+78.046 409.227 78.056 409.309 78.001 409.318 c
+77.909 409.283 77.816 409.349 77.736 409.364 c
+77.684 409.427 77.704 409.556 77.585 409.575 c
+77.582 409.599 77.569 409.613 77.568 409.637 c
+77.551 409.648 77.526 409.607 77.504 409.636 c
+77.491 409.651 77.496 409.692 77.463 409.695 c
+77.455 409.681 l
+77.575 409.509 l
+77.556 409.495 l
+77.5 409.566 77.425 409.641 77.359 409.705 c
+77.343 409.821 77.219 409.855 77.239 409.969 c
+77.225 409.967 l
+77.236 410.006 77.157 410.03 77.197 410.078 c
+77.275 410.135 77.235 410.224 77.23 410.302 c
+77.19 410.374 77.093 410.412 77.073 410.495 c
+77.089 410.594 77.003 410.65 77.005 410.75 c
+76.933 410.805 76.929 410.912 76.817 410.899 c
+76.729 410.873 76.618 410.893 76.556 410.816 c
+76.498 410.808 76.453 410.745 76.396 410.767 c
+76.438 410.816 76.542 410.804 76.56 410.887 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+2.81059 0.394196 0.740295 -5.2778 76.1872 411.803 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [-0.14728 0.0799206 1.14924 0.923071]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+78.608 406.763 m
+78.63 406.758 78.664 406.787 78.674 406.751 c
+78.71 406.748 78.732 406.816 78.775 406.798 c
+78.801 406.826 78.781 406.89 78.838 406.871 c
+78.93 406.846 79.003 406.946 79.095 406.883 c
+79.125 406.884 79.147 406.898 79.159 406.924 c
+79.145 406.966 79.182 406.995 79.204 407.028 c
+79.234 407.026 79.271 407.013 79.278 407.057 c
+79.264 407.136 79.335 407.208 79.391 407.253 c
+79.408 407.248 79.426 407.253 79.439 407.236 c
+79.406 407.145 79.43 407.032 79.383 406.942 c
+79.421 406.921 79.383 406.891 79.381 406.864 c
+79.372 406.846 79.344 406.834 79.356 406.809 c
+79.396 406.793 79.419 406.786 79.455 406.758 c
+79.225 406.553 78.864 406.624 78.559 406.554 c
+78.498 406.565 l
+78.509 406.62 78.55 406.712 78.608 406.763 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+78.608 406.763 m
+78.63 406.758 78.664 406.787 78.674 406.751 c
+78.71 406.748 78.732 406.816 78.775 406.798 c
+78.801 406.826 78.781 406.89 78.838 406.871 c
+78.93 406.846 79.003 406.946 79.095 406.883 c
+79.125 406.884 79.147 406.898 79.159 406.924 c
+79.145 406.966 79.182 406.995 79.204 407.028 c
+79.234 407.026 79.271 407.013 79.278 407.057 c
+79.264 407.136 79.335 407.208 79.391 407.253 c
+79.408 407.248 79.426 407.253 79.439 407.236 c
+79.406 407.145 79.43 407.032 79.383 406.942 c
+79.421 406.921 79.383 406.891 79.381 406.864 c
+79.372 406.846 79.344 406.834 79.356 406.809 c
+79.396 406.793 79.419 406.786 79.455 406.758 c
+79.225 406.553 78.864 406.624 78.559 406.554 c
+78.498 406.565 l
+78.509 406.62 78.55 406.712 78.608 406.763 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+78.608 406.763 m
+78.63 406.758 78.664 406.787 78.674 406.751 c
+78.71 406.748 78.732 406.816 78.775 406.798 c
+78.801 406.826 78.781 406.89 78.838 406.871 c
+78.93 406.846 79.003 406.946 79.095 406.883 c
+79.125 406.884 79.147 406.898 79.159 406.924 c
+79.145 406.966 79.182 406.995 79.204 407.028 c
+79.234 407.026 79.271 407.013 79.278 407.057 c
+79.264 407.136 79.335 407.208 79.391 407.253 c
+79.408 407.248 79.426 407.253 79.439 407.236 c
+79.406 407.145 79.43 407.032 79.383 406.942 c
+79.421 406.921 79.383 406.891 79.381 406.864 c
+79.372 406.846 79.344 406.834 79.356 406.809 c
+79.396 406.793 79.419 406.786 79.455 406.758 c
+79.225 406.553 78.864 406.624 78.559 406.554 c
+78.498 406.565 l
+78.509 406.62 78.55 406.712 78.608 406.763 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+1.0154 0.142395 0.225906 -1.6104 78.2922 407.582 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.059345 0.217937 1.07849 0.725963]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+77.987 411.729 m
+78.148 411.735 78.303 411.835 78.462 411.801 c
+78.479 411.79 78.486 411.764 78.478 411.746 c
+78.371 411.68 78.258 411.565 78.222 411.438 c
+78.212 411.41 78.183 411.406 78.157 411.402 c
+78.133 411.437 78.066 411.416 78.076 411.477 c
+78.205 411.649 l
+78.158 411.72 78.107 411.624 78.046 411.635 c
+78 411.599 78.008 411.519 77.94 411.523 c
+77.946 411.594 77.929 411.675 77.987 411.729 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+77.987 411.729 m
+78.148 411.735 78.303 411.835 78.462 411.801 c
+78.479 411.79 78.486 411.764 78.478 411.746 c
+78.371 411.68 78.258 411.565 78.222 411.438 c
+78.212 411.41 78.183 411.406 78.157 411.402 c
+78.133 411.437 78.066 411.416 78.076 411.477 c
+78.205 411.649 l
+78.158 411.72 78.107 411.624 78.046 411.635 c
+78 411.599 78.008 411.519 77.94 411.523 c
+77.946 411.594 77.929 411.675 77.987 411.729 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+77.987 411.729 m
+78.148 411.735 78.303 411.835 78.462 411.801 c
+78.479 411.79 78.486 411.764 78.478 411.746 c
+78.371 411.68 78.258 411.565 78.222 411.438 c
+78.212 411.41 78.183 411.406 78.157 411.402 c
+78.133 411.437 78.066 411.416 78.076 411.477 c
+78.205 411.649 l
+78.158 411.72 78.107 411.624 78.046 411.635 c
+78 411.599 78.008 411.519 77.94 411.523 c
+77.946 411.594 77.929 411.675 77.987 411.729 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.557693 0.0782013 0.189499 -1.3513 77.7759 412.244 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.0616201 0.312324 1.14789 0.683292]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+78.542 411.613 m
+78.547 411.619 l
+78.536 411.641 78.512 411.638 78.508 411.667 c
+78.533 411.695 78.589 411.679 78.596 411.731 c
+78.589 411.743 78.571 411.754 78.577 411.766 c
+78.637 411.798 78.698 411.847 78.775 411.834 c
+78.832 411.837 78.919 411.827 78.95 411.877 c
+78.925 411.879 l
+78.941 411.9 l
+78.946 411.888 78.966 411.88 78.978 411.868 c
+78.996 411.873 79.012 411.894 79.029 411.87 c
+79.076 411.903 79.107 411.886 79.161 411.893 c
+79.235 411.861 79.33 411.955 79.384 411.879 c
+79.432 411.845 79.474 411.945 79.511 411.891 c
+79.564 411.823 79.451 411.724 79.547 411.675 c
+79.576 411.62 79.491 411.657 79.506 411.605 c
+79.626 411.573 79.582 411.443 79.59 411.371 c
+79.526 411.381 79.528 411.276 79.46 411.294 c
+79.457 411.277 79.47 411.268 79.483 411.265 c
+79.521 411.267 79.537 411.305 79.581 411.3 c
+79.591 411.266 79.532 411.22 79.491 411.209 c
+79.372 411.195 79.321 411.04 79.201 411.012 c
+79.162 410.961 l
+79.201 410.934 79.15 410.875 79.128 410.835 c
+79.117 410.801 79.089 410.805 79.066 410.818 c
+79.015 410.84 79.021 410.911 78.969 410.915 c
+78.941 410.981 78.878 411.029 78.93 411.098 c
+78.969 411.201 78.82 411.247 78.794 411.338 c
+78.755 411.402 78.757 411.505 78.674 411.534 c
+78.616 411.488 78.571 411.557 78.521 411.572 c
+78.508 411.589 78.532 411.608 78.542 411.613 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+78.542 411.613 m
+78.547 411.619 l
+78.536 411.641 78.512 411.638 78.508 411.667 c
+78.533 411.695 78.589 411.679 78.596 411.731 c
+78.589 411.743 78.571 411.754 78.577 411.766 c
+78.637 411.798 78.698 411.847 78.775 411.834 c
+78.832 411.837 78.919 411.827 78.95 411.877 c
+78.925 411.879 l
+78.941 411.9 l
+78.946 411.888 78.966 411.88 78.978 411.868 c
+78.996 411.873 79.012 411.894 79.029 411.87 c
+79.076 411.903 79.107 411.886 79.161 411.893 c
+79.235 411.861 79.33 411.955 79.384 411.879 c
+79.432 411.845 79.474 411.945 79.511 411.891 c
+79.564 411.823 79.451 411.724 79.547 411.675 c
+79.576 411.62 79.491 411.657 79.506 411.605 c
+79.626 411.573 79.582 411.443 79.59 411.371 c
+79.526 411.381 79.528 411.276 79.46 411.294 c
+79.457 411.277 79.47 411.268 79.483 411.265 c
+79.521 411.267 79.537 411.305 79.581 411.3 c
+79.591 411.266 79.532 411.22 79.491 411.209 c
+79.372 411.195 79.321 411.04 79.201 411.012 c
+79.162 410.961 l
+79.201 410.934 79.15 410.875 79.128 410.835 c
+79.117 410.801 79.089 410.805 79.066 410.818 c
+79.015 410.84 79.021 410.911 78.969 410.915 c
+78.941 410.981 78.878 411.029 78.93 411.098 c
+78.969 411.201 78.82 411.247 78.794 411.338 c
+78.755 411.402 78.757 411.505 78.674 411.534 c
+78.616 411.488 78.571 411.557 78.521 411.572 c
+78.508 411.589 78.532 411.608 78.542 411.613 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+78.542 411.613 m
+78.547 411.619 l
+78.536 411.641 78.512 411.638 78.508 411.667 c
+78.533 411.695 78.589 411.679 78.596 411.731 c
+78.589 411.743 78.571 411.754 78.577 411.766 c
+78.637 411.798 78.698 411.847 78.775 411.834 c
+78.832 411.837 78.919 411.827 78.95 411.877 c
+78.925 411.879 l
+78.941 411.9 l
+78.946 411.888 78.966 411.88 78.978 411.868 c
+78.996 411.873 79.012 411.894 79.029 411.87 c
+79.076 411.903 79.107 411.886 79.161 411.893 c
+79.235 411.861 79.33 411.955 79.384 411.879 c
+79.432 411.845 79.474 411.945 79.511 411.891 c
+79.564 411.823 79.451 411.724 79.547 411.675 c
+79.576 411.62 79.491 411.657 79.506 411.605 c
+79.626 411.573 79.582 411.443 79.59 411.371 c
+79.526 411.381 79.528 411.276 79.46 411.294 c
+79.457 411.277 79.47 411.268 79.483 411.265 c
+79.521 411.267 79.537 411.305 79.581 411.3 c
+79.591 411.266 79.532 411.22 79.491 411.209 c
+79.372 411.195 79.321 411.04 79.201 411.012 c
+79.162 410.961 l
+79.201 410.934 79.15 410.875 79.128 410.835 c
+79.117 410.801 79.089 410.805 79.066 410.818 c
+79.015 410.84 79.021 410.911 78.969 410.915 c
+78.941 410.981 78.878 411.029 78.93 411.098 c
+78.969 411.201 78.82 411.247 78.794 411.338 c
+78.755 411.402 78.757 411.505 78.674 411.534 c
+78.616 411.488 78.571 411.557 78.521 411.572 c
+78.508 411.589 78.532 411.608 78.542 411.613 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+1.04131 0.146103 0.287399 -2.0493 78.3542 412.301 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [-0.0532419 0.175764 1.15213 0.803096]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+79.635 411.243 m
+79.703 411.22 79.742 411.304 79.823 411.288 c
+79.833 411.252 79.79 411.213 79.773 411.176 c
+79.74 411.144 79.715 411.154 79.673 411.162 c
+79.658 411.189 79.621 411.208 79.635 411.243 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+79.635 411.243 m
+79.703 411.22 79.742 411.304 79.823 411.288 c
+79.833 411.252 79.79 411.213 79.773 411.176 c
+79.74 411.144 79.715 411.154 79.673 411.162 c
+79.658 411.189 79.621 411.208 79.635 411.243 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+79.635 411.243 m
+79.703 411.22 79.742 411.304 79.823 411.288 c
+79.833 411.252 79.79 411.213 79.773 411.176 c
+79.74 411.144 79.715 411.154 79.673 411.162 c
+79.658 411.189 79.621 411.208 79.635 411.243 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.190399 0.0267029 0.154694 -1.1028 79.5008 411.753 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.179436 0.413908 1.38698 0.582664]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+80.036 410.954 m
+80.055 410.916 80.108 410.87 80.068 410.824 c
+80.039 410.766 79.975 410.776 79.922 410.771 c
+79.939 410.838 79.965 410.925 80.036 410.954 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+80.036 410.954 m
+80.055 410.916 80.108 410.87 80.068 410.824 c
+80.039 410.766 79.975 410.776 79.922 410.771 c
+79.939 410.838 79.965 410.925 80.036 410.954 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+80.036 410.954 m
+80.055 410.916 80.108 410.87 80.068 410.824 c
+80.039 410.766 79.975 410.776 79.922 410.771 c
+79.939 410.838 79.965 410.925 80.036 410.954 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.165894 0.0233002 0.158798 -1.132 79.7714 411.4 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.364867 0.404373 1.62032 0.589863]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+79.858 409.98 m
+79.895 409.999 79.866 410.038 79.878 410.066 c
+79.977 410.204 80.166 410.188 80.298 410.247 c
+80.386 410.27 80.443 410.186 80.497 410.134 c
+80.519 410.129 80.559 410.076 80.607 410.077 c
+80.613 410.091 80.643 410.109 80.62 410.125 c
+80.684 410.147 80.768 410.18 80.827 410.121 c
+80.851 410.162 80.873 410.085 80.891 410.13 c
+80.901 410.137 80.91 410.128 80.919 410.121 c
+80.941 410.14 80.969 410.128 80.999 410.146 c
+81.02 410.205 81.124 410.257 81.064 410.316 c
+81.041 410.275 81.016 410.315 80.982 410.31 c
+80.958 410.307 80.924 410.332 80.905 410.299 c
+80.896 410.325 l
+80.872 410.3 80.866 410.348 80.846 410.356 c
+80.818 410.363 80.784 410.414 80.759 410.376 c
+80.754 410.335 80.759 410.303 80.775 410.262 c
+80.753 410.251 80.73 410.278 80.725 410.296 c
+80.712 410.291 80.709 410.277 80.696 410.27 c
+80.647 410.347 80.691 410.493 80.616 410.512 c
+80.599 410.496 80.583 410.481 80.566 410.467 c
+80.583 410.424 80.608 410.379 80.617 410.337 c
+80.588 410.347 l
+80.572 410.331 80.589 410.298 80.557 410.296 c
+80.539 410.294 l
+80.55 410.368 80.532 410.398 80.473 410.441 c
+80.461 410.426 l
+80.476 410.45 80.445 410.464 80.426 410.48 c
+80.349 410.456 80.42 410.35 80.335 410.306 c
+80.319 410.365 80.357 410.435 80.358 410.503 c
+80.31 410.502 80.251 410.483 80.22 410.438 c
+80.204 410.449 l
+80.176 410.437 80.16 410.4 80.139 410.375 c
+80.178 410.335 80.086 410.311 80.131 410.277 c
+80.103 410.195 80.019 410.194 79.949 410.192 c
+79.904 410.205 l
+79.91 410.3 79.885 410.399 79.922 410.485 c
+79.963 410.445 80.005 410.507 80.043 410.502 c
+80.074 410.471 80.091 410.525 80.116 410.539 c
+80.131 410.568 l
+80.045 410.626 l
+80.074 410.652 80.067 410.737 80.128 410.722 c
+80.201 410.745 80.235 410.863 80.32 410.878 c
+80.367 410.925 80.375 410.983 80.422 411.03 c
+80.448 411.001 80.44 410.941 80.489 410.92 c
+80.502 410.922 80.517 410.93 80.527 410.92 c
+80.567 410.983 80.439 410.989 80.482 411.062 c
+80.455 411.161 80.387 411.033 80.329 411.1 c
+80.298 411.15 80.32 411.201 80.339 411.255 c
+80.35 411.26 80.36 411.282 80.375 411.268 c
+80.429 411.306 80.493 411.355 80.559 411.383 c
+80.651 411.493 80.713 411.666 80.866 411.653 c
+80.887 411.677 80.926 411.667 80.952 411.673 c
+80.979 411.655 80.989 411.619 81.024 411.618 c
+81.036 411.633 l
+81.076 411.556 81.245 411.601 81.193 411.472 c
+81.155 411.44 81.022 411.462 81.078 411.372 c
+81.157 411.402 81.239 411.457 81.311 411.516 c
+81.337 411.522 81.362 411.52 81.382 411.507 c
+81.401 411.528 l
+81.426 411.54 81.463 411.567 81.495 411.587 c
+81.573 411.59 81.613 411.671 81.7 411.648 c
+81.728 411.714 81.742 411.808 81.822 411.833 c
+81.877 411.73 l
+81.893 411.772 81.925 411.831 81.972 411.84 c
+81.987 411.829 81.994 411.798 82.02 411.804 c
+82.071 411.849 82.008 411.95 82.104 411.956 c
+82.197 412.063 82.322 412.116 82.415 412.22 c
+82.446 412.23 82.461 412.197 82.467 412.176 c
+82.487 412.126 82.552 412.126 82.593 412.103 c
+82.729 412.033 82.878 412.188 82.999 412.071 c
+83.085 412.074 83.113 412.181 83.181 412.217 c
+83.273 412.217 83.399 412.256 83.483 412.214 c
+83.573 412.27 83.652 412.34 83.752 412.376 c
+83.901 412.294 l
+83.915 412.175 83.993 412 83.856 411.918 c
+83.786 411.898 83.659 411.923 83.644 411.816 c
+83.622 411.689 83.444 411.745 83.4 411.615 c
+83.397 411.56 83.347 411.569 83.363 411.512 c
+83.348 411.483 l
+83.404 411.434 83.51 411.411 83.5 411.324 c
+83.535 411.288 83.51 411.236 83.491 411.201 c
+83.497 411.154 83.514 411.089 83.48 411.043 c
+83.439 411.013 83.401 410.978 83.366 410.936 c
+83.399 410.892 83.396 410.821 83.416 410.77 c
+83.402 410.739 83.388 410.718 83.351 410.715 c
+83.333 410.772 83.291 410.815 83.26 410.864 c
+83.216 410.836 83.178 410.793 83.153 410.744 c
+83.177 410.71 83.189 410.644 83.167 410.606 c
+83.191 410.609 l
+83.176 410.58 l
+83.235 410.586 83.253 410.51 83.244 410.46 c
+83.241 410.441 83.224 410.428 83.213 410.41 c
+83.204 410.42 83.187 410.425 83.181 410.414 c
+83.158 410.384 l
+83.167 410.377 83.178 410.373 83.174 410.359 c
+83.15 410.339 83.104 410.384 83.065 410.352 c
+83.049 410.336 l
+83.083 410.322 l
+83.038 410.237 l
+83.045 410.227 83.064 410.225 83.061 410.208 c
+83.048 410.204 83.038 410.181 83.022 410.197 c
+83.007 410.228 l
+82.989 410.203 82.944 410.181 82.985 410.152 c
+83.016 410.107 83.085 410.093 83.06 410.019 c
+83.026 409.958 82.965 409.99 82.904 409.979 c
+82.887 410.003 82.875 410.053 82.842 410.021 c
+82.81 409.86 83.026 409.845 83.04 409.701 c
+82.97 409.683 82.911 409.761 82.871 409.812 c
+82.848 409.86 82.786 409.9 82.818 409.961 c
+82.789 410.092 82.628 410.102 82.55 410.201 c
+82.529 410.142 82.46 410.17 82.442 410.103 c
+82.472 410.066 82.418 410.029 82.399 409.986 c
+82.345 409.911 82.47 409.826 82.384 409.771 c
+82.377 409.835 82.335 409.788 82.295 409.804 c
+82.304 409.816 82.296 409.834 82.295 409.847 c
+82.252 409.901 82.165 409.948 82.167 410.024 c
+82.076 410.046 81.997 410.126 81.914 410.177 c
+81.87 410.144 81.787 410.162 81.751 410.127 c
+81.734 410.133 81.732 410.113 81.722 410.104 c
+81.754 410.084 81.8 410.088 81.814 410.047 c
+81.819 409.985 81.773 409.933 81.747 409.889 c
+81.714 409.777 81.568 409.861 81.524 409.766 c
+81.389 409.691 81.375 409.891 81.25 409.916 c
+81.253 409.954 l
+81.022 410.122 l
+80.988 410.074 81.05 410.031 81.067 409.988 c
+81.116 409.962 81.106 409.883 81.158 409.877 c
+81.169 409.838 81.239 409.837 81.225 409.784 c
+81.273 409.79 81.269 409.722 81.312 409.704 c
+81.305 409.655 81.341 409.692 81.359 409.659 c
+81.405 409.523 81.509 409.683 81.593 409.641 c
+81.601 409.645 81.609 409.662 81.619 409.65 c
+81.646 409.573 81.548 409.503 81.568 409.416 c
+81.546 409.381 81.544 409.335 81.505 409.31 c
+81.467 409.329 81.446 409.286 81.433 409.263 c
+81.454 409.209 81.355 409.168 81.414 409.13 c
+81.457 409.034 81.508 408.942 81.481 408.827 c
+81.45 408.812 81.421 408.792 81.401 408.759 c
+81.525 408.626 81.343 408.498 81.386 408.35 c
+81.378 408.33 81.362 408.312 81.348 408.291 c
+81.341 408.301 81.331 408.299 81.323 408.301 c
+81.338 408.265 81.298 408.225 81.273 408.197 c
+81.257 408.208 l
+81.242 408.201 81.232 408.178 81.21 408.183 c
+81.169 408.317 80.972 408.36 80.939 408.5 c
+80.877 408.535 80.858 408.581 80.807 408.617 c
+80.742 408.748 80.784 408.953 80.614 409.01 c
+80.596 409.024 80.566 409.041 80.582 409.065 c
+80.598 409.086 l
+80.561 409.132 80.54 409.191 80.482 409.218 c
+80.44 409.21 80.385 409.24 80.356 409.195 c
+80.273 409.156 80.146 409.193 80.08 409.124 c
+79.991 409.109 79.937 409.166 79.884 409.231 c
+79.789 409.393 79.808 409.622 79.758 409.81 c
+79.799 409.864 79.888 409.938 79.858 409.98 c
+h
+80.564 410.944 m
+80.595 410.973 80.655 410.984 80.695 410.971 c
+80.717 410.985 80.697 411.009 80.7 411.028 c
+80.711 411.084 80.791 411.152 80.755 411.192 c
+80.792 411.219 80.73 411.221 80.734 411.246 c
+80.754 411.3 80.84 411.358 80.811 411.432 c
+80.792 411.429 l
+80.74 411.341 80.611 411.277 80.655 411.159 c
+80.603 411.09 80.622 411.007 80.564 410.944 c
+h
+80.918 410.587 m
+80.851 410.378 81.044 410.613 81.133 410.515 c
+81.164 410.525 81.231 410.512 81.247 410.55 c
+81.234 410.55 81.221 410.565 81.206 410.557 c
+81.137 410.642 81.043 410.586 80.953 410.611 c
+80.918 410.587 l
+h
+81.368 410.65 m
+81.386 410.618 81.416 410.598 81.419 410.555 c
+81.484 410.551 81.444 410.472 81.456 410.441 c
+81.531 410.446 l
+81.557 410.437 81.569 410.487 81.584 410.454 c
+81.551 410.495 81.566 410.562 81.519 410.593 c
+81.455 410.622 81.54 410.693 81.47 410.71 c
+81.422 410.728 81.387 410.688 81.368 410.65 c
+h
+81.56 410.108 m
+81.593 410.099 81.649 410.048 81.665 410.109 c
+81.61 410.131 81.553 410.134 81.504 410.179 c
+81.491 410.136 81.537 410.135 81.56 410.108 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+79.858 409.98 m
+79.895 409.999 79.866 410.038 79.878 410.066 c
+79.977 410.204 80.166 410.188 80.298 410.247 c
+80.386 410.27 80.443 410.186 80.497 410.134 c
+80.519 410.129 80.559 410.076 80.607 410.077 c
+80.613 410.091 80.643 410.109 80.62 410.125 c
+80.684 410.147 80.768 410.18 80.827 410.121 c
+80.851 410.162 80.873 410.085 80.891 410.13 c
+80.901 410.137 80.91 410.128 80.919 410.121 c
+80.941 410.14 80.969 410.128 80.999 410.146 c
+81.02 410.205 81.124 410.257 81.064 410.316 c
+81.041 410.275 81.016 410.315 80.982 410.31 c
+80.958 410.307 80.924 410.332 80.905 410.299 c
+80.896 410.325 l
+80.872 410.3 80.866 410.348 80.846 410.356 c
+80.818 410.363 80.784 410.414 80.759 410.376 c
+80.754 410.335 80.759 410.303 80.775 410.262 c
+80.753 410.251 80.73 410.278 80.725 410.296 c
+80.712 410.291 80.709 410.277 80.696 410.27 c
+80.647 410.347 80.691 410.493 80.616 410.512 c
+80.599 410.496 80.583 410.481 80.566 410.467 c
+80.583 410.424 80.608 410.379 80.617 410.337 c
+80.588 410.347 l
+80.572 410.331 80.589 410.298 80.557 410.296 c
+80.539 410.294 l
+80.55 410.368 80.532 410.398 80.473 410.441 c
+80.461 410.426 l
+80.476 410.45 80.445 410.464 80.426 410.48 c
+80.349 410.456 80.42 410.35 80.335 410.306 c
+80.319 410.365 80.357 410.435 80.358 410.503 c
+80.31 410.502 80.251 410.483 80.22 410.438 c
+80.204 410.449 l
+80.176 410.437 80.16 410.4 80.139 410.375 c
+80.178 410.335 80.086 410.311 80.131 410.277 c
+80.103 410.195 80.019 410.194 79.949 410.192 c
+79.904 410.205 l
+79.91 410.3 79.885 410.399 79.922 410.485 c
+79.963 410.445 80.005 410.507 80.043 410.502 c
+80.074 410.471 80.091 410.525 80.116 410.539 c
+80.131 410.568 l
+80.045 410.626 l
+80.074 410.652 80.067 410.737 80.128 410.722 c
+80.201 410.745 80.235 410.863 80.32 410.878 c
+80.367 410.925 80.375 410.983 80.422 411.03 c
+80.448 411.001 80.44 410.941 80.489 410.92 c
+80.502 410.922 80.517 410.93 80.527 410.92 c
+80.567 410.983 80.439 410.989 80.482 411.062 c
+80.455 411.161 80.387 411.033 80.329 411.1 c
+80.298 411.15 80.32 411.201 80.339 411.255 c
+80.35 411.26 80.36 411.282 80.375 411.268 c
+80.429 411.306 80.493 411.355 80.559 411.383 c
+80.651 411.493 80.713 411.666 80.866 411.653 c
+80.887 411.677 80.926 411.667 80.952 411.673 c
+80.979 411.655 80.989 411.619 81.024 411.618 c
+81.036 411.633 l
+81.076 411.556 81.245 411.601 81.193 411.472 c
+81.155 411.44 81.022 411.462 81.078 411.372 c
+81.157 411.402 81.239 411.457 81.311 411.516 c
+81.337 411.522 81.362 411.52 81.382 411.507 c
+81.401 411.528 l
+81.426 411.54 81.463 411.567 81.495 411.587 c
+81.573 411.59 81.613 411.671 81.7 411.648 c
+81.728 411.714 81.742 411.808 81.822 411.833 c
+81.877 411.73 l
+81.893 411.772 81.925 411.831 81.972 411.84 c
+81.987 411.829 81.994 411.798 82.02 411.804 c
+82.071 411.849 82.008 411.95 82.104 411.956 c
+82.197 412.063 82.322 412.116 82.415 412.22 c
+82.446 412.23 82.461 412.197 82.467 412.176 c
+82.487 412.126 82.552 412.126 82.593 412.103 c
+82.729 412.033 82.878 412.188 82.999 412.071 c
+83.085 412.074 83.113 412.181 83.181 412.217 c
+83.273 412.217 83.399 412.256 83.483 412.214 c
+83.573 412.27 83.652 412.34 83.752 412.376 c
+83.901 412.294 l
+83.915 412.175 83.993 412 83.856 411.918 c
+83.786 411.898 83.659 411.923 83.644 411.816 c
+83.622 411.689 83.444 411.745 83.4 411.615 c
+83.397 411.56 83.347 411.569 83.363 411.512 c
+83.348 411.483 l
+83.404 411.434 83.51 411.411 83.5 411.324 c
+83.535 411.288 83.51 411.236 83.491 411.201 c
+83.497 411.154 83.514 411.089 83.48 411.043 c
+83.439 411.013 83.401 410.978 83.366 410.936 c
+83.399 410.892 83.396 410.821 83.416 410.77 c
+83.402 410.739 83.388 410.718 83.351 410.715 c
+83.333 410.772 83.291 410.815 83.26 410.864 c
+83.216 410.836 83.178 410.793 83.153 410.744 c
+83.177 410.71 83.189 410.644 83.167 410.606 c
+83.191 410.609 l
+83.176 410.58 l
+83.235 410.586 83.253 410.51 83.244 410.46 c
+83.241 410.441 83.224 410.428 83.213 410.41 c
+83.204 410.42 83.187 410.425 83.181 410.414 c
+83.158 410.384 l
+83.167 410.377 83.178 410.373 83.174 410.359 c
+83.15 410.339 83.104 410.384 83.065 410.352 c
+83.049 410.336 l
+83.083 410.322 l
+83.038 410.237 l
+83.045 410.227 83.064 410.225 83.061 410.208 c
+83.048 410.204 83.038 410.181 83.022 410.197 c
+83.007 410.228 l
+82.989 410.203 82.944 410.181 82.985 410.152 c
+83.016 410.107 83.085 410.093 83.06 410.019 c
+83.026 409.958 82.965 409.99 82.904 409.979 c
+82.887 410.003 82.875 410.053 82.842 410.021 c
+82.81 409.86 83.026 409.845 83.04 409.701 c
+82.97 409.683 82.911 409.761 82.871 409.812 c
+82.848 409.86 82.786 409.9 82.818 409.961 c
+82.789 410.092 82.628 410.102 82.55 410.201 c
+82.529 410.142 82.46 410.17 82.442 410.103 c
+82.472 410.066 82.418 410.029 82.399 409.986 c
+82.345 409.911 82.47 409.826 82.384 409.771 c
+82.377 409.835 82.335 409.788 82.295 409.804 c
+82.304 409.816 82.296 409.834 82.295 409.847 c
+82.252 409.901 82.165 409.948 82.167 410.024 c
+82.076 410.046 81.997 410.126 81.914 410.177 c
+81.87 410.144 81.787 410.162 81.751 410.127 c
+81.734 410.133 81.732 410.113 81.722 410.104 c
+81.754 410.084 81.8 410.088 81.814 410.047 c
+81.819 409.985 81.773 409.933 81.747 409.889 c
+81.714 409.777 81.568 409.861 81.524 409.766 c
+81.389 409.691 81.375 409.891 81.25 409.916 c
+81.253 409.954 l
+81.022 410.122 l
+80.988 410.074 81.05 410.031 81.067 409.988 c
+81.116 409.962 81.106 409.883 81.158 409.877 c
+81.169 409.838 81.239 409.837 81.225 409.784 c
+81.273 409.79 81.269 409.722 81.312 409.704 c
+81.305 409.655 81.341 409.692 81.359 409.659 c
+81.405 409.523 81.509 409.683 81.593 409.641 c
+81.601 409.645 81.609 409.662 81.619 409.65 c
+81.646 409.573 81.548 409.503 81.568 409.416 c
+81.546 409.381 81.544 409.335 81.505 409.31 c
+81.467 409.329 81.446 409.286 81.433 409.263 c
+81.454 409.209 81.355 409.168 81.414 409.13 c
+81.457 409.034 81.508 408.942 81.481 408.827 c
+81.45 408.812 81.421 408.792 81.401 408.759 c
+81.525 408.626 81.343 408.498 81.386 408.35 c
+81.378 408.33 81.362 408.312 81.348 408.291 c
+81.341 408.301 81.331 408.299 81.323 408.301 c
+81.338 408.265 81.298 408.225 81.273 408.197 c
+81.257 408.208 l
+81.242 408.201 81.232 408.178 81.21 408.183 c
+81.169 408.317 80.972 408.36 80.939 408.5 c
+80.877 408.535 80.858 408.581 80.807 408.617 c
+80.742 408.748 80.784 408.953 80.614 409.01 c
+80.596 409.024 80.566 409.041 80.582 409.065 c
+80.598 409.086 l
+80.561 409.132 80.54 409.191 80.482 409.218 c
+80.44 409.21 80.385 409.24 80.356 409.195 c
+80.273 409.156 80.146 409.193 80.08 409.124 c
+79.991 409.109 79.937 409.166 79.884 409.231 c
+79.789 409.393 79.808 409.622 79.758 409.81 c
+79.799 409.864 79.888 409.938 79.858 409.98 c
+h
+80.564 410.944 m
+80.595 410.973 80.655 410.984 80.695 410.971 c
+80.717 410.985 80.697 411.009 80.7 411.028 c
+80.711 411.084 80.791 411.152 80.755 411.192 c
+80.792 411.219 80.73 411.221 80.734 411.246 c
+80.754 411.3 80.84 411.358 80.811 411.432 c
+80.792 411.429 l
+80.74 411.341 80.611 411.277 80.655 411.159 c
+80.603 411.09 80.622 411.007 80.564 410.944 c
+h
+80.918 410.587 m
+80.851 410.378 81.044 410.613 81.133 410.515 c
+81.164 410.525 81.231 410.512 81.247 410.55 c
+81.234 410.55 81.221 410.565 81.206 410.557 c
+81.137 410.642 81.043 410.586 80.953 410.611 c
+80.918 410.587 l
+h
+81.368 410.65 m
+81.386 410.618 81.416 410.598 81.419 410.555 c
+81.484 410.551 81.444 410.472 81.456 410.441 c
+81.531 410.446 l
+81.557 410.437 81.569 410.487 81.584 410.454 c
+81.551 410.495 81.566 410.562 81.519 410.593 c
+81.455 410.622 81.54 410.693 81.47 410.71 c
+81.422 410.728 81.387 410.688 81.368 410.65 c
+h
+81.56 410.108 m
+81.593 410.099 81.649 410.048 81.665 410.109 c
+81.61 410.131 81.553 410.134 81.504 410.179 c
+81.491 410.136 81.537 410.135 81.56 410.108 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+79.858 409.98 m
+79.895 409.999 79.866 410.038 79.878 410.066 c
+79.977 410.204 80.166 410.188 80.298 410.247 c
+80.386 410.27 80.443 410.186 80.497 410.134 c
+80.519 410.129 80.559 410.076 80.607 410.077 c
+80.613 410.091 80.643 410.109 80.62 410.125 c
+80.684 410.147 80.768 410.18 80.827 410.121 c
+80.851 410.162 80.873 410.085 80.891 410.13 c
+80.901 410.137 80.91 410.128 80.919 410.121 c
+80.941 410.14 80.969 410.128 80.999 410.146 c
+81.02 410.205 81.124 410.257 81.064 410.316 c
+81.041 410.275 81.016 410.315 80.982 410.31 c
+80.958 410.307 80.924 410.332 80.905 410.299 c
+80.896 410.325 l
+80.872 410.3 80.866 410.348 80.846 410.356 c
+80.818 410.363 80.784 410.414 80.759 410.376 c
+80.754 410.335 80.759 410.303 80.775 410.262 c
+80.753 410.251 80.73 410.278 80.725 410.296 c
+80.712 410.291 80.709 410.277 80.696 410.27 c
+80.647 410.347 80.691 410.493 80.616 410.512 c
+80.599 410.496 80.583 410.481 80.566 410.467 c
+80.583 410.424 80.608 410.379 80.617 410.337 c
+80.588 410.347 l
+80.572 410.331 80.589 410.298 80.557 410.296 c
+80.539 410.294 l
+80.55 410.368 80.532 410.398 80.473 410.441 c
+80.461 410.426 l
+80.476 410.45 80.445 410.464 80.426 410.48 c
+80.349 410.456 80.42 410.35 80.335 410.306 c
+80.319 410.365 80.357 410.435 80.358 410.503 c
+80.31 410.502 80.251 410.483 80.22 410.438 c
+80.204 410.449 l
+80.176 410.437 80.16 410.4 80.139 410.375 c
+80.178 410.335 80.086 410.311 80.131 410.277 c
+80.103 410.195 80.019 410.194 79.949 410.192 c
+79.904 410.205 l
+79.91 410.3 79.885 410.399 79.922 410.485 c
+79.963 410.445 80.005 410.507 80.043 410.502 c
+80.074 410.471 80.091 410.525 80.116 410.539 c
+80.131 410.568 l
+80.045 410.626 l
+80.074 410.652 80.067 410.737 80.128 410.722 c
+80.201 410.745 80.235 410.863 80.32 410.878 c
+80.367 410.925 80.375 410.983 80.422 411.03 c
+80.448 411.001 80.44 410.941 80.489 410.92 c
+80.502 410.922 80.517 410.93 80.527 410.92 c
+80.567 410.983 80.439 410.989 80.482 411.062 c
+80.455 411.161 80.387 411.033 80.329 411.1 c
+80.298 411.15 80.32 411.201 80.339 411.255 c
+80.35 411.26 80.36 411.282 80.375 411.268 c
+80.429 411.306 80.493 411.355 80.559 411.383 c
+80.651 411.493 80.713 411.666 80.866 411.653 c
+80.887 411.677 80.926 411.667 80.952 411.673 c
+80.979 411.655 80.989 411.619 81.024 411.618 c
+81.036 411.633 l
+81.076 411.556 81.245 411.601 81.193 411.472 c
+81.155 411.44 81.022 411.462 81.078 411.372 c
+81.157 411.402 81.239 411.457 81.311 411.516 c
+81.337 411.522 81.362 411.52 81.382 411.507 c
+81.401 411.528 l
+81.426 411.54 81.463 411.567 81.495 411.587 c
+81.573 411.59 81.613 411.671 81.7 411.648 c
+81.728 411.714 81.742 411.808 81.822 411.833 c
+81.877 411.73 l
+81.893 411.772 81.925 411.831 81.972 411.84 c
+81.987 411.829 81.994 411.798 82.02 411.804 c
+82.071 411.849 82.008 411.95 82.104 411.956 c
+82.197 412.063 82.322 412.116 82.415 412.22 c
+82.446 412.23 82.461 412.197 82.467 412.176 c
+82.487 412.126 82.552 412.126 82.593 412.103 c
+82.729 412.033 82.878 412.188 82.999 412.071 c
+83.085 412.074 83.113 412.181 83.181 412.217 c
+83.273 412.217 83.399 412.256 83.483 412.214 c
+83.573 412.27 83.652 412.34 83.752 412.376 c
+83.901 412.294 l
+83.915 412.175 83.993 412 83.856 411.918 c
+83.786 411.898 83.659 411.923 83.644 411.816 c
+83.622 411.689 83.444 411.745 83.4 411.615 c
+83.397 411.56 83.347 411.569 83.363 411.512 c
+83.348 411.483 l
+83.404 411.434 83.51 411.411 83.5 411.324 c
+83.535 411.288 83.51 411.236 83.491 411.201 c
+83.497 411.154 83.514 411.089 83.48 411.043 c
+83.439 411.013 83.401 410.978 83.366 410.936 c
+83.399 410.892 83.396 410.821 83.416 410.77 c
+83.402 410.739 83.388 410.718 83.351 410.715 c
+83.333 410.772 83.291 410.815 83.26 410.864 c
+83.216 410.836 83.178 410.793 83.153 410.744 c
+83.177 410.71 83.189 410.644 83.167 410.606 c
+83.191 410.609 l
+83.176 410.58 l
+83.235 410.586 83.253 410.51 83.244 410.46 c
+83.241 410.441 83.224 410.428 83.213 410.41 c
+83.204 410.42 83.187 410.425 83.181 410.414 c
+83.158 410.384 l
+83.167 410.377 83.178 410.373 83.174 410.359 c
+83.15 410.339 83.104 410.384 83.065 410.352 c
+83.049 410.336 l
+83.083 410.322 l
+83.038 410.237 l
+83.045 410.227 83.064 410.225 83.061 410.208 c
+83.048 410.204 83.038 410.181 83.022 410.197 c
+83.007 410.228 l
+82.989 410.203 82.944 410.181 82.985 410.152 c
+83.016 410.107 83.085 410.093 83.06 410.019 c
+83.026 409.958 82.965 409.99 82.904 409.979 c
+82.887 410.003 82.875 410.053 82.842 410.021 c
+82.81 409.86 83.026 409.845 83.04 409.701 c
+82.97 409.683 82.911 409.761 82.871 409.812 c
+82.848 409.86 82.786 409.9 82.818 409.961 c
+82.789 410.092 82.628 410.102 82.55 410.201 c
+82.529 410.142 82.46 410.17 82.442 410.103 c
+82.472 410.066 82.418 410.029 82.399 409.986 c
+82.345 409.911 82.47 409.826 82.384 409.771 c
+82.377 409.835 82.335 409.788 82.295 409.804 c
+82.304 409.816 82.296 409.834 82.295 409.847 c
+82.252 409.901 82.165 409.948 82.167 410.024 c
+82.076 410.046 81.997 410.126 81.914 410.177 c
+81.87 410.144 81.787 410.162 81.751 410.127 c
+81.734 410.133 81.732 410.113 81.722 410.104 c
+81.754 410.084 81.8 410.088 81.814 410.047 c
+81.819 409.985 81.773 409.933 81.747 409.889 c
+81.714 409.777 81.568 409.861 81.524 409.766 c
+81.389 409.691 81.375 409.891 81.25 409.916 c
+81.253 409.954 l
+81.022 410.122 l
+80.988 410.074 81.05 410.031 81.067 409.988 c
+81.116 409.962 81.106 409.883 81.158 409.877 c
+81.169 409.838 81.239 409.837 81.225 409.784 c
+81.273 409.79 81.269 409.722 81.312 409.704 c
+81.305 409.655 81.341 409.692 81.359 409.659 c
+81.405 409.523 81.509 409.683 81.593 409.641 c
+81.601 409.645 81.609 409.662 81.619 409.65 c
+81.646 409.573 81.548 409.503 81.568 409.416 c
+81.546 409.381 81.544 409.335 81.505 409.31 c
+81.467 409.329 81.446 409.286 81.433 409.263 c
+81.454 409.209 81.355 409.168 81.414 409.13 c
+81.457 409.034 81.508 408.942 81.481 408.827 c
+81.45 408.812 81.421 408.792 81.401 408.759 c
+81.525 408.626 81.343 408.498 81.386 408.35 c
+81.378 408.33 81.362 408.312 81.348 408.291 c
+81.341 408.301 81.331 408.299 81.323 408.301 c
+81.338 408.265 81.298 408.225 81.273 408.197 c
+81.257 408.208 l
+81.242 408.201 81.232 408.178 81.21 408.183 c
+81.169 408.317 80.972 408.36 80.939 408.5 c
+80.877 408.535 80.858 408.581 80.807 408.617 c
+80.742 408.748 80.784 408.953 80.614 409.01 c
+80.596 409.024 80.566 409.041 80.582 409.065 c
+80.598 409.086 l
+80.561 409.132 80.54 409.191 80.482 409.218 c
+80.44 409.21 80.385 409.24 80.356 409.195 c
+80.273 409.156 80.146 409.193 80.08 409.124 c
+79.991 409.109 79.937 409.166 79.884 409.231 c
+79.789 409.393 79.808 409.622 79.758 409.81 c
+79.799 409.864 79.888 409.938 79.858 409.98 c
+h
+80.564 410.944 m
+80.595 410.973 80.655 410.984 80.695 410.971 c
+80.717 410.985 80.697 411.009 80.7 411.028 c
+80.711 411.084 80.791 411.152 80.755 411.192 c
+80.792 411.219 80.73 411.221 80.734 411.246 c
+80.754 411.3 80.84 411.358 80.811 411.432 c
+80.792 411.429 l
+80.74 411.341 80.611 411.277 80.655 411.159 c
+80.603 411.09 80.622 411.007 80.564 410.944 c
+h
+80.918 410.587 m
+80.851 410.378 81.044 410.613 81.133 410.515 c
+81.164 410.525 81.231 410.512 81.247 410.55 c
+81.234 410.55 81.221 410.565 81.206 410.557 c
+81.137 410.642 81.043 410.586 80.953 410.611 c
+80.918 410.587 l
+h
+81.368 410.65 m
+81.386 410.618 81.416 410.598 81.419 410.555 c
+81.484 410.551 81.444 410.472 81.456 410.441 c
+81.531 410.446 l
+81.557 410.437 81.569 410.487 81.584 410.454 c
+81.551 410.495 81.566 410.562 81.519 410.593 c
+81.455 410.622 81.54 410.693 81.47 410.71 c
+81.422 410.728 81.387 410.688 81.368 410.65 c
+h
+81.56 410.108 m
+81.593 410.099 81.649 410.048 81.665 410.109 c
+81.61 410.131 81.553 410.134 81.504 410.179 c
+81.491 410.136 81.537 410.135 81.56 410.108 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+4.411 0.618698 0.666794 -4.7542 79.3488 412.279 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [-0.036892 -0.00825487 1.03559 0.980259]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+81.998 407.083 m
+82.022 407.043 82.031 407.117 82.058 407.077 c
+82.112 407.074 82.1 407.164 82.149 407.117 c
+82.187 407.115 82.214 407.134 82.231 407.167 c
+82.228 407.193 l
+82.249 407.212 82.276 407.194 82.3 407.195 c
+82.303 407.271 82.354 407.27 82.401 407.339 c
+82.443 407.328 82.468 407.345 82.503 407.31 c
+82.563 407.321 82.632 407.325 82.686 407.29 c
+82.752 407.315 82.689 407.422 82.768 407.398 c
+82.786 407.42 82.824 407.401 82.853 407.402 c
+82.908 407.434 82.966 407.464 83.019 407.452 c
+83.08 407.361 83.178 407.51 83.213 407.415 c
+83.258 407.48 83.32 407.4 83.371 407.437 c
+83.405 407.469 83.439 407.395 83.484 407.421 c
+83.504 407.396 83.509 407.34 83.551 407.352 c
+83.542 407.337 l
+83.601 407.281 l
+83.559 407.234 83.52 407.145 83.442 407.161 c
+83.33 407.118 83.236 407.022 83.094 407.069 c
+83.058 407.059 83.005 407.035 82.971 407.063 c
+82.956 407.034 82.923 407.056 82.902 407.053 c
+82.774 407.005 82.622 407.014 82.503 406.978 c
+82.32 406.939 82.147 406.936 81.999 407.037 c
+81.998 407.083 l
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+81.998 407.083 m
+82.022 407.043 82.031 407.117 82.058 407.077 c
+82.112 407.074 82.1 407.164 82.149 407.117 c
+82.187 407.115 82.214 407.134 82.231 407.167 c
+82.228 407.193 l
+82.249 407.212 82.276 407.194 82.3 407.195 c
+82.303 407.271 82.354 407.27 82.401 407.339 c
+82.443 407.328 82.468 407.345 82.503 407.31 c
+82.563 407.321 82.632 407.325 82.686 407.29 c
+82.752 407.315 82.689 407.422 82.768 407.398 c
+82.786 407.42 82.824 407.401 82.853 407.402 c
+82.908 407.434 82.966 407.464 83.019 407.452 c
+83.08 407.361 83.178 407.51 83.213 407.415 c
+83.258 407.48 83.32 407.4 83.371 407.437 c
+83.405 407.469 83.439 407.395 83.484 407.421 c
+83.504 407.396 83.509 407.34 83.551 407.352 c
+83.542 407.337 l
+83.601 407.281 l
+83.559 407.234 83.52 407.145 83.442 407.161 c
+83.33 407.118 83.236 407.022 83.094 407.069 c
+83.058 407.059 83.005 407.035 82.971 407.063 c
+82.956 407.034 82.923 407.056 82.902 407.053 c
+82.774 407.005 82.622 407.014 82.503 406.978 c
+82.32 406.939 82.147 406.936 81.999 407.037 c
+81.998 407.083 l
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+81.998 407.083 m
+82.022 407.043 82.031 407.117 82.058 407.077 c
+82.112 407.074 82.1 407.164 82.149 407.117 c
+82.187 407.115 82.214 407.134 82.231 407.167 c
+82.228 407.193 l
+82.249 407.212 82.276 407.194 82.3 407.195 c
+82.303 407.271 82.354 407.27 82.401 407.339 c
+82.443 407.328 82.468 407.345 82.503 407.31 c
+82.563 407.321 82.632 407.325 82.686 407.29 c
+82.752 407.315 82.689 407.422 82.768 407.398 c
+82.786 407.42 82.824 407.401 82.853 407.402 c
+82.908 407.434 82.966 407.464 83.019 407.452 c
+83.08 407.361 83.178 407.51 83.213 407.415 c
+83.258 407.48 83.32 407.4 83.371 407.437 c
+83.405 407.469 83.439 407.395 83.484 407.421 c
+83.504 407.396 83.509 407.34 83.551 407.352 c
+83.542 407.337 l
+83.601 407.281 l
+83.559 407.234 83.52 407.145 83.442 407.161 c
+83.33 407.118 83.236 407.022 83.094 407.069 c
+83.058 407.059 83.005 407.035 82.971 407.063 c
+82.956 407.034 82.923 407.056 82.902 407.053 c
+82.774 407.005 82.622 407.014 82.503 406.978 c
+82.32 406.939 82.147 406.936 81.999 407.037 c
+81.998 407.083 l
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+1.60471 0.225098 0.201004 -1.4334 81.8294 407.803 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.0287147 0.216793 1.05757 0.763364]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+81.522 411.855 m
+81.567 411.924 81.642 411.948 81.704 411.986 c
+81.733 411.99 81.747 411.965 81.763 411.948 c
+81.781 411.859 81.672 411.882 81.635 411.839 c
+81.587 411.775 81.549 411.646 81.457 411.671 c
+81.458 411.738 81.529 411.786 81.522 411.855 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+81.522 411.855 m
+81.567 411.924 81.642 411.948 81.704 411.986 c
+81.733 411.99 81.747 411.965 81.763 411.948 c
+81.781 411.859 81.672 411.882 81.635 411.839 c
+81.587 411.775 81.549 411.646 81.457 411.671 c
+81.458 411.738 81.529 411.786 81.522 411.855 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+81.522 411.855 m
+81.567 411.924 81.642 411.948 81.704 411.986 c
+81.733 411.99 81.747 411.965 81.763 411.948 c
+81.781 411.859 81.672 411.882 81.635 411.839 c
+81.587 411.775 81.549 411.646 81.457 411.671 c
+81.458 411.738 81.529 411.786 81.522 411.855 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.338394 0.0475006 0.176605 -1.2587 81.2911 412.411 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.169822 0.345934 1.24868 0.649384]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+82.766 409.816 m
+82.796 409.829 82.835 409.799 82.855 409.772 c
+82.857 409.759 82.861 409.749 82.873 409.742 c
+82.881 409.663 82.959 409.649 83.005 409.586 c
+83.068 409.543 83.112 409.463 83.201 409.478 c
+83.247 409.458 83.298 409.46 83.348 409.453 c
+83.389 409.448 83.414 409.46 83.452 409.441 c
+83.279 409.384 83.1 409.467 82.941 409.544 c
+82.89 409.618 82.866 409.717 82.773 409.761 c
+82.763 409.775 82.76 409.799 82.766 409.816 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+82.766 409.816 m
+82.796 409.829 82.835 409.799 82.855 409.772 c
+82.857 409.759 82.861 409.749 82.873 409.742 c
+82.881 409.663 82.959 409.649 83.005 409.586 c
+83.068 409.543 83.112 409.463 83.201 409.478 c
+83.247 409.458 83.298 409.46 83.348 409.453 c
+83.389 409.448 83.414 409.46 83.452 409.441 c
+83.279 409.384 83.1 409.467 82.941 409.544 c
+82.89 409.618 82.866 409.717 82.773 409.761 c
+82.763 409.775 82.76 409.799 82.766 409.816 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+82.766 409.816 m
+82.796 409.829 82.835 409.799 82.855 409.772 c
+82.857 409.759 82.861 409.749 82.873 409.742 c
+82.881 409.663 82.959 409.649 83.005 409.586 c
+83.068 409.543 83.112 409.463 83.201 409.478 c
+83.247 409.458 83.298 409.46 83.348 409.453 c
+83.389 409.448 83.414 409.46 83.452 409.441 c
+83.279 409.384 83.1 409.467 82.941 409.544 c
+82.89 409.618 82.866 409.717 82.773 409.761 c
+82.763 409.775 82.76 409.799 82.766 409.816 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.627502 0.0879974 0.203293 -1.4491 82.6317 410.288 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.00225915 0.322969 1.18133 0.689791]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.108 409.678 m
+83.135 409.658 83.158 409.688 83.181 409.68 c
+83.222 409.713 83.227 409.795 83.274 409.785 c
+83.31 409.779 83.317 409.745 83.337 409.724 c
+83.322 409.671 83.381 409.66 83.371 409.61 c
+83.334 409.57 83.334 409.473 83.249 409.504 c
+83.196 409.553 83.035 409.509 83.089 409.643 c
+83.09 409.654 83.102 409.667 83.108 409.678 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+83.108 409.678 m
+83.135 409.658 83.158 409.688 83.181 409.68 c
+83.222 409.713 83.227 409.795 83.274 409.785 c
+83.31 409.779 83.317 409.745 83.337 409.724 c
+83.322 409.671 83.381 409.66 83.371 409.61 c
+83.334 409.57 83.334 409.473 83.249 409.504 c
+83.196 409.553 83.035 409.509 83.089 409.643 c
+83.09 409.654 83.102 409.667 83.108 409.678 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.108 409.678 m
+83.135 409.658 83.158 409.688 83.181 409.68 c
+83.222 409.713 83.227 409.795 83.274 409.785 c
+83.31 409.779 83.317 409.745 83.337 409.724 c
+83.322 409.671 83.381 409.66 83.371 409.61 c
+83.334 409.57 83.334 409.473 83.249 409.504 c
+83.196 409.553 83.035 409.509 83.089 409.643 c
+83.09 409.654 83.102 409.667 83.108 409.678 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.288895 0.0404968 0.179199 -1.2773 82.928 410.236 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.000125949 0.349751 1.32801 0.634192]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.303 408.846 m
+83.332 408.89 83.382 408.881 83.43 408.901 c
+83.55 408.91 83.58 409.124 83.708 409.056 c
+83.743 409.134 l
+83.788 409.118 83.846 409.11 83.874 409.066 c
+83.885 409.003 83.881 408.956 83.928 408.912 c
+84.009 408.926 83.977 409.037 84.047 409.079 c
+84.084 409.006 l
+84.107 409.015 l
+84.119 408.914 84.11 408.805 84.15 408.711 c
+84.183 408.686 84.181 408.642 84.197 408.607 c
+84.187 408.581 84.134 408.555 84.163 408.524 c
+84.096 408.442 84.065 408.357 84.004 408.275 c
+83.995 408.298 83.971 408.279 83.962 408.264 c
+83.93 408.241 83.879 408.277 83.843 408.266 c
+83.811 408.28 83.842 408.314 83.829 408.329 c
+83.815 408.386 l
+83.778 408.362 l
+83.711 408.417 83.727 408.495 83.626 408.521 c
+83.54 408.542 83.473 408.46 83.389 408.502 c
+83.364 408.455 83.349 408.518 83.318 408.511 c
+83.333 408.631 83.322 408.73 83.303 408.846 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+83.303 408.846 m
+83.332 408.89 83.382 408.881 83.43 408.901 c
+83.55 408.91 83.58 409.124 83.708 409.056 c
+83.743 409.134 l
+83.788 409.118 83.846 409.11 83.874 409.066 c
+83.885 409.003 83.881 408.956 83.928 408.912 c
+84.009 408.926 83.977 409.037 84.047 409.079 c
+84.084 409.006 l
+84.107 409.015 l
+84.119 408.914 84.11 408.805 84.15 408.711 c
+84.183 408.686 84.181 408.642 84.197 408.607 c
+84.187 408.581 84.134 408.555 84.163 408.524 c
+84.096 408.442 84.065 408.357 84.004 408.275 c
+83.995 408.298 83.971 408.279 83.962 408.264 c
+83.93 408.241 83.879 408.277 83.843 408.266 c
+83.811 408.28 83.842 408.314 83.829 408.329 c
+83.815 408.386 l
+83.778 408.362 l
+83.711 408.417 83.727 408.495 83.626 408.521 c
+83.54 408.542 83.473 408.46 83.389 408.502 c
+83.364 408.455 83.349 408.518 83.318 408.511 c
+83.333 408.631 83.322 408.73 83.303 408.846 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.303 408.846 m
+83.332 408.89 83.382 408.881 83.43 408.901 c
+83.55 408.91 83.58 409.124 83.708 409.056 c
+83.743 409.134 l
+83.788 409.118 83.846 409.11 83.874 409.066 c
+83.885 409.003 83.881 408.956 83.928 408.912 c
+84.009 408.926 83.977 409.037 84.047 409.079 c
+84.084 409.006 l
+84.107 409.015 l
+84.119 408.914 84.11 408.805 84.15 408.711 c
+84.183 408.686 84.181 408.642 84.197 408.607 c
+84.187 408.581 84.134 408.555 84.163 408.524 c
+84.096 408.442 84.065 408.357 84.004 408.275 c
+83.995 408.298 83.971 408.279 83.962 408.264 c
+83.93 408.241 83.879 408.277 83.843 408.266 c
+83.811 408.28 83.842 408.314 83.829 408.329 c
+83.815 408.386 l
+83.778 408.362 l
+83.711 408.417 83.727 408.495 83.626 408.521 c
+83.54 408.542 83.473 408.46 83.389 408.502 c
+83.364 408.455 83.349 408.518 83.318 408.511 c
+83.333 408.631 83.322 408.73 83.303 408.846 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.875198 0.122803 0.261093 -1.86169 83.112 409.541 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.00966132 0.228716 1.15178 0.765213]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.474 410.724 m
+83.544 410.745 83.579 410.763 83.622 410.823 c
+83.681 410.902 83.615 411.046 83.614 411.146 c
+83.582 411.203 83.617 411.26 83.617 411.316 c
+83.631 411.318 l
+83.657 411.146 83.759 410.977 83.661 410.815 c
+83.679 410.686 83.518 410.714 83.459 410.639 c
+83.445 410.64 83.431 410.629 83.425 410.647 c
+83.421 410.679 83.455 410.706 83.474 410.724 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+83.474 410.724 m
+83.544 410.745 83.579 410.763 83.622 410.823 c
+83.681 410.902 83.615 411.046 83.614 411.146 c
+83.582 411.203 83.617 411.26 83.617 411.316 c
+83.631 411.318 l
+83.657 411.146 83.759 410.977 83.661 410.815 c
+83.679 410.686 83.518 410.714 83.459 410.639 c
+83.445 410.64 83.431 410.629 83.425 410.647 c
+83.421 410.679 83.455 410.706 83.474 410.724 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.474 410.724 m
+83.544 410.745 83.579 410.763 83.622 410.823 c
+83.681 410.902 83.615 411.046 83.614 411.146 c
+83.582 411.203 83.617 411.26 83.617 411.316 c
+83.631 411.318 l
+83.657 411.146 83.759 410.977 83.661 410.815 c
+83.679 410.686 83.518 410.714 83.459 410.639 c
+83.445 410.64 83.431 410.629 83.425 410.647 c
+83.421 410.679 83.455 410.706 83.474 410.724 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.319107 0.0447998 0.223694 -1.5946 83.2105 411.742 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.167188 0.278831 1.50297 0.731748]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.89 409.373 m
+83.91 409.365 83.928 409.348 83.934 409.328 c
+83.923 409.313 l
+83.867 409.345 l
+83.89 409.373 l
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+83.89 409.373 m
+83.91 409.365 83.928 409.348 83.934 409.328 c
+83.923 409.313 l
+83.867 409.345 l
+83.89 409.373 l
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.89 409.373 m
+83.91 409.365 83.928 409.348 83.934 409.328 c
+83.923 409.313 l
+83.867 409.345 l
+83.89 409.373 l
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.0635071 0.00889587 0.141693 -1.0103 83.7373 409.834 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.874542 0.465144 2.03918 0.532496]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.938 409.301 m
+83.97 409.265 84.015 409.309 84.052 409.312 c
+84.116 409.297 84.167 409.201 84.234 409.227 c
+84.275 409.203 84.286 409.161 84.262 409.12 c
+84.207 409.072 84.15 409.132 84.083 409.09 c
+84.084 409.144 83.972 409.174 84.06 409.221 c
+84.044 409.273 83.957 409.218 83.939 409.291 c
+83.938 409.301 l
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+83.938 409.301 m
+83.97 409.265 84.015 409.309 84.052 409.312 c
+84.116 409.297 84.167 409.201 84.234 409.227 c
+84.275 409.203 84.286 409.161 84.262 409.12 c
+84.207 409.072 84.15 409.132 84.083 409.09 c
+84.084 409.144 83.972 409.174 84.06 409.221 c
+84.044 409.273 83.957 409.218 83.939 409.291 c
+83.938 409.301 l
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+83.938 409.301 m
+83.97 409.265 84.015 409.309 84.052 409.312 c
+84.116 409.297 84.167 409.201 84.234 409.227 c
+84.275 409.203 84.286 409.161 84.262 409.12 c
+84.207 409.072 84.15 409.132 84.083 409.09 c
+84.084 409.144 83.972 409.174 84.06 409.221 c
+84.044 409.273 83.957 409.218 83.939 409.291 c
+83.938 409.301 l
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.3116 0.0437012 0.169495 -1.2086 83.8115 409.766 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.091771 0.382949 1.29295 0.617289]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+84.289 409.105 m
+84.316 409.104 84.323 409.075 84.328 409.054 c
+84.315 409.033 84.299 409.069 84.277 409.052 c
+84.28 409.069 84.253 409.106 84.289 409.105 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+84.289 409.105 m
+84.316 409.104 84.323 409.075 84.328 409.054 c
+84.315 409.033 84.299 409.069 84.277 409.052 c
+84.28 409.069 84.253 409.106 84.289 409.105 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+84.289 409.105 m
+84.316 409.104 84.323 409.075 84.328 409.054 c
+84.315 409.033 84.299 409.069 84.277 409.052 c
+84.28 409.069 84.253 409.106 84.289 409.105 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.0518951 0.0072937 0.143906 -1.02609 84.1416 409.573 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [0.675198 0.460893 2.28589 0.540734]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+84.319 409.174 m
+84.343 409.177 l
+84.351 409.157 84.328 409.151 84.316 409.141 c
+84.312 409.154 84.339 409.166 84.319 409.174 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0200043 setsmoothness
+n
+84.319 409.174 m
+84.343 409.177 l
+84.351 409.157 84.328 409.151 84.316 409.141 c
+84.312 409.154 84.339 409.166 84.319 409.174 c
+[/DeviceCMYK] cs 0 0.701996 1 0 sc
+f
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+84.319 409.174 m
+84.343 409.177 l
+84.351 409.157 84.328 409.151 84.316 409.141 c
+84.312 409.154 84.339 409.166 84.319 409.174 c
+W
+n
+q
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+q
+0.0316925 0.00450134 0.137207 -0.9785 84.1855 409.638 cm
+<</ShadingType 2
+/ColorSpace [/DeviceCMYK] 
+/BBox [1.75681 0.480053 3.11962 0.521687]
+/Function /N100 /FunctionDictionary findRes 
+/Coords [0 0 1 0]
+/Extend [true true]
+>> sh
+Q
+Q
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0839996 w
+4 M
+true setSA
+0.0200043 setsmoothness
+n
+82.464 406.936 m
+84.145 407.172 85.317 408.718 85.083 410.389 c
+84.848 412.061 83.296 413.224 81.615 412.988 c
+79.934 412.753 78.762 411.207 78.996 409.536 c
+79.23 407.864 80.783 406.701 82.464 406.936 c
+h
+[/DeviceCMYK] cs 0 0 1 0 sc
+S
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.0829926 w
+4 M
+true setSA
+0.0200043 setsmoothness
+n
+79.509 406.52 m
+81.19 406.756 82.363 408.302 82.128 409.973 c
+81.894 411.644 80.341 412.808 78.66 412.572 c
+76.979 412.337 75.807 410.791 76.041 409.119 c
+76.275 407.448 77.828 406.284 79.509 406.52 c
+h
+[/DeviceCMYK] cs 0 0 1 0 sc
+S
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+83.231 401.54 m
+83.197 401.676 83.156 401.809 83.109 401.937 c
+80.76 401.608 l
+80.77 401.75 80.789 401.891 80.815 402.03 c
+82.941 402.328 l
+82.875 402.46 82.801 402.588 82.721 402.711 c
+80.921 402.459 l
+80.967 402.608 81.022 402.754 81.085 402.896 c
+82.443 403.087 l
+82.335 403.216 82.218 403.338 82.094 403.452 c
+81.32 403.343 l
+81.419 403.504 81.528 403.658 81.65 403.803 c
+80.882 404.325 79.927 404.574 78.935 404.435 c
+76.817 404.138 75.341 402.18 75.638 400.061 c
+75.935 397.943 77.893 396.467 80.011 396.764 c
+81.003 396.903 81.853 397.405 82.447 398.117 c
+82.568 398.262 82.692 398.418 82.79 398.58 c
+82.004 398.47 l
+81.879 398.583 81.764 398.705 81.655 398.835 c
+83.013 399.025 l
+83.076 399.167 83.131 399.313 83.177 399.462 c
+81.377 399.21 l
+81.296 399.333 81.222 399.46 81.156 399.593 c
+83.283 399.891 l
+83.308 400.03 83.327 400.17 83.337 400.313 c
+83.347 400.45 83.35 400.588 83.345 400.728 c
+83.34 400.863 83.329 401 83.309 401.137 c
+83.29 401.274 83.264 401.409 83.231 401.54 c
+[/DeviceCMYK] cs 0 1 1 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+82.447 398.117 m
+83.214 397.596 84.17 397.347 85.161 397.486 c
+87.28 397.783 88.756 399.741 88.459 401.86 c
+88.162 403.978 86.204 405.455 84.085 405.157 c
+83.094 405.018 82.244 404.516 81.65 403.803 c
+81.528 403.658 81.419 403.504 81.32 403.343 c
+82.094 403.452 l
+82.218 403.338 82.335 403.216 82.443 403.087 c
+81.085 402.896 l
+81.022 402.754 80.967 402.608 80.921 402.459 c
+82.721 402.711 l
+82.801 402.588 82.875 402.46 82.941 402.328 c
+80.815 402.03 l
+80.789 401.891 80.77 401.75 80.76 401.608 c
+83.109 401.937 l
+83.156 401.809 83.197 401.676 83.231 401.54 c
+83.264 401.409 83.29 401.274 83.309 401.137 c
+83.329 401 83.34 400.863 83.345 400.728 c
+83.35 400.588 83.347 400.45 83.337 400.313 c
+83.327 400.17 83.308 400.03 83.283 399.891 c
+81.156 399.593 l
+81.222 399.46 81.296 399.333 81.377 399.21 c
+83.177 399.462 l
+83.131 399.313 83.076 399.167 83.013 399.025 c
+81.655 398.835 l
+81.764 398.705 81.879 398.583 82.004 398.47 c
+82.79 398.58 l
+82.447 398.117 l
+[/DeviceCMYK] cs 0 0.5 1 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+81.876 401 m
+81.858 401.128 81.775 401.193 81.651 401.175 c
+81.556 401.162 81.487 401.098 81.452 400.991 c
+81.483 401.016 81.52 401.033 81.563 401.039 c
+81.672 401.054 81.75 401.005 81.779 400.904 c
+81.884 400.919 l
+81.882 400.952 81.879 400.979 81.876 401 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+81.44 400.532 m
+81.44 400.507 81.441 400.496 81.443 400.482 c
+81.446 400.456 81.453 400.432 81.46 400.41 c
+82.19 400.513 l
+82.194 400.558 82.197 400.599 82.198 400.638 c
+81.44 400.532 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+81.833 399.89 m
+81.369 399.825 81.093 400.033 81.028 400.497 c
+80.995 400.73 81.023 400.945 81.099 401.119 c
+80.969 400.928 80.912 400.66 80.953 400.362 c
+81.018 399.898 81.321 399.693 81.758 399.754 c
+81.904 399.775 82.038 399.815 82.174 399.878 c
+82.178 399.982 l
+82.066 399.937 81.953 399.906 81.833 399.89 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+84.052 401.825 m
+83.891 401.803 83.767 401.703 83.692 401.552 c
+83.763 401.625 83.852 401.672 83.956 401.687 c
+84.071 401.703 84.183 401.688 84.341 401.634 c
+84.345 401.8 l
+84.233 401.831 84.143 401.838 84.052 401.825 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+84.049 400.195 m
+83.602 400.132 83.278 400.414 83.206 400.93 c
+83.144 401.373 83.251 401.753 83.479 401.989 c
+83.379 401.914 83.301 401.833 83.221 401.718 c
+83.17 401.726 l
+83.148 401.666 l
+83.109 401.545 83.085 401.414 83.076 401.246 c
+83.06 401.246 83.059 401.245 83.046 401.243 c
+82.947 401.229 82.893 401.18 82.862 401.01 c
+82.899 401.057 82.946 401.076 83.004 401.084 c
+83.015 401.086 83.054 401.091 83.075 401.093 c
+83.074 400.996 83.081 400.896 83.095 400.797 c
+83.17 400.282 83.506 399.994 83.953 400.057 c
+84.068 400.073 84.165 400.102 84.312 400.165 c
+84.315 400.265 l
+84.216 400.227 84.138 400.207 84.049 400.195 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+82.403 400 m
+82.432 401.488 l
+82.346 401.476 l
+82.314 399.863 l
+82.729 399.921 l
+82.73 399.964 82.731 400.006 82.731 400.046 c
+82.403 400 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+87.501 402.128 m
+87.511 402.57 l
+87.411 402.556 l
+87.403 402.21 l
+87.436 402.188 87.468 402.16 87.501 402.128 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+87.47 401.632 m
+87.441 401.832 87.349 401.93 87.206 401.91 c
+87.106 401.896 87.031 401.823 86.989 401.711 c
+87.025 401.745 87.068 401.766 87.118 401.773 c
+87.26 401.793 87.353 401.695 87.381 401.495 c
+87.402 401.348 87.389 401.219 87.351 401.119 c
+87.454 401.215 87.502 401.403 87.47 401.632 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+85.821 400.479 m
+85.85 401.968 l
+85.764 401.955 l
+85.732 400.342 l
+86.147 400.4 l
+86.148 400.444 86.149 400.485 86.15 400.525 c
+85.821 400.479 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+87.487 400.713 m
+87.485 400.87 l
+87.389 400.733 87.278 400.663 87.126 400.641 c
+86.824 400.599 86.588 400.831 86.533 401.226 c
+86.491 401.526 86.554 401.813 86.683 402.014 c
+86.6 401.94 86.537 401.841 86.493 401.725 c
+86.478 401.725 86.476 401.724 86.464 401.723 c
+86.354 401.707 86.3 401.648 86.271 401.431 c
+86.317 401.519 86.376 401.553 86.447 401.566 c
+86.417 401.42 86.414 401.256 86.437 401.088 c
+86.493 400.694 86.736 400.462 87.038 400.504 c
+87.19 400.526 87.3 400.596 87.397 400.733 c
+87.398 400.576 l
+87.791 400.631 l
+87.793 400.756 l
+87.487 400.713 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+76.152 399.123 m
+76.201 400.983 l
+76.102 400.97 l
+76.049 398.984 l
+76.452 399.04 l
+76.455 399.166 l
+76.152 399.123 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+76.986 399.994 m
+77.197 401.123 l
+77.118 401.112 l
+76.952 400.219 l
+76.986 399.994 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+77.401 399.298 m
+77.43 400.823 l
+77.335 400.362 l
+77.313 399.161 l
+77.728 399.219 l
+77.731 399.345 l
+77.401 399.298 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+76.825 399.218 m
+76.582 400.695 l
+76.566 400.117 l
+76.737 399.08 l
+77.02 399.12 l
+77.046 399.249 l
+76.825 399.218 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+78.037 400.488 m
+78.125 400.528 78.257 400.564 78.375 400.581 c
+78.55 400.605 78.63 400.584 78.655 400.503 c
+78.685 400.505 78.716 400.506 78.748 400.507 c
+78.754 400.56 78.754 400.583 78.75 400.611 c
+78.735 400.716 78.658 400.745 78.464 400.717 c
+78.345 400.701 78.214 400.665 78.125 400.625 c
+78.07 400.6 l
+78.035 400.585 l
+78.04 400.848 l
+78.012 400.837 77.984 400.824 77.954 400.811 c
+77.946 400.448 l
+77.982 400.463 l
+78.037 400.488 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+78.741 400.203 m
+78.696 400.202 78.677 400.2 78.647 400.196 c
+78.453 400.169 78.346 400.098 78.327 399.985 c
+78.377 400.02 78.447 400.044 78.538 400.057 c
+78.566 400.061 78.585 400.062 78.627 400.062 c
+78.637 399.968 78.635 399.885 78.617 399.817 c
+78.71 399.889 78.759 400.031 78.741 400.203 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+78.797 399.494 m
+78.782 399.659 l
+78.695 399.515 78.564 399.433 78.373 399.407 c
+78.148 399.375 77.97 399.529 77.934 399.785 c
+77.915 399.917 77.931 400.034 77.979 400.135 c
+77.894 400.049 77.853 399.945 77.838 399.822 c
+77.836 399.705 l
+77.837 399.686 77.838 399.667 77.841 399.647 c
+77.877 399.392 78.06 399.238 78.285 399.27 c
+78.475 399.297 78.606 399.378 78.679 399.52 c
+78.694 399.355 l
+79.053 399.405 l
+79.051 399.449 l
+79.05 399.53 l
+78.797 399.494 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+79.848 400.906 m
+79.714 400.887 79.651 400.834 79.663 400.749 c
+79.663 400.747 79.663 400.746 79.663 400.745 c
+79.69 400.756 79.721 400.764 79.759 400.769 c
+79.84 400.78 79.952 400.787 80.06 400.787 c
+80.063 400.923 l
+79.984 400.92 79.907 400.914 79.848 400.906 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+79.669 399.59 m
+79.615 399.583 79.538 399.577 79.438 399.572 c
+79.39 399.569 79.353 399.569 79.328 399.57 c
+79.25 399.576 l
+79.231 399.577 l
+79.234 399.797 l
+79.203 399.801 79.171 399.805 79.135 399.81 c
+79.137 399.439 l
+79.161 399.439 l
+79.239 399.433 l
+79.265 399.432 79.301 399.432 79.35 399.435 c
+79.449 399.44 79.526 399.446 79.58 399.454 c
+79.879 399.496 80.056 399.6 80.123 399.776 c
+80.029 399.681 79.879 399.62 79.669 399.59 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+79.617 400.261 m
+79.383 400.334 79.267 400.457 79.239 400.656 c
+79.224 400.761 79.231 400.862 79.267 400.952 c
+79.188 400.869 79.15 400.766 79.144 400.655 c
+79.147 400.622 79.148 400.586 79.148 400.537 c
+79.149 400.531 79.15 400.525 79.151 400.52 c
+79.179 400.32 79.295 400.197 79.528 400.124 c
+79.707 400.069 79.736 400.049 79.746 399.977 c
+79.747 399.975 79.747 399.973 79.747 399.971 c
+79.816 400.002 79.844 400.048 79.835 400.114 c
+79.825 400.186 79.796 400.205 79.617 400.261 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+80.736 400.984 m
+80.733 400.844 l
+80.883 400.865 l
+80.884 401.004 l
+80.736 400.984 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+80.692 399.727 m
+80.479 399.698 80.347 399.803 80.315 400.028 c
+80.309 400.072 80.306 400.12 80.308 400.171 c
+80.311 400.329 l
+80.313 400.456 l
+80.339 401.433 l
+80.253 401.421 l
+80.224 400.319 l
+80.223 400.266 l
+80.228 400.247 80.231 400.227 80.234 400.206 c
+80.249 400.104 80.244 400.016 80.221 399.939 c
+80.222 399.923 80.224 399.907 80.226 399.891 c
+80.258 399.667 80.391 399.561 80.603 399.59 c
+80.699 399.604 80.785 399.632 80.894 399.683 c
+80.896 399.783 l
+80.825 399.754 80.761 399.737 80.692 399.727 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+84.578 401.406 m
+84.666 401.445 84.797 401.481 84.916 401.498 c
+85.091 401.522 85.171 401.501 85.196 401.42 c
+85.225 401.422 85.257 401.424 85.289 401.424 c
+85.294 401.478 85.295 401.5 85.291 401.529 c
+85.276 401.633 85.198 401.662 85.004 401.635 c
+84.886 401.618 84.754 401.582 84.666 401.542 c
+84.611 401.518 l
+84.575 401.502 l
+84.58 401.766 l
+84.553 401.754 84.524 401.742 84.494 401.728 c
+84.486 401.365 l
+84.522 401.381 l
+84.578 401.406 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+85.281 401.12 m
+85.237 401.119 85.217 401.118 85.187 401.114 c
+84.994 401.086 84.887 401.016 84.867 400.903 c
+84.917 400.937 84.988 400.961 85.079 400.974 c
+85.107 400.978 85.125 400.979 85.167 400.98 c
+85.178 400.886 85.176 400.803 85.157 400.734 c
+85.251 400.807 85.3 400.948 85.281 401.12 c
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+85.337 400.412 m
+85.323 400.576 l
+85.236 400.432 85.104 400.351 84.914 400.324 c
+84.689 400.293 84.51 400.447 84.474 400.702 c
+84.456 400.834 84.472 400.952 84.519 401.052 c
+84.431 400.963 84.379 400.851 84.367 400.721 c
+84.384 400.732 84.401 400.743 84.419 400.755 c
+84.411 400.423 l
+84.486 400.254 84.645 400.162 84.826 400.187 c
+85.016 400.214 85.147 400.295 85.22 400.437 c
+85.235 400.272 l
+85.594 400.323 l
+85.592 400.366 l
+85.591 400.447 l
+85.337 400.412 l
+true setoverprint
+0 0 0 1 nzopmsc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+80.983 399.821 m
+80.874 399.769 80.788 399.741 80.692 399.727 c
+80.479 399.698 80.347 399.803 80.315 400.028 c
+80.309 400.072 80.306 400.12 80.308 400.171 c
+80.311 400.329 l
+80.313 400.456 l
+80.342 401.558 l
+80.755 401.616 l
+80.74 401.375 l
+80.952 401.405 l
+80.948 401.013 l
+80.736 400.984 l
+80.719 400.31 l
+80.718 400.281 80.719 400.259 80.721 400.244 c
+80.732 400.162 80.78 400.133 80.879 400.147 c
+80.926 400.153 80.962 400.163 80.989 400.177 c
+80.983 399.821 l
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+79.239 400.656 m
+79.267 400.457 79.383 400.334 79.617 400.261 c
+79.796 400.205 79.825 400.186 79.835 400.114 c
+79.849 400.016 79.781 399.961 79.617 399.938 c
+79.493 399.921 79.376 399.924 79.237 399.949 c
+79.231 399.577 l
+79.25 399.576 l
+79.328 399.57 l
+79.353 399.569 79.39 399.569 79.438 399.572 c
+79.538 399.577 79.615 399.583 79.669 399.59 c
+80.106 399.652 80.285 399.847 80.234 400.206 c
+80.204 400.423 80.102 400.538 79.881 400.605 c
+79.696 400.66 79.673 400.675 79.663 400.749 c
+79.651 400.834 79.714 400.887 79.848 400.906 c
+79.929 400.917 80.041 400.924 80.149 400.924 c
+80.157 401.298 l
+80.047 401.299 79.882 401.29 79.787 401.277 c
+79.324 401.212 79.197 400.947 79.239 400.656 c
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+84.446 402.203 m
+84.437 401.772 l
+84.279 401.826 84.167 401.841 84.052 401.825 c
+83.742 401.782 83.567 401.452 83.626 401.024 c
+83.668 400.73 83.839 400.572 84.08 400.606 c
+84.182 400.62 84.29 400.668 84.419 400.755 c
+84.408 400.303 l
+84.26 400.24 84.164 400.211 84.049 400.195 c
+83.602 400.132 83.278 400.414 83.206 400.93 c
+83.109 401.624 83.425 402.163 83.976 402.24 c
+84.047 402.25 84.11 402.252 84.164 402.246 c
+84.341 402.227 l
+84.396 402.216 84.407 402.213 84.446 402.203 c
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+87.879 400.768 m
+87.487 400.713 l
+87.485 400.87 l
+87.389 400.733 87.278 400.663 87.126 400.641 c
+86.824 400.599 86.588 400.831 86.533 401.226 c
+86.459 401.751 86.706 402.237 87.073 402.288 c
+87.234 402.311 87.366 402.262 87.501 402.128 c
+87.514 402.695 l
+87.924 402.752 l
+87.879 400.768 l
+h
+87.215 401.053 m
+87.408 401.081 87.513 401.319 87.47 401.632 c
+87.441 401.832 87.349 401.93 87.206 401.91 c
+87.018 401.884 86.915 401.645 86.958 401.335 c
+86.987 401.128 87.074 401.034 87.215 401.053 c
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+82.249 400.013 m
+82.113 399.95 81.978 399.909 81.833 399.89 c
+81.369 399.825 81.093 400.033 81.028 400.497 c
+80.952 401.039 81.203 401.48 81.621 401.539 c
+81.963 401.587 82.212 401.394 82.261 401.044 c
+82.278 400.928 82.279 400.813 82.265 400.647 c
+81.44 400.532 l
+81.44 400.507 81.441 400.496 81.443 400.482 c
+81.468 400.299 81.605 400.223 81.846 400.257 c
+81.994 400.277 82.123 400.327 82.263 400.417 c
+82.249 400.013 l
+h
+81.884 400.919 m
+81.882 400.952 81.879 400.979 81.876 401 c
+81.858 401.128 81.775 401.193 81.651 401.175 c
+81.52 401.157 81.44 401.043 81.427 400.856 c
+81.884 400.919 l
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+83.154 401.727 m
+83.141 401.728 83.127 401.728 83.112 401.725 c
+82.976 401.706 82.908 401.626 82.807 401.421 c
+82.81 401.666 l
+82.434 401.613 l
+82.403 400 l
+82.818 400.058 l
+82.831 401.044 82.847 401.215 83.046 401.243 c
+83.059 401.245 83.06 401.246 83.076 401.246 c
+83.087 401.442 83.118 401.589 83.17 401.726 c
+83.154 401.727 l
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+86.572 402.207 m
+86.559 402.207 86.545 402.207 86.53 402.205 c
+86.394 402.186 86.326 402.105 86.225 401.901 c
+86.228 402.145 l
+85.852 402.092 l
+85.821 400.479 l
+86.236 400.538 l
+86.249 401.523 86.265 401.695 86.464 401.723 c
+86.477 401.725 86.476 401.725 86.493 401.725 c
+86.503 401.921 86.535 402.068 86.587 402.205 c
+86.572 402.207 l
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+77.817 399.357 m
+77.401 399.298 l
+77.43 400.823 l
+77.108 399.257 l
+76.825 399.218 l
+76.582 400.695 l
+76.54 399.178 l
+76.152 399.123 l
+76.204 401.108 l
+76.801 401.192 l
+76.986 399.994 l
+77.221 401.251 l
+77.866 401.341 l
+77.817 399.357 l
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+78.741 400.203 m
+78.696 400.202 78.677 400.2 78.647 400.196 c
+78.412 400.163 78.304 400.066 78.326 399.907 c
+78.34 399.808 78.407 399.754 78.497 399.766 c
+78.667 399.79 78.766 399.968 78.741 400.203 c
+h
+79.141 399.542 m
+78.797 399.494 l
+78.782 399.659 l
+78.695 399.515 78.564 399.433 78.373 399.407 c
+78.148 399.375 77.97 399.529 77.934 399.785 c
+77.88 400.169 78.117 400.43 78.577 400.495 c
+78.625 400.502 78.685 400.506 78.748 400.507 c
+78.754 400.56 78.754 400.583 78.75 400.611 c
+78.735 400.716 78.658 400.745 78.464 400.717 c
+78.345 400.701 78.214 400.665 78.125 400.625 c
+78.07 400.6 l
+78.035 400.585 l
+78.042 400.948 l
+78.24 401.037 78.374 401.079 78.527 401.101 c
+78.884 401.151 79.095 401.017 79.137 400.715 c
+79.148 400.637 79.15 400.577 79.147 400.397 c
+79.139 399.826 l
+79.139 399.723 l
+79.139 399.642 l
+79.14 399.586 l
+79.141 399.542 l
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+true setSA
+0.0200043 setsmoothness
+n
+85.038 400.684 m
+84.947 400.671 84.88 400.726 84.867 400.824 c
+84.844 400.983 84.952 401.081 85.187 401.114 c
+85.217 401.118 85.237 401.119 85.281 401.12 c
+85.306 400.886 85.207 400.708 85.038 400.684 c
+h
+85.68 400.503 m
+85.68 400.559 l
+85.679 400.641 l
+85.68 400.743 l
+85.688 401.315 l
+85.691 401.494 85.689 401.554 85.678 401.632 c
+85.635 401.935 85.424 402.068 85.067 402.018 c
+84.914 401.997 84.781 401.955 84.583 401.865 c
+84.575 401.502 l
+84.611 401.518 l
+84.666 401.542 l
+84.754 401.582 84.886 401.618 85.004 401.635 c
+85.198 401.662 85.276 401.633 85.291 401.529 c
+85.295 401.5 85.294 401.478 85.289 401.424 c
+85.226 401.423 85.165 401.419 85.118 401.412 c
+84.657 401.348 84.421 401.086 84.474 400.702 c
+84.51 400.447 84.689 400.293 84.914 400.324 c
+85.104 400.351 85.236 400.432 85.323 400.576 c
+85.337 400.412 l
+85.682 400.46 l
+85.68 400.503 l
+[/DeviceCMYK] cs 0 0 0 0 sc
+f
+Q
+q
+1 0 0 1 -10.5002 -358.507 cm
+n
+29.373 421.274 m
+34.54 384.436 l
+92.759 392.602 l
+87.592 429.44 l
+W
+n
+0.136002 w
+4 M
+true setSA
+0.0200043 setsmoothness
+n
+74.439 400.014 m
+74.836 397.183 77.493 395.333 80.153 395.706 c
+85.165 396.409 l
+87.825 396.782 89.87 399.292 89.473 402.123 c
+88.185 411.311 l
+87.787 414.142 85.131 415.993 82.47 415.619 c
+77.459 414.916 l
+74.798 414.543 72.753 412.033 73.15 409.202 c
+74.439 400.014 l
+h
+[/DeviceCMYK] cs 0 0 0 1 sc
+S
+Q
+PDFVars/TermAll get exec end end
+userdict /pgsave get restore
+showpage
+%%PageTrailer
+%%EndPage
+%%Trailer
+%%DocumentProcessColors: Cyan Magenta Yellow Black
+%%EOF

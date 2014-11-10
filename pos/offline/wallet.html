@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Digital Wallet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Application styles -->
+<link href="style/wallet.css" rel="stylesheet" type="text/css">
+
+<!-- Date and time formatting -->
+<script src="script/moment.js" type="text/javascript"></script>
+
+<!-- Data storage (memory model) -->
+<script src="script/dao.js" type="text/javascript"></script>
+
+<!-- Asset preload -->
+<script src="script/preloadjs/preloadjs-0.4.1.min.js" type="text/javascript"></script>
+
+<!-- Animation -->
+<script src="script/greensock/TweenMax.min.js" type="text/javascript"></script>
+
+<!-- Emulation -->
+<script src="http://localhost:8001/demo/jms/javascript/WebSocket.js" type="text/javascript"></script>
+
+<!-- JMS -->
+<script src="http://localhost:8001/demo/jms/javascript/JmsClient.js" type="text/javascript"></script>
+
+<!-- URL parsing -->
+<script src="script/URLParser.js" type="text/javascript"></script>
+
+<!-- Local data model -->
+<script src="script/model.js" type="text/javascript"></script>
+
+<!-- Actions -->
+<script src="script/actions.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">
+var CARD_RATIO = 0.6279;
+var CLICK_DISTANCE = 40;
+
+var concurrent = null;
+var sending = null;
+var touch = null;
+var discounts = null;
+var down = null;
+var move = null;
+var queue = null;
+
+// Gateway variables
+var connection = null;
+var consumer = null;
+var dashboard = null;
+var future = null;
+var producer = null;
+var session = null;
+var topicConsume = null;
+var topicDashboard = null;
+var topicProduce = null;
+
+function broadcast( message )
+{
+    // Debug
+    console.log( "Broadcast: " + message.client.action );
+
+    // Initialize concurrency if needed
+    if( sending == null )
+    {
+        concurrent = [];
+        sending = false;
+    }
+
+    // Do not allow concurrent sending
+    if( !sending )
+    {
+        sending = true;
+
+        if( message.client.hasOwnProperty( "dashboard" ) )
+        {
+            dashboard.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        } else {
+            producer.send(
+                session.createTextMessage( JSON.stringify( message ) ),
+                doMessageSent
+            );
+        }
+    } else {
+        // Queue for retry later
+        concurrent.push( message );
+    }
+}
+
+function buildLineItem( purchase, product )
+{
+    var bubble = null;
+    var clear = null;
+    var clone = null;
+    var count = null;
+    var ending = null;
+    var found = null;
+    var list = null;
+    var tax = null;
+    var template = null;
+
+    // Debug
+    console.log( "Building line item." );
+    console.log( product );
+
+    // Reference elements
+    template = document.querySelector( ".line.template" );
+    list = document.querySelector( ".list" );
+    tax = document.querySelector( ".tax" );
+    clear = document.querySelector( ".clear" );
+
+    // Handle interface differences
+    // Mainly event handling
+    if( clear == null )
+    {
+        bubble = false;
+    } else {
+        bubble = true;
+    }
+
+    // Account for interface differences
+    // Code reused in register and wallet
+    if( bubble == true )
+    {
+        ending = 2;
+    } else {
+        ending = 1;
+    }
+
+    found = false;
+    count = 0;
+
+    for( var c = 0; c < list.children.length - ending; c++ )
+    {
+        if( list.children[c].getAttribute( "data-id" ) == product.objectId )
+        {
+            found = true;
+            count = parseInt( list.children[c].children[2].innerHTML );
+            clone = list.children[c];
+            break;
+        }
+    }
+
+    if( found )
+    {
+        count = count + 1;
+        clone.children[2].innerHTML = count;
+        clone.children[2].style.visibility = "visible";
+        clone.children[3].innerHTML = model.configuration.currencySymbol + ( count * product.price ).toFixed( 2 );
+    } else {
+        // Build new line item
+        clone = template.cloneNode( true );
+        clone.setAttribute( "data-purchase", purchase );
+        clone.setAttribute( "data-id", product.objectId );
+        clone.setAttribute( "data-name", product.name );
+        clone.setAttribute( "data-price", product.price );
+        clone.setAttribute( "data-image", product.image );
+        clone.setAttribute( "data-path", product.imagePath );
+        clone.classList.remove( "template" );
+        clone.children[0].style.backgroundImage = "url( '" + product.imagePath + "/" + product.image + "' )";
+        clone.children[1].innerHTML = product.name;
+        clone.children[2].innerHTML = "1";
+        clone.children[2].style.visibility = "hidden";
+        clone.children[3].innerHTML = model.configuration.currencySymbol + product.price.toFixed( 2 );
+
+        if( bubble == true )
+        {
+            clone.addEventListener( touch ? "touchstart" : "click", doItemClick );
+        }
+
+        // Add to line item list
+        list.insertBefore( clone, tax );
+    }
+
+    // Calculate new total
+    calculateTotal();
+}
+
+function calculateTotal()
+{
+    var charge = null;
+    var clear = null;
+    var ending = null;
+    var list = null;
+    var tax = null;
+    var taxes = null;
+    var total = null;
+
+    console.log( "Recalculating total." );
+
+    // References
+    list = document.querySelector( ".list" );
+    charge = document.querySelector( ".charge" );
+    tax = document.querySelector( ".tax" );
+    clear = document.querySelector( ".clear" );
+
+    // Account for different interfaces
+    // No clear button on wallet
+    if( clear == null )
+    {
+        ending = 1;
+    } else {
+        ending = 2;
+    }
+
+    // Nothing yet
+    total = 0;
+
+    // Iterate through children
+    // Do not include tax and clear buttons in iteration
+    for( var c = 0; c < list.children.length - ending; c++ )
+    {
+        total = total + ( parseInt( list.children[c].children[2].innerHTML ) * parseFloat( list.children[c].getAttribute( "data-price" ) ) );
+    }
+
+    // Manage interface visibility
+    // Charge button
+    // Taxes
+    // Clear list button
+    if( total == 0 )
+    {
+        // Change button appearance
+        charge.classList.add( "pending" );
+        charge.classList.remove( "ready" );
+        charge.classList.remove( "waiting" );
+        charge.classList.remove( "accepted" );
+
+        // Disable charge button click
+        if( clear != null )
+        {
+            charge.removeEventListener( touch ? "touchstart" : "click", doChargeClick );
+        }
+
+        // Hide list controls
+        tax.style.visibility = "hidden";
+
+        // May or may not have a clear button
+        if( clear != null )
+        {
+            clear.style.visibility = "hidden";
+        }
+    } else {
+        // Enable charge button
+        // Different rules for different interfaces
+        if( clear != null )
+        {
+            charge.classList.add( "ready" );
+            charge.classList.remove( "pending" );
+            charge.classList.remove( "waiting" );
+            charge.classList.remove( "accepted" );
+            charge.addEventListener( touch ? "touchstart" : "click", doChargeClick );
+        }
+
+        // Show list controls
+        tax.style.visibility = "visible";
+
+        // May or may not have a clear button
+        if( clear != null )
+        {
+            clear.style.visibility = "visible";
+        }
+    }
+
+    // Calculate taxes
+    taxes = total * model.configuration.taxRate;
+    total = total + taxes;
+
+    // Display taxes and update total
+    tax.children[3].innerHTML = model.configuration.currencySymbol + taxes.toFixed( 2 );
+
+    if( clear != null )
+    {
+        charge.innerHTML = model.configuration.currencyCharge + total.toFixed( 2 );
+    } else {
+        charge.innerHTML = model.configuration.currencyTotal + total.toFixed( 2 );
+    }
+}
+
+function clearLineItems()
+{
+    var clear = null;
+    var ending = null;
+    var list = null;
+
+    // Debug
+    console.log( "Clear items from list." );
+
+    // References
+    list = document.querySelector( ".list" );
+    clear = document.querySelector( ".clear" );
+
+    // Account for interface difference
+    // Between register and wallet
+    if( clear == null )
+    {
+        ending = 1;
+    } else {
+        ending = 2;
+    }
+
+    // Remove all product children
+    // Always from zero element
+    // Number of children will vary
+    while( list.children.length > ending )
+    {
+        list.removeChild( list.children[0] );
+    }
+
+    // Update running total
+    calculateTotal();
+}
+
+function generateRandomString()
+{
+    var now = null;
+    var random = null;
+    var result = null;
+
+    // Random with date seed
+    now = new Date();
+    random = Math.floor( Math.random() * now.getTime() );
+    result = random.toString( 16 );
+
+    console.log( "Random string generation (" + result + ")." );
+
+    // Hex version
+    return result;
+}
+
+function handshakeLookup()
+{
+    var transaction = null;
+    var query = null;
+
+    // Get transaction from URL
+    transaction = URLParser( window.location.href ).getParam( "id" );
+
+    console.log( "Reading handshake record (" + transaction + ")." );
+
+    dao.transactionFind( transaction, {
+        success: doHandshakeSuccess,
+        error: doHandshakeError
+    } );
+
+    /*
+    // Lookup transaction details
+    // Mainly for full transaction and endpoint
+    query = new Parse.Query( Handshake );
+    query.endsWith( "transactionId", transaction );
+    query.first( {
+        success: doHandshakeSuccess,
+        error: doHandshakeError
+    } );
+    */
+}
+
+function initializeClient()
+{
+    var buttons = null;
+    var card = null;
+    var code = null;
+    var codeWidth = null;
+    var coupon = null;
+    var input = null;
+    var passbook = null;
+    var payment = null;
+    var pin = null;
+    var receipt = null;
+    var wallet = null;
+
+    console.log( "Initializing user interface." );
+
+    // Touch support
+    touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+    console.log( "Touch is" + ( touch ? " " : " not " ) + "supported." );
+
+    // Receipt screen
+    receipt = document.querySelector( ".receipt" );
+    receipt.style.display = "inline";
+
+    // Pin entry
+    input = document.querySelector( ".pin input" );
+    input.addEventListener( "keyup", doPinChange );
+
+    buttons = document.querySelector( ".pin .total" );
+    buttons.children[0].addEventListener( touch ? "touchstart" : "click", doPinPrevious );
+
+    // NOTE: Payment was here
+
+    // wallet = document.querySelector( ".wallet" );
+
+    card = document.querySelector( ".card" );
+    card.addEventListener( touch ? "touchstart" : "mousedown", doCardDown );
+
+    // NOTE: Coupon was here
+
+    // passbook = document.querySelector( ".passbook" );
+
+    // NOTE: Code width was here
+
+    buttons = document.querySelector( ".coupon .total" );
+    buttons.children[1].addEventListener( touch ? "touchstart" : "click", doCouponDecline );
+
+    // Random seed of discounts to apply
+    discounts = [5, 10, 15, 20, 25, 30, 35, 40];
+}
+
+function initializeConnection()
+{
+    var factory = null;
+
+    // Debug
+    console.log( "Initializing broker connection." );
+
+    // Use JMS as broker
+    factory = new JmsConnectionFactory( model.handshake.endpoint );
+
+    // Connect to server
+    future = factory.createConnection(
+        null,           // User name
+        null,           // Password
+        doConnected     // Callback
+    );
+}
+
+function removeLineItem( productId )
+{
+    var clear = null;
+    var count = null;
+    var ending = null;
+    var item = null;
+    var list = null;
+
+    // Debug
+    console.log( "Remove purchase from list." );
+
+    // References
+    list = document.querySelector( ".list" );
+    clear = document.querySelector( ".clear" );
+
+    if( clear == null )
+    {
+        ending = 1;
+    } else {
+        ending = 2;
+    }
+
+    // Iterate through line items
+    for( var c = 0; c < list.children.length - ending; c++ )
+    {
+        // Look for matching line item
+        if( list.children[c].getAttribute( "data-id" ) == productId )
+        {
+            // Determine current quantity
+            count = parseInt( list.children[c].children[2].innerHTML );
+
+            // If only one
+            if( count == 1 )
+            {
+                // Outright remove line item
+                list.removeChild( list.children[c] );
+            } else {
+                // Decrement quantity for all others
+                list.children[c].children[2].innerHTML = count - 1;
+                list.children[c].children[3].innerHTML = model.configuration.currencySymbol + ( ( count - 1 ) * parseFloat( list.children[c].getAttribute( "data-price" ) ) ).toFixed( 2 );
+
+                // Hide quantity for single item
+                if( count == 2 )
+                {
+                    list.children[c].children[2].style.visibility = "hidden";
+                }
+            }
+
+            break;
+        }
+    }
+
+    // Update interface totals
+    calculateTotal();
+}
+
+function sendCardChange( element, data )
+{
+    var message = null;
+
+    // Sending to register allows preload
+    console.log( "Let register know new card." );
+
+    // Allow preload at register
+    message = {
+        client: {
+            action: CARD_CHANGE,
+            reply: model.handshake.replyTo
+        },
+        content: {
+            background: data.getAttribute( "data-card" ),
+            width: element.clientWidth,
+            height: element.clientHeight,
+            name: element.children[0].innerHTML,
+            expires: element.children[1].innerHTML,
+            number: element.children[2].innerHTML,
+            vendor: data.getAttribute( "data-vendor" )
+        }
+    };
+
+    // Let register know which card
+    // Allows for preload of imagery
+    broadcast( message );
+}
+
+function doCardAnimation()
+{
+    var message = null;
+    var top = null;
+
+    console.log( "Checking card animation." );
+
+    top = parseInt( this.style.top.substring( 0, this.style.top.length - 2) );
+
+    if( top < 5 && this.getAttribute( "data-top" ) == "false" )
+    {
+        console.log( "Telling register to animate card." );
+
+        this.setAttribute( "data-top", "true" );
+
+        // Assemble message
+        message = {
+            client: {
+                action: CARD_SWIPE,
+                reply: model.handshake.replyTo
+            },
+            content: {
+                width: this.clientWidth,
+                height: this.clientHeight,
+                name: this.children[0].innerHTML,
+                expires: this.children[1].innerHTML,
+                number: this.children[2].innerHTML,
+                logo: this.getAttribute( "data-vendor" ),
+                background: this.getAttribute( "data-card" )
+            }
+        };
+
+        // Reached top of this screen
+        // Show on register screen
+        broadcast( message );
+
+        // Dashboard
+        console.log( "Sending swipe to dashboard." );
+        message.client.dashboard = true;
+        broadcast( message );
+    }
+}
+
+function doCardCharged( data )
+{
+    var card = null;
+    var height = null;
+    var status = null;
+
+    console.log( "Animate card onto screen." );
+
+    status = document.querySelector( ".status" );
+    status.innerHTML = "PAYMENT COMPLETE";
+
+    card = document.querySelector( ".card" );
+    card.style.top = window.innerHeight + ( card.clientHeight / 2 ) + "px";
+
+    TweenMax.to( card, 1, {
+        top: Math.round( ( ( window.innerHeight - card.clientHeight ) / 2 ) - 15 ),
+        onComplete: doTransactionComplete,
+        onCompleteScope: card
+    } );
+}
+
+function doCardComplete( card, clone, data )
+{
+    var img = null;
+
+    console.log( "Horizontal gesture complete." );
+
+    // Remove logo image
+    card.removeChild( card.children[3] );
+
+    // Rebuild logo image
+    // SVG placed into SVG scales down
+    // Rebuilding from scratch keep scale
+    img = document.createElement( "img" );
+    img.width = 52;
+    img.height = 52;
+    img.src = "https://s3.amazonaws.com/kaazingwallet/img/" + data.getAttribute( "data-vendor" ) + ".svg";
+    img.classList.add( "logo" );
+
+    card.style.backgroundImage = "url( 'img/" + data.getAttribute( "data-card" ) + ".png' )";
+    card.style.left = Math.round( ( window.innerWidth - card.clientWidth ) / 2 ) + "px";
+    card.appendChild( img );
+
+    document.body.removeChild( clone );
+
+    // Allow preload at register
+    sendCardChange( card, data );
+}
+
+function doCardDown( event )
+{
+    event.preventDefault();
+
+    if( touch )
+    {
+        down = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+        };
+    } else {
+        down = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+
+    console.log( "Down at: " + down );
+
+    document.addEventListener( touch ? "touchmove" : "mousemove", doCardMove );
+    document.addEventListener( touch ? "touchend" : "mouseup", doCardUp );
+}
+
+function doCardLeft()
+{
+    var card = null;
+    var clone = null;
+    var incoming = null;
+    var message = null;
+    var page = null;
+    var selected = null;
+
+    console.log( "Swipe card left." );
+
+    page = document.querySelector( ".payment .holder" );
+
+    for( var c = 0; c < page.children.length; c++ )
+    {
+        if( page.children[c].classList.contains( "selected" ) )
+        {
+            selected = c;
+            break;
+        }
+    }
+
+    if( selected == ( page.children.length - 1 ) )
+    {
+        incoming = 0;
+    } else {
+        incoming = selected + 1;
+    }
+
+    card = document.querySelector( ".card" );
+
+    clone = card.cloneNode( true );
+    clone.style.backgroundImage = "url( 'img/" + page.children[incoming].getAttribute( "data-card" ) + ".png' )";
+    clone.children[3].src = "https://s3.amazonaws.com/kaazingwallet/img/" + page.children[incoming].getAttribute( "data-vendor" ) + ".svg";
+    clone.style.left = window.innerWidth + "px";
+    document.body.appendChild( clone );
+
+    page.children[selected].classList.remove( "selected" );
+    page.children[incoming].classList.add( "selected" );
+
+    TweenMax.to( card, 0.50, {
+        left: 0 - window.innerWidth,
+        onComplete: doCardComplete,
+        onCompleteParams: [card, clone, page.children[incoming]]
+    } );
+
+    TweenMax.to( clone, 0.50, {
+        left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+    } );
+}
+
+function doCardMove( event )
+{
+    event.preventDefault();
+
+    if( touch )
+    {
+        move = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY
+        };
+    } else {
+        move = {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+}
+
+function doCardRight()
+{
+    var card = null;
+    var clone = null;
+    var incoming = null;
+    var message = null;
+    var page = null;
+    var selected = null;
+
+    console.log( "Card swipe right." );
+
+    page = document.querySelector( ".payment .holder" );
+
+    for( var c = 0; c < page.children.length; c++ )
+    {
+        if( page.children[c].classList.contains( "selected" ) )
+        {
+            selected = c;
+            break;
+        }
+    }
+
+    if( selected == 0 )
+    {
+        incoming = page.children.length - 1;
+    } else {
+        incoming = selected - 1;
+    }
+
+    card = document.querySelector( ".card" );
+
+    clone = card.cloneNode( true );
+    clone.style.backgroundImage = "url( 'img/" + page.children[incoming].getAttribute( "data-card" ) + ".png' )";
+    clone.children[3].src = "https://s3.amazonaws.com/kaazingwallet/img/" + page.children[incoming].getAttribute( "data-vendor" ) + ".svg";
+    clone.style.left = ( 0 - window.innerWidth ) + "px";
+    document.body.appendChild( clone );
+
+    page.children[selected].classList.remove( "selected" );
+    page.children[incoming].classList.add( "selected" );
+
+    TweenMax.to( card, 0.50, {
+        left: window.innerWidth,
+        onComplete: doCardComplete,
+        onCompleteParams: [card, clone, page.children[incoming]]
+    } );
+
+    TweenMax.to( clone, 0.50, {
+        left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+    } );
+}
+
+function doCardUp( event )
+{
+    var card = null;
+    var distance = null;
+    var distanceX = null;
+    var distanceY = null;
+    var status = null;
+    var up = null;
+
+    event.preventDefault();
+
+    console.log( "Moved to: " + move );
+
+    distance = Math.sqrt( Math.pow( move.x - down.x, 2 ) + Math.pow( move.y - down.y, 2 ) );
+
+    console.log( "Distance: " + distance );
+
+    if( distance < CLICK_DISTANCE )
+    {
+        console.log( "Card clicked." );
+    } else {
+        distanceX = Math.max( down.x, move.x ) - Math.min( down.x, move.x );
+        distanceY = Math.max( down.y, move.y ) - Math.min( down.y, move.y );
+
+        if( distanceX > distanceY )
+        {
+            console.log( "Horizontal swipe." );
+
+            if( down.x < move.x )
+            {
+                doCardRight();
+            } else if( down.x > move.x ) {
+                doCardLeft();
+            }
+        } else if( distanceY > distanceX ) {
+            console.log( "Vertical swipe." );
+
+            if( down.y < move.y )
+            {
+                console.log( "Down" );
+            } else if( down.y > move.y ) {
+                // Debug
+                console.log( "Up" );
+
+                status = document.querySelector( ".status" );
+                status.innerHTML = "PROCESSING PAYMENT";
+
+                card = document.querySelector( ".card" );
+                card.setAttribute( "data-top", "false" );
+
+                TweenMax.to( card, 0.50, {
+                    top: 0 - card.clientWidth,
+                    onUpdate: doCardAnimation,
+                    onUpdateScope: card
+                } );
+            }
+        }
+    }
+
+    document.removeEventListener( touch ? "touchmove" : "mousemove", doCardMove );
+    document.removeEventListener( touch ? "touchend" : "mouseup", doCardUp );
+
+    down = null;
+    move = null;
+}
+
+function doConfigurationFindError( error )
+{
+    console.log( "Error reading configuration (" + error.message + ")." );
+}
+
+function doConfigurationFindSuccess( result )
+{
+    var configuration = null;
+    var query = null;
+
+    console.log( "Configuration loaded." );
+
+    // Store in memory model
+    model.configuration.animationDelay = result.get( "animationDelay" );
+    model.configuration.authorization = result.get( "authorization" );
+    model.configuration.connecting = result.get( "connecting" );
+    model.configuration.createdAt = result.createdAt;
+    model.configuration.currencyAccepted = result.get( "currencyAccepted" );
+    model.configuration.currencyCharge = result.get( "currencyCharge" );
+    model.configuration.currencyPayment = result.get( "currencyPayment" );
+    model.configuration.currencyPending = result.get( "currencyPending" );
+    model.configuration.currencySymbol = result.get( "currencySymbol" );
+    model.configuration.currencyTotal = result.get( "currencyTotal" );
+    model.configuration.endpoint = result.get( "endpoint" );
+    model.configuration.notification = result.get( "notification" );
+    model.configuration.objectId = result.id;
+    model.configuration.shortCode = result.get( "shortCode" );
+    model.configuration.splashDelay = result.get( "splashDelay" );
+    model.configuration.taxRate = result.get( "taxRate" );
+    model.configuration.topic = result.get( "topic" );
+    model.configuration.updatedAt = result.updatedAt;
+    model.configuration.vendorLogo = result.get( "vendorLogo" );
+    model.configuration.vendorName = result.get( "vendorName" );
+    model.configuration.vendorPath = result.get( "vendorPath" );
+    model.configuration.customerPin = result.get( "customerPin" );
+
+    configuration = new Configuration();
+    configuration.id = model.configuration.objectId;
+
+    query = new Parse.Query( Layout );
+    query.equalTo( "configurationId", configuration );
+    query.include( "productId" );
+    query.find( {
+        success: doLayoutFindSuccess,
+        error: doLayoutFindError
+    } );
+}
+
+function doConnected()
+{
+    // Debug
+    console.log( "Client connection established." );
+
+    // Connection
+    connection = future.getValue();
+
+    // Start broker session
+    connection.start( doSessionStart );
+}
+
+function doCouponComplete()
+{
+    console.log( "Remove coupon screen." );
+    this.style.display = "none";
+}
+
+function doCouponDecline()
+{
+    var coupon = null;
+    var receipt = null;
+
+    console.log( "Coupon declined." );
+
+    clearLineItems();
+
+    // References
+    coupon = document.querySelector( ".coupon" );
+    receipt = document.querySelector( ".receipt" );
+
+    receipt.style.left = window.innerWidth + "px";
+    receipt.style.display = "inline";
+
+    TweenMax.to( coupon, 0.50, {
+        left: 0 - window.innerWidth,
+        onComplete: doCouponComplete,
+        onCompleteScope: coupon
+    } );
+
+    TweenMax.to( receipt, 0.50, {
+        left: 0
+    } );
+}
+
+function doHandshakeError( error )
+{
+    console.log( "Error finding handshake." );
+}
+
+function doHandshakeSuccess( result )
+{
+    // Debug
+    console.log( "Handshake resolved." );
+
+    // Store in application model
+    model.handshake.objectId = result.objectId;
+    model.handshake.createdAt = result.createdAt;
+    model.handshake.updatedAt = result.updatedAt;
+    model.handshake.registerId = result.registerId;
+    model.handshake.configurationId = result.configurationId;
+    model.handshake.endpoint = result.endpoint;
+    model.handshake.transactionId = result.transactionId;
+    model.handshake.topic = result.topic;
+    model.handshake.replyTo = result.replyTo;
+
+    // Start connections
+    initializeConnection();
+}
+
+function doLayoutFindError( error )
+{
+    console.log( "Error reading products (" + error.message + ")." );
+}
+
+function doLayoutFindSuccess( results )
+{
+    var query = null;
+
+    console.log( "Layout found." );
+
+    model.products = [];
+
+    for( var p = 0; p < results.length; p++ )
+    {
+        model.products.push( {
+            objectId: results[p].get( "productId" ).id,
+            createdAt: results[p].get( "productId" ).createdAt,
+            updatedAt: results[p].get( "productId" ).updatedAt,
+            price: results[p].get( "productId" ).get( "price" ),
+            imagePath: results[p].get( "productId" ).get( "imagePath" ),
+            image: results[p].get( "productId" ).get( "image" )
+        } );
+    }
+
+    query = new Parse.Query( Transaction );
+    query.equalTo( "objectId", model.handshake.transactionId );
+    query.first( {
+        success: doTransactionFindSuccess,
+        error: doTransactionFindError
+    } );
+}
+
+function doMessageArrived( message )
+{
+    var data = null;
+
+    data = JSON.parse( message.getText() );
+
+    // Debug
+    console.log( "Action \"" + data.client.action + "\" arrived." );
+
+    // Decision tree
+    if( data.client.action == PURCHASE_CREATE ) {
+        doPurchaseCreate( data );
+    } else if( data.client.action == PURCHASE_DELETE ) {
+        doPurchaseDelete( data );
+    } else if( data.client.action == PURCHASE_DESTROY ) {
+        doPurchaseDestroy( data );
+    } else if( data.client.action == TRANSACTION_CHARGE ) {
+        doTransactionCharge( data );
+    } else if( data.client.action == CARD_CHARGED ) {
+        doCardCharged( data );
+    } else if( data.client.action == CLIENT_SYNC_RESPONSE ) {
+        doRegisterFindSuccess( data );
+    }
+
+    /*
+    else if( data.server.action == PRODUCT_READ ) {
+        doProductRead( data );
+    } else if( data.server.action == PURCHASE_DELETE ) {
+        doPurchaseDelete( data );
+    } else if( data.server.action == PURCHASE_DESTROY ) {
+        doPurchaseDestroy( data );
+    } else if( data.server.action == TRANSACTION_CHARGE ) {
+        doTransactionCharge( data );
+    } else if( data.server.action == CARD_CHARGED ) {
+        doCardCharged( data );
+    } else if( data.server.action == TRANSACTION_COMPLETE ) {
+        doTransactionComplete( data );
+    }
+    */
+}
+
+function doMessageSent()
+{
+    // Debug
+    console.log( "Message sent (" + concurrent.length + " left)." );
+
+    // Not sending any longer
+    sending = false;
+
+    // Check for next messages
+    // Send first-in-first-out
+    if( concurrent.length > 0 )
+    {
+        broadcast( concurrent[0] );
+        concurrent.splice( 0, 1 );
+    }
+}
+
+function doPayClick()
+{
+    var pin = null;
+    var receipt = null;
+
+    // Debug
+    console.log( "Present digital wallet." );
+
+    // Switch views
+    pin = document.querySelector( ".pin" );
+    receipt = document.querySelector( ".receipt" );
+
+    pin.style.left = receipt.clientWidth + "px";
+    pin.style.display = "inline";
+
+    TweenMax.to( receipt, 0.50, {
+        left: 0 - receipt.clientWidth,
+        onComplete: doReceiptComplete,
+        onCompleteScope: receipt
+    } );
+
+    TweenMax.to( pin, 0.50, {
+        left: 0
+    } );
+}
+
+function doPinChange()
+{
+    var button = null;
+
+    console.log( "PIN entry changed." );
+
+    button = document.querySelector( ".pin .total > div:last-of-type" );
+
+    if( this.value.trim().length == 4 )
+    {
+        button.classList.add( "ready" );
+        button.classList.remove( "pending" );
+        button.addEventListener( touch ? "touchstart" : "click", doPinContinue );
+    } else {
+        button.classList.add( "pending" );
+        button.classList.remove( "ready" );
+        button.removeEventListener( touch ? "touchstart" : "click", doPinContinue );
+    }
+}
+
+function doPinComplete()
+{
+    var button = null;
+    var input = null;
+
+    console.log( "PIN screen hidden." );
+
+    this.style.display = "none";
+
+    input = document.querySelector( ".pin input" );
+    input.value = "";
+
+    button = document.querySelector( ".pin .total > div:last-of-type" );
+    button.classList.add( "pending" );
+    button.classList.remove( "ready" );
+    button.removeEventListener( touch ? "touchstart" : "click", doPinContinue );
+}
+
+function doPinContinue()
+{
+    var amount = null;
+    var card = null;
+    var input = null;
+    var index = null;
+    var message = null;
+    var page = null;
+    var payment = null;
+    var pin = null;
+    var total = null;
+
+    console.log( "Validating PIN." );
+
+    input = document.querySelector( ".pin input" );
+
+    if( input.value.trim() != model.configuration.customerPin )
+    {
+        console.log( "PIN is incorrect." );
+        alert( "PIN is incorrect." );
+
+        input.value = "";
+
+        this.classList.remove( "ready" );
+        this.classList.add( "pending" );
+    } else {
+        console.log( "PIN is correct." );
+
+        payment = document.querySelector( ".payment" );
+        payment.style.left = window.innerWidth + "px";
+        payment.style.display = "inline";
+
+        pin = document.querySelector( ".pin" );
+
+        card = document.querySelector( ".card" );
+        card.style.left = window.innerWidth + "px";
+        card.style.visibility = "visible";
+
+        TweenMax.to( card, 0.50, {
+            left: Math.round( ( window.innerWidth - card.clientWidth ) / 2 )
+        } );
+
+        TweenMax.to( pin, 0.50, {
+            left: 0 - window.innerWidth,
+            onComplete: doPinComplete,
+            onCompleteScope: pin
+        } );
+
+        TweenMax.to( payment, 0.50, {
+            left: 0
+        } );
+
+        // Parse out total amount
+        // Mostly used for brevity
+        total = document.querySelector( ".receipt .charge" );
+
+        index = total.innerHTML.indexOf( model.configuration.currencySymbol ) + 1;
+        amount = parseFloat( total.innerHTML.substr( index ) );
+
+        // Preload data fpr register
+        page = document.querySelector( ".page .holder > div:first-of-type" );
+
+        // Construct message
+        // Transaction and default card
+        message = {
+            client: {
+                action: TRANSACTION_ACCEPTED,
+                reply: model.handshake.replyTo
+            },
+            content: {
+                total: amount,
+                card: {
+                    background: page.getAttribute( "data-card" ),
+                    width: card.clientWidth,
+                    height: card.clientHeight,
+                    name: card.children[0].innerHTML,
+                    expires: card.children[1].innerHTML,
+                    number: card.children[2].innerHTML,
+                    vendor: page.getAttribute( "data-vendor" )
+                }
+            }
+        };
+
+        // Send that a PIN has been entered
+        broadcast( message );
+    }
+}
+
+function doPinPrevious( event )
+{
+    var pin = null;
+    var receipt = null;
+
+    console.log( "PIN previous button clicked." );
+
+    pin = document.querySelector( ".pin" );
+
+    receipt = document.querySelector( ".receipt" );
+    receipt.style.left = ( 0 - window.innerWidth ) + "px";
+    receipt.style.display = "inline";
+
+    TweenMax.to( pin, 0.50,  {
+        left: window.innerWidth,
+        onComplete: doPinPreviousComplete,
+        onCompleteScope: pin
+    } );
+
+    TweenMax.to( receipt, 0.50, {
+        left: 0
+    } );
+}
+
+function doPinPreviousComplete()
+{
+    console.log( "Hide PIN screen (previous)." );
+    this.style.display = "none";
+}
+
+function doPurchaseCreate( data )
+{
+    console.log( "Adding purchase to list." );
+
+    // Check application data model
+    if( model.purchase == null )
+    {
+        model.purchase = [];
+    }
+
+    // Add purchase to application data model
+    model.purchase.push( data.content.purchase );
+
+    // Put the new item in the display
+    buildLineItem( data.content.purchase.objectId, data.content.product );
+}
+
+function doPurchaseDelete( data )
+{
+    var purchase = null;
+
+    // Debug
+    console.log( "Purchase deleted." );
+
+    // Remove purchase from local model
+    for( var p = 0; p < model.purchase.length; p++ )
+    {
+        if( model.purchase[p].objectId == data.content.purchaseId )
+        {
+            purchase = model.purchase.splice( p, 1 );
+            break;
+        }
+    }
+
+    // Update the display
+    // TODO: Migrate to online version
+    if( purchase[0].productId.hasOwnProperty( "objectId" ) )
+    {
+        console.log( "Removing purchase (" + purchase[0].productId.objectId + ")" );
+        removeLineItem( purchase[0].productId.objectId );
+    } else {
+        console.log( "Removing purchase (" + purchase[0].productId + ")" );
+        removeLineItem( purchase[0].productId );
+    }
+}
+
+function doPurchaseDestroy( data )
+{
+    console.log( "Clear purchased items." );
+
+    // Clear memory model
+    model.purchase = [];
+
+    // Update display
+    clearLineItems();
+}
+
+function doPurchaseLoadError( error )
+{
+    console.log( "Problem reading purchases (" + error.message + ")." );
+}
+
+function doPurchaseLoadSuccess( results )
+{
+    console.log( "Purchases loaded." );
+
+    var found = null;
+    var product = null;
+
+    /*
+    // Store in memory model
+    model.purchase = [];
+    model.products = [];
+
+    // Populate purchases
+    for( var p = 0; p < results.length; p++ )
+    {
+        model.purchase.push( {
+            objectId: results[p].id,
+            createdAt: results[p].createdAt,
+            updatedAt: results[p].updatedAt,
+            price: results[p].get( "price" ),
+            transactionId: results[p].get( "transactionId" ).id,
+            productId: results[p].get( "productId" ).id
+        } );
+
+        // Populate distinct product records
+        found = false;
+
+        for( var i = 0; i < model.products.length; i++ )
+        {
+            if( results[p].get( "productId" ).id == model.products[i].objectId )
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if( !found )
+        {
+            model.products.push( {
+                objectId: results[p].get( "productId" ).id,
+                createdAt: results[p].get( "productId" ).createdAt,
+                updatedAt: results[p].get( "productId" ).updatedAt,
+                name: results[p].get( "productId" ).get( "name" ),
+                price: results[p].get( "productId" ).get( "price" ),
+                imagePath: results[p].get( "productId" ).get( "imagePath" ),
+                image: results[p].get( "productId" ).get( "image" )
+            } );
+        }
+    }
+    */
+
+    // Fill with any purchases
+    for( var p = 0; p < model.purchase.length; p++ )
+    {
+        for( var i = 0; i < model.products.length; i++ )
+        {
+            console.log( model.purchase[p].productId.objectId );
+
+            if( model.products[i].objectId == model.purchase[p].productId.objectId )
+            {
+                product = model.products[i];
+                break;
+            }
+        }
+
+        buildLineItem( model.purchase[p].objectId, product );
+    }
+
+    // Ready to reveal user interface
+    initializeClient();
+}
+
+function doQueueComplete()
+{
+    console.log( "Card images loaded." );
+}
+
+function doQueueProgress( event )
+{
+    console.log( "Loading cards (" + Math.round( event.progress * 100 ) + "%)." );
+}
+
+function doReceiptComplete()
+{
+    this.style.display = "none";
+    console.log( "Receipt screen hidden." );
+}
+
+function doRegisterFindError( error )
+{
+    console.log( "Unable to locate register entry (" + error.message + ")." );
+}
+
+function doRegisterFindSuccess( result )
+{
+    var query = null;
+
+    console.log( "Register reference found." );
+
+    // TODO: Copy over
+    model.configuration = result.content.configuration;
+    model.register = result.content.register;
+    model.layout = result.content.layout;
+    model.products = result.content.product;
+    model.transaction = result.content.transaction;
+    model.purchase = result.content.purchase;
+
+    dao.configuration = result.content.configuration;
+    dao.register = result.content.register;
+    dao.layout = result.content.layout;
+    dao.product = result.content.product;
+    dao.transaction = result.content.transaction;
+    dao.purchase = result.content.purchase;
+
+    console.log( result.content );
+
+    doPurchaseLoadSuccess( result.content.purchase );
+
+    /*
+    query = new Parse.Query( Configuration );
+    query.equalTo( "objectId", result.get( "configurationId" ).id );
+    query.first( {
+        success: doConfigurationFindSuccess,
+        error: doConfigurationFindError
+    } );
+    */
+}
+
+function doSessionStart()
+{
+    var message = null;
+    var query = null;
+
+    // Debug
+    console.log( "Client session started." );
+
+    // Session
+    // Topic
+    session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+    topicConsume = session.createTopic( model.handshake.replyTo );
+    // topicProduce = session.createTopic( model.handshake.topic );
+    topicProduce = session.createTopic( model.handshake.replyTo );
+
+    // Consumer
+    // Set listener
+    consumer = session.createConsumer( topicConsume );
+    consumer.setMessageListener( doMessageArrived );
+
+    // Producer
+    producer = session.createProducer( topicProduce );
+
+    // Dashboard
+    topicDashboard = session.createTopic( dao.configuration.topic );
+    dashboard = session.createProducer( topicDashboard );
+
+    message = {
+        client: {
+            action: CLIENT_SYNC_REQUEST,
+            reply: model.transaction.replyTo
+        },
+        content: null
+    };
+
+    broadcast( message );
+
+    /*
+    query = new Parse.Query( Register );
+    query.equalTo( "objectId", model.handshake.registerId );
+    query.first( {
+        success: doRegisterFindSuccess,
+        error: doRegisterFindError
+    } );
+    */
+}
+
+function doTransactionAnimation()
+{
+    this.style.display = "none";
+    console.log( "Payment screen removed." );
+}
+
+function doTransactionCharge( data )
+{
+    var amount = null;
+    var charge = null;
+    var index = null;
+
+    console.log( "Charge arrived from register." );
+
+    // Reference to charge button
+    charge = document.querySelector( ".receipt .charge" );
+
+    // Parse payment total
+    index = charge.innerHTML.indexOf( model.configuration.currencySymbol ) + 1;
+    amount = charge.innerHTML.substr( index );
+
+    // Update interface for clicking to accept
+    charge.innerHTML = model.configuration.currencyPayment + amount;
+    charge.classList.add( "ready" );
+    charge.classList.remove( "pending" );
+    charge.addEventListener( touch ? "touchstart" : "click", doPayClick );
+}
+
+function doTransactionComplete()
+{
+    console.log( "Waiting to reset." );
+
+    setTimeout( function() {
+        var accept = null;
+        var card = null;
+        var coupon = null;
+        var details = null;
+        var end = null;
+        var list = null;
+        var payment = null;
+        var percent = null;
+        var product = null;
+        var savings = null;
+        var start = null;
+        var today = null;
+        var url = null;
+
+        console.log( "Resetting after coupon decision." );
+
+        payment = document.querySelector( ".payment" );
+        card = document.querySelector( ".card" );
+
+        coupon = document.querySelector( ".coupon" );
+        coupon.style.left = window.innerWidth + "px";
+        coupon.style.display = "inline";
+
+        list = document.querySelector( ".list" );
+        product = list.children[Math.floor( Math.random() * ( list.children.length - 1 ) )];
+
+        percent = discounts[Math.floor( Math.random() * discounts.length )];
+
+        savings = document.querySelector( ".savings" );
+        savings.innerHTML = "Save " + percent + "% on " + product.getAttribute( "data-name" ) + ".";
+
+        today = new Date();
+        today.setDate( today.getDate() + Math.floor( Math.random() * 7 ) );
+
+        // Display offer
+        details = document.querySelector( ".details" );
+        details.innerHTML = "Come back on " + moment( today ).format( "dddd, MMMM Do" ) + " to get extra savings.";
+
+        // Store coupon details in application model
+        model.coupon = {
+            percent: percent,
+            product: product.getAttribute( "data-name" ),
+            date: today.getTime()
+        };
+
+        // Build calendar URL
+        start = new Date( model.coupon.date );
+        end = new Date( model.coupon.date );
+
+        // http://stackoverflow.com/questions/10488831/link-to-add-to-google-calendar
+        // https://www.google.com/calendar/render?action=TEMPLATE&text=Joe%27s+40th+Birthday&details=Joe+turns+40+just+this+once&dates=20111212T190000/20111212T200000&location=Gillette+Stadium&sf=true&output=xml
+        // 20111212T190000/20111212T200000
+        // TODO: Add timing to populate calendar
+        url = "https://www.google.com/calendar/render?" +
+            "action=TEMPLATE&" +
+            "text=Save " + model.coupon.percent + "% on " + model.coupon.product + "&" +
+            "dates=" +
+            start.getFullYear() + "0" + ( start.getMonth() + 1 ) + "0" + start.getDate() + "/" +
+            end.getFullYear() + "0" + ( end.getMonth() + 1 ) + "0" + end.getDate() + "&" +
+            "sf=true&" +
+            "output=xml";
+        url = encodeURI( url );
+
+        // Assign link
+        accept = document.querySelector( ".coupon .total" );
+        accept.children[0].innerHTML = "<a href=\"" + url + "\">Remind me</a>";
+
+        TweenMax.to( payment, 0.50, {
+            left: 0 - payment.clientWidth,
+            onComplete: doTransactionAnimation,
+            onCompleteScope: payment
+        } );
+
+        TweenMax.to( card, 0.50, {
+            left: 0 - payment.clientWidth
+        } );
+
+        TweenMax.to( coupon, 0.50,  {
+            left: 0
+        } );
+    }, 3000 );
+}
+
+function doTransactionFindError( error )
+{
+    console.log( "Error reading transaction (" + error.message + ")." );
+}
+
+function doTransactionFindSuccess( result )
+{
+    var query = null;
+    var transaction = null;
+
+    console.log( "Transaction found." );
+
+    // Store in application model
+    model.transaction.objectId = result.id;
+    model.transaction.createdAt = result.createdAt;
+    model.transaction.updatedAt = result.updatedAt;
+    model.transaction.clerkId = result.get( "clerkId" ).id;
+    model.transaction.registerId = result.get( "registerId" ).id;
+
+    // Load purchases for transaction
+    console.log( "Loading purchases..." );
+
+    transaction = new Transaction();
+    transaction.id = result.id;
+
+    query = new Parse.Query( Purchase );
+    query.equalTo( "transactionId", transaction );
+    query.include( "productId" );
+    query.find( {
+        success: doPurchaseLoadSuccess,
+        error: doPurchaseLoadError
+    } );
+}
+
+function doWindowLoad()
+{
+    // Debug
+    console.log( "Page loaded." );
+
+    // Initialize
+    handshakeLookup();
+
+    // Initial layout
+    doWindowResize();
+
+    // Preload card images in background
+    queue = new createjs.LoadQueue();
+    queue.on( "progress", doQueueProgress, this );
+    queue.on( "complete", doQueueComplete, this );
+    queue.loadManifest( [
+        {id: "gold-card", src: "img/gold-card.png"},
+        {id: "blue-card", src: "img/blue-card.png"},
+        {id: "red-card", src: "img/red-card.png"}
+    ] );
+}
+
+function doWindowResize()
+{
+    var buttons = null;
+    var card = null;
+    var code = null;
+    var codeWidth = null;
+    var coupon = null;
+    var payment = null;
+    var pin = null;
+    var receipt = null;
+
+    console.log( "Window resize." );
+
+    // Receipt screen
+    receipt = document.querySelector( ".receipt" );
+    receipt.style.width = window.innerWidth + "px";
+    receipt.style.height = window.innerHeight + "px";
+
+    // Pin screen
+    pin = document.querySelector( ".pin" );
+    pin.style.width = window.innerWidth + "px";
+    pin.style.height = window.innerHeight + "px";
+
+    buttons = document.querySelector( ".pin .total" );
+    buttons.children[0].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+    buttons.children[1].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+
+    // Payment screen
+    payment = document.querySelector( ".payment" );
+    payment.style.width = window.innerWidth + "px";
+    payment.style.height = window.innerHeight + "px";
+
+    card = document.querySelector( ".card" );
+    card.style.width = ( window.innerHeight - ( 80 + 50 ) ) + "px";
+    card.style.height = Math.round( ( window.innerHeight - ( 80 + 50 ) ) * CARD_RATIO ) + "px";
+    card.style.top = Math.round( ( ( window.innerHeight - card.clientHeight ) / 2 ) - 15 ) + "px";
+
+    // Coupon screen
+    coupon = document.querySelector( ".coupon" );
+    coupon.style.width = window.innerWidth + "px";
+    coupon.style.height = window.innerHeight + "px";
+
+    // Coupon code
+    codeWidth = Math.round( window.innerWidth * 0.60 );
+
+    code = document.querySelector( ".code" );
+    code.style.width = codeWidth + "px";
+
+    // BEWARE MAGIC NUMBERS
+    // 30 is 15 * 2
+    // 15px offset on left and right of passbook
+    // Passbook measurement are not calculated with display = none
+    // BEWARE MAGIC NUMBERS
+    code.style.left = Math.round( ( ( window.innerWidth - 30 ) - codeWidth ) / 2 ) + "px";
+
+    buttons = document.querySelector( ".coupon .total" );
+    buttons.children[0].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+    buttons.children[1].style.width = Math.round( ( window.innerWidth - 45 ) / 2 ) + "px";
+}
+
+window.addEventListener( "load", doWindowLoad );
+window.addEventListener( "resize", doWindowResize );
+</script>
+
+</head>
+<body>
+
+<!-- Receipt -->
+<div class="receipt">
+
+    <!-- Item list -->
+    <div class="list">
+
+        <!-- Products -->
+
+        <!-- Tax -->
+        <div class="line tax">
+            <div class="photo">%</div>
+            <div class="label">Tax</div>
+            <div class="rate">(8.25%)</div>
+            <div class="price">$1.65</div>
+        </div>
+
+    </div>
+
+    <!-- Security -->
+    <div class="security">
+        <img src="https://s3.amazonaws.com/kaazingwallet/img/padlock.svg" width="20" height="30">
+        <div>Your connection is secure.</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="total">
+        <div class="charge pending">Total: $0.00</div>
+        <div class="logo"></div>
+    </div>
+
+</div>
+
+<!-- Pin -->
+<div class="pin">
+
+    <!-- Prompt -->
+    <div class="prompt">Enter your 4-digit pin to continue.</div>
+    <input type="password" pattern="[0-9]*" inputmode="numeric">
+
+    <!-- Buttons -->
+    <div class="total">
+        <div class="charge no">Previous</div>
+        <div class="charge pending">Next</div>
+    </div>
+
+</div>
+
+<!-- Payment -->
+<div class="payment">
+
+    <!-- Status -->
+    <div class="status">READY TO PAY</div>
+
+    <!-- Wallet area -->
+    <!-- Gives measurements for card -->
+    <div class="wallet"></div>
+
+    <!-- Page -->
+    <div class="page">
+        <div class="holder">
+            <div class="indicator selected" data-card="gold-card" data-vendor="kaazing"></div>
+            <div class="indicator" data-card="red-card" data-vendor="visa"></div>
+            <div class="indicator" data-card="blue-card" data-vendor="american-express"></div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">To pay, swipe the selected card upwards.</div>
+
+</div>
+
+<!-- Coupon -->
+<div class="coupon">
+
+    <div class="holder">
+        <div class="passbook">
+            <div class="brand"></div>
+            <div class="savings"></div>
+            <div class="details"></div>
+            <div class="code"></div>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="total">
+        <div class="charge ready">Remind me</div>
+        <div class="charge no">No thanks</div>
+    </div>
+
+</div>
+
+<!-- Credit card -->
+<!-- ISO 8710 ID-1 == 54mm x 86mm (0.6279 ratio) -->
+<div class="card">
+    <div class="holder">VIKRAM MEHTA</div>
+    <div class="expiration">11/15</div>
+    <div class="number">1234 5678 9012 3456</div>
+    <img class="logo" width="52" height="52" src="https://s3.amazonaws.com/kaazingwallet/img/kaazing.svg">
+</div>
+
+<!-- Line item template -->
+<div class="line template">
+    <div class="photo" style="background-image: url( 'img/barkram.jpg' );"></div>
+    <div class="label">Apple Biscuit</div>
+    <div class="duplicate">0</div>
+    <div class="price">$4.50</div>
+</div>
+
+</body>
+</html>
