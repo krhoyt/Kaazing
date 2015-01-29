@@ -1,0 +1,440 @@
+<html>
+<head>
+
+<title>Quick Start</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+
+<!-- Style -->
+<style type="text/css">
+/* Spin animation */
+@-webkit-keyframes spin {
+  from {
+    transform: rotate( 0deg );
+    -webkit-transform: rotate( 0deg );
+  }
+
+  to {
+    transform: rotate( 360deg );
+    -webkit-transform: rotate( 360deg );
+  }
+}      
+  
+/* Hide overflow (no scrolling) */
+body {
+  margin: 0px;
+  overflow: hidden;
+  padding: 0px;
+}
+
+/* Enahance spin effect */
+/* Identify each user */
+.cover {
+  background-color: white;
+  border-radius: 80px;
+  box-shadow: 0px 0px 5px 5px rgba( 0, 0, 0, 0.30 );
+  height: 60px;
+  margin-left: 10px;
+  margin-top: 10px;
+  width: 60px;
+}  
+  
+/* Mouse */
+/* Apply animation effect */
+.mouse {
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;    
+  -webkit-animation-name: spin;
+  -webkit-animation-timing-function: linear;
+  background-image: url( 'color.wheel.png' );
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  height: 80px;
+  position: absolute;
+  visibility: hidden;
+  width: 80px;
+}
+</style>    
+  
+<!-- Gateway -->
+<script src="kaazing-ce.js" type="text/javascript"></script>
+  
+<!-- URL parser for optional debugging -->
+<script src="URLParser.js"></script>  
+  
+<!-- Application -->
+<script type="text/javascript">  
+// Constants
+var ARTIFACT_INTERVAL = 1000;
+var ARTIFACT_TIMEOUT = 3000;
+var DOCUMENT_DOWN = "down";
+var DOCUMENT_MOVE = "move";
+var DOCUMENT_UP = "up";
+var KAAZING_ID = "8381c16e-11f4-4bac-9ae7-c03a2c9376ec";  
+var MOUSE_RADIUS = 40;
+var QUICK_START = "quick_start";
+  
+// Application
+var color = null;
+var count = null;
+var debug = null;
+var interval = null;
+var kaazing = null;
+var mouse = null;
+var touch = null;
+
+// Called to map touch and mouse to single structure
+// Consider using Pointer Events in the future
+function mapPoints( event )
+{
+  var changes = null;
+
+  // Touches may change in any order
+  // Still a single array
+  // Track points to control individually
+  changes = [];
+
+  if( touch )
+  {
+    // Touch means more than one interaction point
+    for( var t = 0; t < event.changedTouches.length; t++ )
+    {
+      changes.push( {
+        id: event.changedTouches[t].identifier,
+        timestamp: Date.now(),
+        x: event.changedTouches[t].clientX,
+        y: event.changedTouches[t].clientY
+      } );
+    }
+  } else {
+    // Just a mouse here
+
+    // Track across pointers on all screens
+    if( mouse == null )
+    {
+      mouse = Date.now();
+    }
+
+    // Push a single interaction
+    changes.push( {
+      id: mouse,
+      timestamp: Date.now(),
+      x: event.clientX,
+      y: event.clientY
+    } );
+  }
+
+  return changes;
+}  
+  
+// Called when connected to server
+// Subscribes to topic  
+function doConnected()
+{
+  // Subscribe
+  // Event handler configured earlier
+  kaazing.subscribe( QUICK_START );  
+}
+  
+// Called when a message arrives
+// Decodes message to data structure
+// Decision tree based on content
+function doConsumeMessage( message )
+{
+  var body = null;
+  var config = null;
+  var cover = null;
+  var data = null;
+  var point = null;
+  var template = null;
+
+  // Turn String message into JSON data
+  data = JSON.parse( message );
+
+  // Debug
+  if( debug )
+  {
+    console.log( "Message: " + data.action );
+  }
+
+  // Decision tree
+  // Based on custom message content
+  if( data.action == DOCUMENT_DOWN )
+  {
+    // Interaction is down
+    // Get template indicator
+    template = document.querySelector( ".template" );
+
+    // Place template instance for each interaction point
+    for( var c = 0; c < data.changes.length; c++ )
+    {
+      point = template.cloneNode( true );
+      point.classList.remove( "template" );
+
+      // Track individual interactions
+      // Provide for cleanup
+      point.setAttribute( "data-id", data.changes[c].id );    
+      point.setAttribute( "data-timestamp", data.changes[c].timestamp );                
+
+      // Set initial position
+      point.style.left = ( data.changes[c].x - MOUSE_RADIUS ) + "px";
+      point.style.top = ( data.changes[c].y - MOUSE_RADIUS ) + "px";
+      point.style.visibility = "visible";
+
+      // Custom fill color
+      cover = point.querySelector( ".cover" );
+      cover.style.backgroundColor = data.color;
+
+      // Insert before template element
+      template.parentElement.insertBefore( point, template );
+    }
+  } else if( data.action == DOCUMENT_MOVE ) {
+    // Moving interactions
+    for( var c = 0; c < data.changes.length; c++ )
+    {
+      // Reference to specific interaction
+      point = document.querySelector( ".mouse[data-id='" + data.changes[c].id + "']" );            
+
+      // Artifacts may have already been removed
+      if( point != null )
+      {
+        // Update cleanup reference
+        point.setAttribute( "data-timestamp", data.changes[c].timestamp );
+
+        // Update position
+        point.style.left = ( data.changes[c].x - MOUSE_RADIUS ) + "px";
+        point.style.top = ( data.changes[c].y - MOUSE_RADIUS ) + "px";                
+      }
+    }
+  } else if( data.action == DOCUMENT_UP ) {
+    // Interaction is up
+    // Remove visual indicator for specific change
+    for( var c = 0; c < data.changes.length; c++ )
+    {
+      // Reference specific interaction
+      // Remove it by way of the parent
+      point = document.querySelector( ".mouse[data-id='" + data.changes[c].id + "']" );    
+
+      // Artifacts may have already been removed
+      if( point != null )
+      {
+        point.parentElement.removeChild( point );                            
+      }
+    }
+  }
+}  
+  
+// Called when mouse is down in document
+// Broadcast that the mouse is down
+// Start watching mouse movement
+function doDocumentDown( event )
+{
+  // Do not drag or select text
+  event.preventDefault();
+
+  // Debug
+  if( debug )
+  {
+    console.log( "Event: down" );
+    console.log( event );
+  }
+
+  // Broadcast event and coordinates
+  // Handle touch and mouse
+  kaazing.publish( QUICK_START, JSON.stringify( {
+    action: DOCUMENT_DOWN,
+    changes: mapPoints( event ),
+    color: color,
+    touch: touch
+  } ) );
+
+  // Only add listeners on first touch
+  if( count == null )
+  {
+    if( touch )
+    {
+        count = event.changedTouches.length;
+    } else {
+        count = count + 1;   
+    }
+
+    document.body.addEventListener( touch ? "touchmove" : "mousemove", doDocumentMove );
+    document.body.addEventListener( touch ? "touchend" : "mouseup", doDocumentUp );        
+    document.body.addEventListener( "touchleave", doDocumentUp );        
+    document.body.addEventListener( "touchcancel", doDocumentUp );                                
+  } else {
+    count = count + event.changedTouches.length;            
+  }
+}  
+  
+// Called when the interaction is moved while down
+// Broadcast interaction position
+function doDocumentMove( event )
+{
+  // Do not drag or select text
+  event.preventDefault();    
+
+  // Debug
+  if( debug )
+  {
+    console.log( "Event: move" );
+    console.log( event );
+  }
+
+  // Broadcast event and coordinates
+  kaazing.publish( QUICK_START, JSON.stringify( {
+    action: DOCUMENT_MOVE,
+    changes: mapPoints( event ),
+    color: color,
+    touch: touch
+  } ) );
+}
+
+// Called when the interaction is released after being down
+// Broadcast interaction release
+// Remove drag movement events
+function doDocumentUp( event )
+{
+  // Do not drag or select text
+  event.preventDefault();    
+
+  // Debug
+  if( debug )
+  {
+    console.log( "Event: up" );
+    console.log( event );
+  }
+
+  // Broadcast event
+  // No coordinates needed
+  kaazing.publish( QUICK_START, JSON.stringify( {
+      action: DOCUMENT_UP,
+      changes: mapPoints( event ),
+      color: color,
+      touch: touch
+  } ) );    
+
+  // Decrement mouse pointers
+  if( touch )
+  {
+    count = count - event.changedTouches.length;     
+  } else {
+    count = count - 1;    
+  }
+
+  // If this was the last pointer
+  // Remove event listeners from document
+  if( count == 0 )
+  {
+    // Clear count
+    count = null;
+
+    // New ID for next mouse interaction
+    mouse = null;
+
+    // Remove listeners
+    document.body.removeEventListener( touch ? "touchmove" : "mousemove", doDocumentMove );
+    document.body.removeEventListener( touch ? "touchend" : "mouseup", doDocumentUp );
+    document.body.removeEventListener( "touchleave", doDocumentUp );        
+    document.body.removeEventListener( "touchcancel", doDocumentUp );                
+  }
+}  
+
+// Called to remove artifacts
+// Extremely rapid interactions on touch devices
+function doPointerCheck()
+{
+  var last = null;
+  var pointers = null;
+  var timestamp = null;
+
+  // What time is it
+  timestamp = Date.now();
+
+  // Get a list of pointers on the screen
+  pointers = document.querySelectorAll( ".mouse" );
+
+  // Check each pointer
+  for( var p = 0; p < pointers.length; p++ )
+  {
+    // Timestamp of last update for pointer
+    last = parseInt( pointers[p].getAttribute( "data-timestamp" ) );
+
+    // Only those that have been set
+    // Default value of zero
+    if( last != 0 )
+    {
+      // How long since last update
+      if( ( timestamp - ARTIFACT_TIMEOUT ) > parseInt( pointers[p].getAttribute( "data-timestamp" ) ) )
+      {
+        // Remove those not updated recently
+        pointers[p].parentElement.removeChild( pointers[p] );     
+      }                
+    }
+  }
+}  
+  
+// Called when subscribed to topic
+// Starts interval to remove artifacts
+// Configures document event listener
+function doSubscribed()
+{  
+  // Only start interval once
+  if( interval == null )
+  {
+    // Remove artifacts over time
+    interval = setInterval( doPointerCheck, ARTIFACT_INTERVAL );  
+  }
+  
+  // Track interaction down
+  document.body.addEventListener( touch ? "touchstart" : "mousedown", doDocumentDown );  
+}
+  
+// Called when window is loaded
+// Connects to server  
+function doWindowLoad()
+{
+  // Debugging
+  // Optional "debug" parameter on the query string
+  if( !URLParser( window.location.href ).hasParam( "debug" ) )
+  {
+    debug = false;
+    console.log( "Add query variable \"debug\" to see messages." );
+  } else {
+    debug = true;
+  }
+  
+  // Debug
+  if( debug )
+  {
+    console.log( "Load." );
+  }  
+  
+  // Handle touch devices
+  touch = ( "ontouchstart" in document.documentElement ) ? true : false;
+
+  // Random color for each device
+  color = "rgb( " +
+    Math.floor( Math.random() * 255 ) + ", " +
+    Math.floor( Math.random() * 255 ) + ", " +
+    Math.floor( Math.random() * 255 ) + " )";
+
+  kaazing = GatewayCE.connect( KAAZING_ID, doConnected );
+  kaazing.on( GatewayCE.EVENT_SUBSCRIBE, doSubscribed );
+  kaazing.on( GatewayCE.EVENT_MESSAGE, doConsumeMessage );
+}
+
+// Event listener to kick things off
+window.addEventListener( "load", doWindowLoad );  
+</script>  
+  
+</head>
+<body>
+
+<!-- Position indicator -->
+<div class="mouse template">
+  <div class="cover"></div>
+</div>
+  
+</body>
+<html>

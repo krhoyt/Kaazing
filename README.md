@@ -37,3 +37,10 @@ PetrolPal
 Drive up and swipe your credit card? Go inside to pay? Or just fuel up with the real-time Web?
 
 An extension of the POS concept, this demonstration applies Kaazing Gateway and the real-time Web to solve pay-at-the-pump systems.  Part of this solution involves a (mobile Web-based) smartphone application that allows you to find the nearest gas station.  Once you arrive at a pump, a handshake negotiates the communication channel for transaction information.  Pump away and see the amount tick by not only on the pump, but on your smartphone too.  When done, payment is just a button tap away.  Then find out the specials going on inside the store.  Secure, fast and friendly payment solutions with Kaazing Gateway and the real-time Web.
+
+Sandbox
+=======
+
+Kaazing Gateway went open source in December 2014!  This is a wrapper for the AMQP client.
+
+Kaazing Gateway offers numerous means for publish/subscribe.  For the purposes of open source, AMQP 0.91 was selected.  AMQP is a robust messaging protocol, which is great for enterprise application, but not so great to get started with event driven development.  To address this learning curve, I wrote a JavaScript wrapper that exposes only the most minimalistic publish/subscribe API.  The client library uses a free "sandbox" of Gateway.  This allows developers to get started with this exciting architecture with no need to install, register, or pay for anything.

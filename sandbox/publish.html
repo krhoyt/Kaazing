@@ -1,0 +1,70 @@
+<html>
+<head>
+
+<title>Publish</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+
+<!-- Gateway -->
+<script src="kaazing-ce.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">  
+// Constants
+var INTERVAL_DELAY = 1000;
+var KAAZING_ID = "8381c16e-11f4-4bac-9ae7-c03a2c9376ec";  
+var TOPIC_NAME = "my_topic";
+  
+// Application
+var count = null;
+var interval = null;
+var kaazing = null;  
+  
+// Called to publish a message
+// Also increments counter
+function publish()
+{
+  // Initialize counter if needed
+  if( count == null )
+  {
+    count = 0;  
+  }
+  
+  // Increment counter
+  count = count + 1;
+  
+  // Publish latest value
+  kaazing.publish( TOPIC_NAME, count, doPublish );
+}
+  
+// Called when connected to server
+// Starts an interval to publish data
+function doConnected()
+{
+  // Interval
+  interval = setInterval( publish, INTERVAL_DELAY );
+}
+
+// Called when a message is sent
+// Mostly so we know something is happening
+function doPublish()
+{
+  console.log( "Published: " + count );
+}
+  
+// Called when window is loaded
+// Connects to server
+function doWindowLoad()
+{
+  // Connect to server
+  kaazing = GatewayCE.connect( KAAZING_ID, doConnected );
+}
+
+// Event listener to kick things off
+window.addEventListener( "load", doWindowLoad );  
+</script>  
+  
+</head>
+<body>
+
+</body>
+<html>
