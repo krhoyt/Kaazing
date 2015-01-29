@@ -23,3 +23,17 @@ Tic Tac Toe
 Will a physical Internet of Things (IoT) light encourage real-time audience participation?
 
 Presentations are always better when you can show real world, working examples.  This means the construction of a portable physical device that connects to cloud services and is accessible over the Internet.  Cloud services for this project showcase Kaazing Gateway deployed from AWS Marketplace onto Amazone EC2.  Run your own real-time cloud in minutes!  Hardware leveraged to build this IoT device include everyting from foam core board and glue, to an Arduino Yun communicating to the cloud via the STOMP protocol.  Audience participation is accomplished through a web-based user interface.
+
+Point of Sale
+=======
+
+Does a cashless POS have to mean vendor lock-in, or can the real-time Web help?
+
+Point of Sale (POS) systems are, for the most part, pretty dated.  You can visit just about any grocery store to see that.  Aside from the hardware, the software is well documented to be a security risk, with many systems running years-old operating systems.  Modern solutions to go cashless tend to be proprietary, and require additional hardware.  This example explores what a POS transaction might look like using only the Web.  Kaazing Gateway provides real-time data exchange built on advanced wire security.
+
+PetrolPal
+=======
+
+Drive up and swipe your credit card? Go inside to pay? Or just fuel up with the real-time Web?
+
+An extension of the POS concept, this demonstration applies Kaazing Gateway and the real-time Web to solve pay-at-the-pump systems.  Part of this solution involves a (mobile Web-based) smartphone application that allows you to find the nearest gas station.  Once you arrive at a pump, a handshake negotiates the communication channel for transaction information.  Pump away and see the amount tick by not only on the pump, but on your smartphone too.  When done, payment is just a button tap away.  Then find out the specials going on inside the store.  Secure, fast and friendly payment solutions with Kaazing Gateway and the real-time Web.
