@@ -1,0 +1,48 @@
+<html>
+<head>
+
+<title>Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+<!-- Chat styling -->
+<!-- Most styling is developer controlled -->
+<link href="chat.css" rel="stylesheet" type="text/css">
+  
+<!-- Gateway -->  
+<script src="gateway.js" type="text/javascript"></script>
+
+<!-- Application -->
+<script type="text/javascript">  
+// Kaazing client ID
+var KAAZING_ID = "8381c16e-11f4-4bac-9ae7-c03a2c9376ec";  
+
+// Called when the window is loaded
+// Creates chat infrastructure
+function doWindowLoad()
+{
+  // Utility method on library
+  // Client ID
+  // Input DIV element
+  // Output/history DIV element
+  Gateway.chat( 
+    KAAZING_ID, 
+    document.querySelector( ".message" ), 
+    document.querySelector( ".history" )
+  );    
+}
+  
+// Event listener for when loaded
+window.addEventListener( "load", doWindowLoad );  
+</script>  
+  
+</head>
+<body>
+
+<!-- Two required DOM elements -->
+<!-- Must be DIV elements -->
+<!-- Can be positioned styles via CSS -->
+<div class="history"></div>  
+<div class="message">Press &lt;Enter&gt; to send.</div>
+  
+</body>
+<html>
