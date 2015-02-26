@@ -16,3 +16,13 @@ Java
 ===
 
 This is a Java Swing desktop client that mirrors the Web example.  It is designed to be run on the desktop.  The README file in that project folder includes links to access the necessary Java libraries (JAR files) for Kaazing Gateway functionality.  Unlike the Web example, there is no library wrapper.
+
+Android
+===
+
+Work in progress.  Furthest along of native mobile examples, but not quite done.
+
+Swift
+===
+
+Start of the user interface.  Connectivity not yet implemented.
