@@ -460,7 +460,15 @@ public class MainActivity extends ActionBarActivity
         }
 
         items.add( message );
-        adapter.notifyDataSetChanged();
+
+        history.post( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                adapter.notifyDataSetChanged();
+            }
+        } );
     }
 
     private int parseRgb( String rgb )
@@ -550,13 +558,21 @@ public class MainActivity extends ActionBarActivity
         }
 
         // Send
-        publish.publishBasic(
-            buffer,
-            properties,
-            getString( R.string.chat_exchange ),
-            getString( R.string.chat_topic ),
-            false,
-            false
-        );
+        /*
+        dispatch.dispatchAsync(new Runnable() {
+            public void run() {
+                System.out.println("Send message.");
+
+                publish.publishBasic(
+                        buffer,
+                        properties,
+                        getString( R.string.chat_exchange ),
+                        getString( R.string.chat_topic ),
+                        false,
+                        false
+                );
+            }
+        });
+        */
     }
 }

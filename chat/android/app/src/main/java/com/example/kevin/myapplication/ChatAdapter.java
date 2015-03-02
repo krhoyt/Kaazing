@@ -38,6 +38,7 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage>
 
         // 4. Set the text for textView
         labelView.setText(itemsArrayList.get(position).content);
+        labelView.setTextColor(itemsArrayList.get(position).color);
 
         // 5. return rowView
         return rowView;
