@@ -3,5 +3,13 @@
 
     <string name="app_name">Chat</string>
     <string name="action_settings">Settings</string>
+    <string name="sandbox_url">wss://sandbox.kaazing.net/amqp091</string>
+    <string name="virtual_host">/</string>
+    <string name="sandbox_user">guest</string>
+    <string name="sandbox_password">guest</string>
+    <string name="chat_queue">queue_AND_123</string>
+    <string name="chat_exchange">exchange_WLRNhKKM7d</string>
+    <string name="chat_topic">chat_topic</string>
+    <string name="chat_tag">start_tag</string>
 
 </resources>
