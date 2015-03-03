@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0A06DB771A9E2C7D0065C2BD"
+               BlueprintIdentifier = "0A7830D51AA62C9300576FED"
                BuildableName = "Chat.app"
                BlueprintName = "Chat"
                ReferencedContainer = "container:Chat.xcodeproj">
@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0A06DB8C1A9E2C7D0065C2BD"
+               BlueprintIdentifier = "0A7830EA1AA62C9300576FED"
                BuildableName = "ChatTests.xctest"
                BlueprintName = "ChatTests"
                ReferencedContainer = "container:Chat.xcodeproj">
@@ -46,7 +46,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0A06DB8C1A9E2C7D0065C2BD"
+               BlueprintIdentifier = "0A7830EA1AA62C9300576FED"
                BuildableName = "ChatTests.xctest"
                BlueprintName = "ChatTests"
                ReferencedContainer = "container:Chat.xcodeproj">
@@ -56,7 +56,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0A06DB771A9E2C7D0065C2BD"
+            BlueprintIdentifier = "0A7830D51AA62C9300576FED"
             BuildableName = "Chat.app"
             BlueprintName = "Chat"
             ReferencedContainer = "container:Chat.xcodeproj">
@@ -75,7 +75,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0A06DB771A9E2C7D0065C2BD"
+            BlueprintIdentifier = "0A7830D51AA62C9300576FED"
             BuildableName = "Chat.app"
             BlueprintName = "Chat"
             ReferencedContainer = "container:Chat.xcodeproj">
@@ -93,7 +93,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0A06DB771A9E2C7D0065C2BD"
+            BlueprintIdentifier = "0A7830D51AA62C9300576FED"
             BuildableName = "Chat.app"
             BlueprintName = "Chat"
             ReferencedContainer = "container:Chat.xcodeproj">

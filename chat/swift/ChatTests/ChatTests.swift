@@ -2,7 +2,7 @@
 //  ChatTests.swift
 //  ChatTests
 //
-//  Created by Kevin Hoyt on 2/25/15.
+//  Created by Kevin Hoyt on 3/3/15.
 //  Copyright (c) 2015 Kaazing. All rights reserved.
 //
 
