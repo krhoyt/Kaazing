@@ -96,19 +96,6 @@ public class ChatActivity extends ActionBarActivity {
                         // Publish to other clients
                         gateway.send(chat);
 
-                        /*
-                        // Add to collection
-                        items.add( chat );
-
-                        // Update list
-                        history.post( new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        } );
-                        */
-
                         // Clear field
                         message.setText( null );
                     }
