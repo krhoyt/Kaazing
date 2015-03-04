@@ -9,7 +9,7 @@
         android:layout_height="50dp"
         android:textSize="22dp"
         android:paddingLeft="16dp"
-        android:text="Hello"
+        android:text="Chat Row"
         android:gravity="center|left">
     </TextView>
 

@@ -2,130 +2,67 @@
 <items version="2" >
 
     <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/gateway.util/1.0.0.28/778e1ad962890b0d19b43c6bdcd798323c0f45b9/gateway.util-1.0.0.28.jar"
+        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.glassfish/javax.json/1.0.4/3178f73569fd7a1e5ffc464e680f7a8cc784b85a/javax.json-1.0.4.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="778e1ad962890b0d19b43c6bdcd798323c0f45b9">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/gateway.util-1.0.0.28-cfba8861e5f5735f086f9a7be0fdda65d4209ed8.jar" />
+        sha1="3178f73569fd7a1e5ffc464e680f7a8cc784b85a">
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/javax.json-1.0.4-bc2e97175934b5b70188c4e1f4d39ed883e703bd.jar" />
     </item>
     <item
         jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/gateway.client.java/5.1.0.3/7ab943b2b28dd1717b1c1ca90b1b2ddc253bd938/gateway.client.java-5.1.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="7ab943b2b28dd1717b1c1ca90b1b2ddc253bd938">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/gateway.client.java-5.1.0.3-0704fde08fed04b40b24019e96873fa8594190c0.jar" />
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/gateway.client.java-5.1.0.3-0704fde08fed04b40b24019e96873fa8594190c0.jar" />
     </item>
     <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.glassfish/javax.json/1.0.4/3178f73569fd7a1e5ffc464e680f7a8cc784b85a/javax.json-1.0.4.jar"
+        jar="/Users/Kevin/Desktop/Chat/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="3178f73569fd7a1e5ffc464e680f7a8cc784b85a">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/javax.json-1.0.4-bc2e97175934b5b70188c4e1f4d39ed883e703bd.jar" />
+        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-f462fc693ddd74cdea3913f9a8c0ef3c862637b0.jar" />
     </item>
     <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.5/6b262da268f8ad9eff941b25503a9198f0a0ac93/slf4j-api-1.7.5.jar"
+        jar="/Users/Kevin/Desktop/Chat/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="6b262da268f8ad9eff941b25503a9198f0a0ac93">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/slf4j-api-1.7.5-38100997be3f3222d314b52c83b2338206055e07.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/gateway.resource.address/1.0.0.39/a8f26f36cee821566be27d7d3db2515d2ac4ddc0/gateway.resource.address-1.0.0.39.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="a8f26f36cee821566be27d7d3db2515d2ac4ddc0">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/gateway.resource.address-1.0.0.39-b1fb61543726e4273ce64f040cd39c2e9e0e10c2.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/gateway.transport/1.0.0.29/c26d81cb9d53a2413589a844c9ed4a3d1bfe4c7f/gateway.transport-1.0.0.29.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="c26d81cb9d53a2413589a844c9ed4a3d1bfe4c7f">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/gateway.transport-1.0.0.29-7a54aaebf1cce97483cd1b969f389f4a6304c83d.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/gateway.security/1.0.0.15/aa72f68a112d0bca8d6025565a6e1246f8e0fb9b/gateway.security-1.0.0.15.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="aa72f68a112d0bca8d6025565a6e1246f8e0fb9b">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/gateway.security-1.0.0.15-83f575fbd199abafd16a289927073897a6b13ac3.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.17/5af35056b4d257e4b64b9e8069c0746e8b08629f/log4j-1.2.17.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="5af35056b4d257e4b64b9e8069c0746e8b08629f">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/log4j-1.2.17-77e78543a833d493035e45621acc448cfe9b6afb.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/classes-44c6b529b6ecb04d8dee0515d5b5445ee91deee8.jar" />
+        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/classes-e4b0d98434b4f50127e6d8621c12387e2e690819.jar" />
     </item>
     <item
         jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/gateway.client.java.transport/5.0.0.6/32194f93d55e6150ad824ea94c671df0061e0d5c/gateway.client.java.transport-5.0.0.6.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="32194f93d55e6150ad824ea94c671df0061e0d5c">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/gateway.client.java.transport-5.0.0.6-1d4e2d1ff6fb76975b8a721dc1a02cf017dfff19.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/mina.netty/3.0.0.0/7337b5b1c35bb679e9e0f3e6332f5f1b4e1fa342/mina.netty-3.0.0.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="7337b5b1c35bb679e9e0f3e6332f5f1b4e1fa342">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/mina.netty-3.0.0.0-941f68d09434e67b047e1046e790a70c9d213631.jar" />
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/gateway.client.java.transport-5.0.0.6-1d4e2d1ff6fb76975b8a721dc1a02cf017dfff19.jar" />
     </item>
     <item
         jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/net.api/1.1.0.9/9d69951ca79b7bc010bc76f7f031e4033fc20866/net.api-1.1.0.9.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="9d69951ca79b7bc010bc76f7f031e4033fc20866">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/net.api-1.1.0.9-ee1cd7d617514bf88f2175c5de4ffa6c1dc46211.jar" />
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/net.api-1.1.0.9-ee1cd7d617514bf88f2175c5de4ffa6c1dc46211.jar" />
     </item>
     <item
         jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/amqp.client.java/5.0.0.6/9d83e59987e22630939d7774901fb56dd3f5e899/amqp.client.java-5.0.0.6.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="9d83e59987e22630939d7774901fb56dd3f5e899">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/amqp.client.java-5.0.0.6-ba1c1fb5df1316080066bef8f6506dd0492ae2f2.jar" />
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/amqp.client.java-5.0.0.6-ba1c1fb5df1316080066bef8f6506dd0492ae2f2.jar" />
     </item>
     <item
         jar="/Users/Kevin/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.3/support-annotations-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-12c0467f610994478947addfdb01e69deb9026a9.jar" />
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-12c0467f610994478947addfdb01e69deb9026a9.jar" />
     </item>
     <item
-        jar="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
+        jar="/Users/Kevin/Desktop/Chat/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-c9d4b52654ee5ad0da964c2d83b0e46f59815024.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/classes-f38295b353c4fc6db2b44dceebed4435f4c0b709.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.kaazing/gateway.server.spi/5.0.0.11/59e680b418f112b259c36f2787b861694c898801/gateway.server.spi-5.0.0.11.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="59e680b418f112b259c36f2787b861694c898801">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/gateway.server.spi-5.0.0.11-3e207d196085c08c5ad043da9e72ff4e5f7feb97.jar" />
-    </item>
-    <item
-        jar="/Users/Kevin/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-log4j12/1.7.5/6edffc576ce104ec769d954618764f39f0f0f10d/slf4j-log4j12-1.7.5.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="6edffc576ce104ec769d954618764f39f0f0f10d">
-        <dex dex="/Users/Kevin/AndroidStudioProjects/MyApplication/app/build/intermediates/pre-dexed/debug/slf4j-log4j12-1.7.5-8a56033d0a2aa51ce393e07f030051f7c46d039c.jar" />
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="/Users/Kevin/Desktop/Chat/app/build/intermediates/pre-dexed/debug/classes-6aaf4672e3af880f20b08268cd249bd7d14b6f47.jar" />
     </item>
 
 </items>
