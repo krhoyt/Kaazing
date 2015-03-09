@@ -24,7 +24,7 @@ public class Gateway {
 	
 	private static final String EXCHANGE_PREFIX = "exchange_";
 	private static final String	QUEUE_PREFIX = "queue_";
-	private static final String TAG = "iot";	
+	private static final String TAG = "start_tag";	
 	
 	private AmqpChannel			consume = null;
 	private AmqpChannel			publish = null;
@@ -134,7 +134,7 @@ public class Gateway {
         publish.publishBasic(
         	buffer,
             properties,
-            EXCHANGE_PREFIX + "iot",
+            EXCHANGE_PREFIX + getClientId(),
             topic,
             false,
             false
@@ -146,7 +146,7 @@ public class Gateway {
 		
 		consume.bindQueue( 
 			QUEUE_PREFIX + now, 
-			EXCHANGE_PREFIX + "iot", 
+			EXCHANGE_PREFIX + getClientId(), 
 			topic, 
 			false, 
 			null 
@@ -225,7 +225,7 @@ public class Gateway {
 					@Override
 					public void run() {
 						publish.declareExchange( 
-							EXCHANGE_PREFIX + "iot", 
+							EXCHANGE_PREFIX + getClientId(), 
 							"direct", 
 							false, 
 							false, 
@@ -579,7 +579,7 @@ public class Gateway {
 				
 				consume.unbindQueue( 
 					QUEUE_PREFIX + now, 
-					EXCHANGE_PREFIX + "iot", 
+					EXCHANGE_PREFIX + getClientId(), 
 					topic, 
 					null 
 				);

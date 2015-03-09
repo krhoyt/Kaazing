@@ -14,9 +14,9 @@ public class IoT implements SerialPortEventListener {
 	// Constants
 	private static final char 	SERIAL_END = '\r';
 	private static final char 	SERIAL_START = '#';	
-	private static final String KAAZING_ID = "abc123";
+	private static final String KAAZING_ID = "nKkG23KJnb";
 	private static final String SERIAL_PORT = "port.txt";
-	private static final String TOPIC = "intel_topic";	
+	private static final String TOPIC = "iot_topic";	
 	
 	// Gateway
 	private Gateway	gateway = null;
@@ -79,7 +79,7 @@ public class IoT implements SerialPortEventListener {
 		};
 		
 		// Connect to gateway
-		gateway.connect();		
+		gateway.connect( KAAZING_ID );		
 	}
 	
 	// Initialize serial port
