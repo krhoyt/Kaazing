@@ -21,10 +21,19 @@ body {
   font-family: 'Source Sans Pro', sans-serif;  
 }
   
+.as-of {
+  color: #655f5f;  
+  font-size: 1.50em;
+}
+  
 .building {
   background-image: url( 'building.svg' );
   background-position: 13px center;
 }
+  
+.cloud {
+  background-image: url( 'cloud.svg' );
+}  
 
 .comparison {
   color: #655f5f;  
@@ -50,7 +59,15 @@ body {
   font-size: 1.10em;
   padding-left: 30px;
 }    
+  
+.compass {
+  background-image: url( 'compass.svg' );
+}
 
+.condition {
+  background-image: url( 'condition.svg' );
+}    
+  
 .details {
   color: #59bee8;
   background-image: url( 'info.svg' );
@@ -169,6 +186,17 @@ body {
   background-color: #f3f2ee;
 }
 
+.pod {
+  background-position: 5px center;
+  background-repeat: no-repeat;
+  background-size: auto 50%;
+  height: 30px; 
+  background-color: #1799cb; 
+  color: white; 
+  line-height: 30px;  
+  padding-left: 25px;
+}
+  
 .score-current {
   bottom: 0;
   color: #655f5f;
@@ -239,6 +267,10 @@ body {
   font-weight: 600;
   padding-left: 40px;
 }    
+  
+.thumb {
+  background-image: url( 'thumb.svg' );
+}  
   
 .up {
   background-image: url( 'high.svg' );
@@ -355,7 +387,7 @@ body {
                 <p class="down-white">&nbsp;</p>
                 <p class="status-message">15% lower</p>        
               </div>
-              <p class="col-sm-6">Chart</p>
+              <p class="col-sm-6">--- Chart ---</p>
             </div>            
             <div class="row">
               <p class="col-sm-12 details">View Details</p>
@@ -390,37 +422,42 @@ body {
   <!-- Info panels -->
   <div class="col-sm-4" style="padding-left: 30px;">
     <div class="row">
-      <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Building Info</p>
+      <p class="col-sm-12 pod compass">Building Info</p>
     </div>
     
     <div class="row">
-      <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Building Info</p>
+      <p class="col-sm-12 pod cloud">Weather Preview</p>
     </div>    
     
     <div class="row">
-      <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Building Info</p>
+      <p class="col-sm-12 pod condition">Allapot Level</p>
     </div>
     
-    <div class="row" style="background-color: green;">
+    <div class="panel row">
       <div class="col-sm-12">
         <div class="row">
-          <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Title</p>                
+          <p class="col-sm-12 pod thumb">Comfort Index</p>                
         </div>
         <div class="row">
-          <p class="col-sm-12">As of the Last 30 Days</p>
+          <p class="col-sm-12 as-of" style="margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0;">As of the Last 30 Days</p>
         </div>
         <div class="row">
-          <p class="col-sm-12">Some other really small text I cannot read.</p>
+          <p class="col-sm-12" style="color: #59bee8; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0;">Viewing average index in the current range.</p>
         </div>        
         <div class="row">
-          <div class="col-sm-2">:-)</div>
-          <div class="col-sm-2">75%</div>
+          <div class="col-sm-2 happy" style="margin-top: 10px;"></div>
+          <div class="col-sm-2" style="margin-top: 10px; padding: 0; text-align: center;">
+            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;">75%</p>
+            <p style="margin: 0; margin-top: -5px; padding: 0;">usage</p>
+          </div>
           <div class="col-sm-8">--- Chart ---</div>
         </div>
-        <div class="row">
-          <div class="col-sm-12" style="height: 200px; background-color: lightgreen;"></div>
+        <div class="row" style="margin-top: 10px;">
+          <div class="col-sm-12">
+            <div style="background-color: white; height: 200px; background-image: url( 'graph.png' );"></div>
+          </div>
         </div>
-        <div class="row">
+        <div class="row" style="margin-top: 10px;">
           <div class="col-sm-9">
             <div class="row">
               <div class="col-sm-4">1x1</div>
