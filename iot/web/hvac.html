@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    
+<title>Building Overview</title>
+
+<!-- Bootstrap styles -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Google Fonts -->
+<!-- Source Sans Pro -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet" type="text/css">
+  
+<style type="">
+body {
+  background-color: white;
+  font-family: 'Source Sans Pro', sans-serif;  
+}
+  
+.building {
+  background-image: url( 'building.svg' );
+  background-position: 13px center;
+}
+
+.comparison {
+  color: #655f5f;  
+  font-size: 1.50em;
+  font-weight: 600;
+  margin-left: 10px;
+}
+  
+.comparison-label {
+  background-position: 10px center;
+  background-repeat: no-repeat;
+  color: #655f5f;  
+  font-size: 1.10em;
+  font-weight: 600;
+  margin-left: 10px;
+  padding-left: 30px;
+}  
+  
+.comparison-report {
+  background-position: left center;
+  background-repeat: no-repeat;
+  color: #655f5f;  
+  font-size: 1.10em;
+  padding-left: 30px;
+}    
+
+.details {
+  color: #59bee8;
+  background-image: url( 'info.svg' );
+  background-position: 10px center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+  padding-left: 30px;
+  margin-top: 5px;
+}
+  
+.down {
+  background-image: url( 'low.svg' );
+}
+  
+.down-white {
+  background-image: url( 'low-white.svg' );
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: auto 90%;
+  margin: 0;
+  padding: 0;  
+}  
+  
+.drop {
+  background-image: url( 'drop.svg' );
+  background-size: auto 85%;    
+}  
+  
+.energy-logo {
+  background-color: #0093dd;
+  background-image: url( 'energy-star.svg' );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 50px;
+  width: 50px;
+}
+  
+.energy-star {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50px;
+  background-color: white;
+  border-top: solid 2px #0093dd;
+}
+
+.fire {
+  background-image: url( 'fire.svg' );
+  background-size: auto 100%;    
+}  
+  
+.gauge {
+  background-image: url( 'gauge.svg' );
+  background-position: 13px center;
+}  
+  
+.green {
+  background-color: #6fc048;
+}
+  
+.happy {
+  background-image: url( 'happy.svg' );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+  height: 50px;
+}
+  
+.header {
+  background-color: #565253;
+  background-repeat: no-repeat;
+  background-size: auto 50%;
+  color: white;
+  font-size: 1.50em;
+  height: 50px;
+  line-height: 50px;
+  padding-left: 50px;
+}
+  
+.leaf {
+  background-image: url( 'leaf.svg' );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+  height: 50px;
+}  
+  
+.lightening {
+  background-image: url( 'lightening.svg' );
+  background-size: auto 100%;    
+}
+ 
+.maintenance-icon {
+  background-image: url( 'alert.svg' );
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: auto 90%;
+  margin: 0;
+  padding: 0;  
+}
+  
+.office {
+  background-image: url( 'hq.jpg' ); 
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 220px;
+  margin-bottom: 10px;    
+  margin-left: 10px;
+  position: relative;
+}
+  
+.panel {
+  background-color: #f3f2ee;
+}
+
+.score-current {
+  bottom: 0;
+  color: #655f5f;
+  font-size: 3em;
+  line-height: 48px;
+  padding-right: 10px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+}  
+  
+.score-goal {
+  background-image: url( 'star.svg' );
+  background-position: 10px center;
+  background-repeat: no-repeat;
+  background-size: auto 65%;
+  bottom: 0;
+  color: #655f5f;
+  font-size: 1em;
+  font-weight: 600;
+  left: 50px;
+  letter-spacing: 0.50px;  
+  padding-bottom: 2px;
+  padding-left: 28px;
+  position: absolute;
+  right: 50px;
+}
+  
+.score-label {
+  color: #655f5f;
+  font-size: 1.50em;
+  font-weight: 600;
+  left: 50px;
+  padding-left: 10px;
+  position: absolute;
+  right: 50px;
+  top: 0;
+}  
+  
+.status {
+  background-image: url( 'status.svg' );
+}
+  
+.status-icon {
+  background-image: url( 'check.svg' );
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: auto 90%;
+  margin: 0;
+  padding: 0;  
+}
+  
+.status-message {
+  color: white;
+  font-size: 1.25em;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+  
+.summary {
+  background-position: 10px center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+  color: #655f5f;
+  font-size: 1.50em;
+  font-weight: 600;
+  padding-left: 40px;
+}    
+  
+.up {
+  background-image: url( 'high.svg' );
+}
+  
+.wrench {
+  background-image: url( 'wrench.svg' );
+}  
+</style>  
+  
+</head>
+<body style="padding: 50px;">
+  
+<div class="container-fluid">
+  
+<div class="row">
+  
+  <div class="col-sm-8">
+    
+    <!-- Building status -->
+    <div class="panel row">
+      
+      <div class="col-sm-12">
+        
+        <!-- Header -->
+        <div class="row">
+          <p class="col-sm-12 header building">Building Status</p>
+        </div>
+        
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-12 office">
+                <div class="energy-star">
+                  <div class="energy-logo"></div>
+                  <div class="score-label">Energy Star Score</div>
+                  <div class="score-goal">Target score: 80</div>
+                  <div class="score-current">85</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <p class="col-sm-12 comparison">My Usage Comparison</p>
+            </div>
+            <div class="row" style="height: 50px; margin-top: 10px;">
+              <p class="col-sm-3 comparison-label lightening">Energy</p>
+              <p class="col-sm-8 comparison-report up">2.3% week over week</p>
+            </div>
+            <div class="row" style="height: 50px;">
+              <p class="col-sm-3 comparison-label drop">Water</p>
+              <p class="col-sm-8 comparison-report down">3.5% week over week</p>
+            </div>           
+            <div class="row" style="height: 50px;">
+              <p class="col-sm-3 comparison-label fire">Fuel</p>
+              <p class="col-sm-8 comparison-report down">4.8% week over week</p>
+            </div>            
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+    
+    <!-- HVAC summary -->
+    <div class="panel row">
+      
+      <div class="col-sm-12">
+        
+        <!-- Header -->
+        <div class="row">
+          <p class="col-sm-12 header gauge">HVAC Summary</p>
+        </div>
+        
+        <div class="row">
+
+          <div class="col-sm-4">          
+            <div class="row">
+              <p class="col-sm-12 summary status">Unit Status</p>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 green" style="padding-top: 5px;">
+                <p class="status-icon">&nbsp;</p>
+                <p class="status-message">No Alarms</p>        
+              </div>
+            </div>            
+            <div class="row">
+              <p class="col-sm-12 details">View Details</p>
+            </div>            
+          </div>
+          
+          <div class="col-sm-4">          
+            <div class="row">
+              <p class="col-sm-12 summary wrench">Maintenance</p>
+            </div>
+            <div class="row">
+              <div class="col-sm-12" style="background-color: #ffd33f; padding-top: 5px;">
+                <p class="maintenance-icon">&nbsp;</p>
+                <p class="status-message">Recommended</p>        
+              </div>
+            </div>            
+            <div class="row">
+              <p class="col-sm-12 details">View Details</p>
+            </div>            
+          </div>          
+          
+          <div class="col-sm-4">          
+            <div class="row">
+              <p class="col-sm-12 summary lightening">Live Power Usage</p>
+            </div>
+            <div class="row green">
+              <div class="col-sm-6" style="padding-top: 5px;">
+                <p class="down-white">&nbsp;</p>
+                <p class="status-message">15% lower</p>        
+              </div>
+              <p class="col-sm-6">Chart</p>
+            </div>            
+            <div class="row">
+              <p class="col-sm-12 details">View Details</p>
+            </div>            
+          </div>          
+          
+        </div>
+        
+        <div class="row">
+        
+          <div class="col-sm-1 happy"></div>
+          <div class="col-sm-1" style="padding: 0;">
+            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">75%</p>
+            <p style="margin: 0; padding: 0; margin-top: -5px; color: #655f5f; text-align: center;">usage</p>
+          </div>
+          <div class="col-sm-4">--- Chart ---</div>
+          <div class="col-sm-1 leaf"></div>
+          <div class="col-sm-1" style="padding: 0;">
+            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">0.60</p>
+            <p style="margin: 0; padding: 0; margin-top: -5px; color: #655f5f; text-align: center;">index</p>        
+          </div>
+          <div class="col-sm-4">--- Chart ---</div>          
+          
+        </div>
+        
+      </div>
+      
+    </div>    
+    
+  </div>
+    
+  <!-- Info panels -->
+  <div class="col-sm-4" style="padding-left: 30px;">
+    <div class="row">
+      <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Building Info</p>
+    </div>
+    
+    <div class="row">
+      <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Building Info</p>
+    </div>    
+    
+    <div class="row">
+      <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Building Info</p>
+    </div>
+    
+    <div class="row" style="background-color: green;">
+      <div class="col-sm-12">
+        <div class="row">
+          <p class="col-sm-12" style="height: 30px; background-color: lightblue;">Title</p>                
+        </div>
+        <div class="row">
+          <p class="col-sm-12">As of the Last 30 Days</p>
+        </div>
+        <div class="row">
+          <p class="col-sm-12">Some other really small text I cannot read.</p>
+        </div>        
+        <div class="row">
+          <div class="col-sm-2">:-)</div>
+          <div class="col-sm-2">75%</div>
+          <div class="col-sm-8">--- Chart ---</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12" style="height: 200px; background-color: lightgreen;"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-9">
+            <div class="row">
+              <div class="col-sm-4">1x1</div>
+              <div class="col-sm-4">2x1</div>              
+              <div class="col-sm-4">3x1</div>              
+            </div>
+            <div class="row">
+              <div class="col-sm-4">1x2</div>
+              <div class="col-sm-4">2x2</div>              
+              <div class="col-sm-4">3x2</div>              
+            </div>            
+          </div>
+          <div class="col-sm-3">
+            <div class="row">
+              <div class="col-sm-12">84F</div>              
+            </div>
+            <div class="row">
+              <div class="col-sm-12">67%</div>              
+            </div>            
+            <div class="row">
+              <div class="col-sm-12">45mph</div>              
+            </div>            
+          </div>
+        </div>
+      </div>
+    </div>        
+  </div>
+  
+</div>  
+  
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    
+<!-- Bootstrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  
+</body>
+</html>
