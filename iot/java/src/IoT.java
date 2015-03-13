@@ -3,6 +3,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
@@ -16,20 +19,30 @@ public class IoT implements SerialPortEventListener {
 	private static final char 	SERIAL_START = '#';	
 	private static final String KAAZING_ID = "nKkG23KJnb";
 	private static final String SERIAL_PORT = "port.txt";
+	private static final String STATIC_OUT = "static.txt";	
 	private static final String TOPIC = "iot_topic";	
 	
 	// Gateway
+	private boolean	realtime = false;
 	private Gateway	gateway = null;
+	
+	// Parse
+	private Parse	parse = null;
 	
 	// Serial port
 	private boolean			reading = false;
 	private SerialPort		serial = null;
+	private String			latest = null;
 	private StringBuilder	builder = null;
+	
+	// Timer
+	private ScheduledExecutorService	service;	
 	
 	// Constructor
 	// Initialize gateway
 	// Initialize serial port
 	public IoT() {
+		initParse();
 		initGateway();
 		initSerial();
 	}
@@ -80,6 +93,21 @@ public class IoT implements SerialPortEventListener {
 		
 		// Connect to gateway
 		gateway.connect( KAAZING_ID );		
+	}
+	
+	// Initialize data storage
+	private void initParse() {
+		parse = new Parse();
+		
+		service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleAtFixedRate(new Runnable() {
+			
+			@Override
+			public void run() {
+				parse.save( latest );
+			}
+			
+		}, 1, 5, TimeUnit.SECONDS );		
 	}
 	
 	// Initialize serial port
@@ -160,7 +188,11 @@ public class IoT implements SerialPortEventListener {
                             	
                             	@Override 
                             	public void run() {
-                            		process( builder.toString() );
+                            		latest = builder.toString();
+                            		
+                            		if( realtime ) {
+                            			process( latest );                            			
+                            		} 
                             	}
                                 
                             } );

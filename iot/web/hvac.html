@@ -63,7 +63,7 @@ body {
 .compass {
   background-image: url( 'compass.svg' );
 }
-
+  
 .condition {
   background-image: url( 'condition.svg' );
 }    
@@ -78,6 +78,10 @@ body {
   margin-top: 5px;
 }
   
+.display {
+  background-image: url( 'computer.svg' );
+}    
+    
 .down {
   background-image: url( 'low.svg' );
 }
@@ -121,6 +125,15 @@ body {
   background-size: auto 100%;    
 }  
   
+.funnel {
+  background-color: rgba( 0, 0, 0, 0 );
+  background-image: url( 'funnel.svg' );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+  border: none;
+}  
+  
 .gauge {
   background-image: url( 'gauge.svg' );
   background-position: 13px center;
@@ -148,6 +161,15 @@ body {
   line-height: 50px;
   padding-left: 50px;
 }
+  
+.kaazing {
+  background-color: rgba( 0, 0, 0, 0 );
+  background-image: url( 'kaazing.svg' );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 75%;
+  border: none;
+}    
   
 .leaf {
   background-image: url( 'leaf.svg' );
@@ -271,6 +293,15 @@ body {
 .thumb {
   background-image: url( 'thumb.svg' );
 }  
+  
+.turtle {
+  background-color: rgba( 0, 0, 0, 0 );
+  background-image: url( 'turtle.svg' );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  border: none;
+}
   
 .up {
   background-image: url( 'high.svg' );
@@ -403,13 +434,29 @@ body {
             <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">75%</p>
             <p style="margin: 0; padding: 0; margin-top: -5px; color: #655f5f; text-align: center;">usage</p>
           </div>
-          <div class="col-sm-4">--- Chart ---</div>
+          <svg class="col-sm-4" height="50">
+            <g transform="translate( 32, 0 )">
+              <rect x="0" y="0" width="50" height="20" fill="#6fc048" rx="10" ry="10"></rect>
+              <path d="M25 28 l6 -8 l-12 0 l6 8" fill="#6fc048"></path>
+              <text x="25" y="15" width="50" text-anchor="middle" fill="white">25%</text>              
+            </g>
+            <rect x="0" y="30" width="25%" height="10" rx="5" ry="5" fill="#655f5f"></rect>                        
+            <rect x="0" y="30" width="100%" height="10" stroke-width="2" stroke="#655f5f" rx="5" ry="5" fill="rgba( 0, 0, 0, 0 )"></rect>
+          </svg>
           <div class="col-sm-1 leaf"></div>
           <div class="col-sm-1" style="padding: 0;">
             <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">0.60</p>
             <p style="margin: 0; padding: 0; margin-top: -5px; color: #655f5f; text-align: center;">index</p>        
           </div>
-          <div class="col-sm-4">--- Chart ---</div>          
+          <svg class="col-sm-4" height="50">
+            <g transform="translate( 90, 0 )">
+              <rect x="0" y="0" width="50" height="20" fill="#6fc048" rx="10" ry="10"></rect>
+              <path d="M25 28 l6 -8 l-12 0 l6 8" fill="#6fc048"></path>
+              <text x="25" y="15" width="50" text-anchor="middle" fill="white">50%</text>              
+            </g>
+            <rect x="0" y="30" width="50%" height="10" rx="5" ry="5" fill="#655f5f"></rect>            
+            <rect x="0" y="30" width="100%" height="10" stroke-width="2" stroke="#655f5f" rx="5" ry="5" fill="rgba( 0, 0, 0, 0 )"></rect>
+          </svg>          
           
         </div>
         
@@ -430,10 +477,10 @@ body {
     </div>    
     
     <div class="row">
-      <p class="col-sm-12 pod condition">Allapot Level</p>
+      <p class="col-sm-12 pod condition">Allapot Condition</p>
     </div>
     
-    <div class="panel row">
+    <div class="panel row" style="margin-bottom: 10px;">
       <div class="col-sm-12">
         <div class="row">
           <p class="col-sm-12 pod thumb">Comfort Index</p>                
@@ -447,43 +494,40 @@ body {
         <div class="row">
           <div class="col-sm-2 happy" style="margin-top: 10px;"></div>
           <div class="col-sm-2" style="margin-top: 10px; padding: 0; text-align: center;">
-            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;">75%</p>
-            <p style="margin: 0; margin-top: -5px; padding: 0;">usage</p>
+            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0; color: #655f5f;">75%</p>
+            <p style="margin: 0; margin-top: -5px; padding: 0; color: #655f5f;">usage</p>
           </div>
-          <div class="col-sm-8">--- Chart ---</div>
+          <svg class="col-sm-8" height="65">
+            <g transform="translate( 32, 10 )">
+              <rect x="0" y="0" width="50" height="20" fill="#6fc048" rx="10" ry="10"></rect>
+              <path d="M25 28 l6 -8 l-12 0 l6 8" fill="#6fc048"></path>
+              <text x="25" y="15" width="50" text-anchor="middle" fill="white">25%</text>              
+            </g>
+            <rect x="0" y="40" width="25%" height="10" rx="5" ry="5" fill="#655f5f"></rect>                        
+            <rect x="0" y="40" width="100%" height="10" stroke-width="2" stroke="#655f5f" rx="5" ry="5" fill="rgba( 0, 0, 0, 0 )"></rect>
+          </svg>          
         </div>
-        <div class="row" style="margin-top: 10px;">
+        <div class="row" style="margin-top: 10px; padding-bottom: 10px;">
           <div class="col-sm-12">
             <div style="background-color: white; height: 200px; background-image: url( 'graph.png' );"></div>
           </div>
-        </div>
-        <div class="row" style="margin-top: 10px;">
-          <div class="col-sm-9">
-            <div class="row">
-              <div class="col-sm-4">1x1</div>
-              <div class="col-sm-4">2x1</div>              
-              <div class="col-sm-4">3x1</div>              
-            </div>
-            <div class="row">
-              <div class="col-sm-4">1x2</div>
-              <div class="col-sm-4">2x2</div>              
-              <div class="col-sm-4">3x2</div>              
-            </div>            
-          </div>
-          <div class="col-sm-3">
-            <div class="row">
-              <div class="col-sm-12">84F</div>              
-            </div>
-            <div class="row">
-              <div class="col-sm-12">67%</div>              
-            </div>            
-            <div class="row">
-              <div class="col-sm-12">45mph</div>              
-            </div>            
-          </div>
+        </div>        
+      </div>    
+    </div>  
+  
+    <div class="panel row">
+      <div class="col-sm-12">
+        <div class="row">
+          <p class="col-sm-12 pod display">Display Options</p>                
+        </div>    
+        <div class="row" style="padding-bottom: 10px;">
+          <button class="col-sm-4 turtle" style="height: 40px;"></button>
+          <button class="col-sm-4 funnel" style="height: 40px;"></button>
+          <button class="col-sm-4 kaazing" style="height: 40px;"></button>
         </div>
       </div>
-    </div>        
+    </div>          
+    
   </div>
   
 </div>  

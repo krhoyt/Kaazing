@@ -1,1 +1,1 @@
-/dev/tty.usbmodem1421
+/dev/tty.usbserial-A601EO1P
