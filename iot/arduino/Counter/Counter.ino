@@ -1,5 +1,3 @@
-// #define PI 3.141592653589793
-
 // Counters
 int comfort;
 int index;
@@ -12,7 +10,7 @@ void setup() {
   index = random( 360 );
   usage = random( 360 );
   
-  Serial.begin( 9600 );
+  Serial.begin( 115200 );
 }
 
 // Loop
@@ -31,8 +29,8 @@ void loop() {
   comfort = comfort + 1;  
   usage = usage + 1;    
   
-  // Give serial time to
-  delay( 100 );
+  // Buffer
+  delay( 25 );
 }
 
 float toRadians( int deg )  {

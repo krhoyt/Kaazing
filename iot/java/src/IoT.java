@@ -205,7 +205,7 @@ public class IoT implements SerialPortEventListener {
 				// Open serial port
 				// Listen for data
 				serial.openPort();
-				serial.setParams( 9600, 8, 1, 0 );
+				serial.setParams( 115200, 8, 1, 0 );
 				serial.addEventListener( this );			
 			} catch( SerialPortException spe ) {
 				spe.printStackTrace();
