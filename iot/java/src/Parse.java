@@ -8,7 +8,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.json.Json;
@@ -25,6 +24,8 @@ public class Parse {
 	private String	application = null;
 	private String	rest = null;
 	private URL 	url = null;
+	
+	public ParseListener	callback = null;	
 	
 	public Parse() {
 		byte[]			data;
@@ -69,6 +70,7 @@ public class Parse {
 		JsonObject			request;
 		JsonObjectBuilder	builder;
 		Reader				response;
+		StringBuilder		result;
 		String[]			parts;
 		StringWriter		sw;
 		
@@ -87,6 +89,8 @@ public class Parse {
 			writer.writeObject( request );
 		}		
 		
+        result = new StringBuilder();		
+		
 		try {
 	        connection = ( HttpURLConnection )url.openConnection();
 	        connection.setRequestMethod( "POST" );
@@ -97,15 +101,20 @@ public class Parse {
 	        connection.setDoOutput( true );
 	        connection.getOutputStream().write( sw.toString().getBytes() );
 	        
-	        response = new BufferedReader( new InputStreamReader( connection.getInputStream(), "UTF-8" ) );
+	        response = new BufferedReader( new InputStreamReader( connection.getInputStream(), "UTF-8" ) );	     
 	        
-	        // TODO: Make into string to return
-	        for( int c = 0; ( c = response.read() ) >= 0; System.out.print( ( char )c ) );
+	        for( int c = 0; ( c = response.read() ) >= 0; ) {
+	        	result.append( ( char )c  );
+	        }
+	        
+	        if( callback != null ) {
+	        	callback.onSave( result.toString().trim() );
+	        }
 		} catch( IOException ioe ) {
 			ioe.printStackTrace();
 		}
 		
-		return "Saved.";
+		return result.toString().trim();
 	}
 	
 }
