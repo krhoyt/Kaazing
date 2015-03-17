@@ -469,7 +469,7 @@ public class Gateway {
 						consume.ackBasic( tag, true );
 					}
 					
-				} );				
+				} );
 			}
 			
 			@Override
