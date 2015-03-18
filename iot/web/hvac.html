@@ -20,6 +20,10 @@ body {
   background-color: white;
   font-family: 'Source Sans Pro', sans-serif;  
 }
+ 
+button:focus {
+  outline: 0;
+}  
   
 .as-of {
   color: #655f5f;  
@@ -127,7 +131,7 @@ body {
   
 .funnel {
   background-color: rgba( 0, 0, 0, 0 );
-  background-image: url( 'funnel.svg' );
+  background-image: url( 'refresh-1.svg' );
   background-position: center;
   background-repeat: no-repeat;
   background-size: auto 80%;
@@ -219,6 +223,15 @@ body {
   padding-left: 25px;
 }
   
+.refresh {
+  background-color: rgba( 0, 0, 0, 0 );
+  background-image: url( 'refresh.svg' );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+  border: none;
+}  
+  
 .score-current {
   bottom: 0;
   color: #655f5f;
@@ -296,10 +309,10 @@ body {
   
 .turtle {
   background-color: rgba( 0, 0, 0, 0 );
-  background-image: url( 'turtle.svg' );
+  background-image: url( 'refresh-5.svg' );
   background-position: center;
   background-repeat: no-repeat;
-  background-size: auto 100%;
+  background-size: auto 80%;
   border: none;
 }
   
@@ -317,6 +330,12 @@ body {
   
 <!-- Gateway -->  
 <script src="gateway.js" type="text/javascript"></script>  
+  
+<!-- URL Parser -->  
+<script src="URLParser.js" type="text/javascript"></script>    
+  
+<!-- Moment -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js" type="text/javascript"></script>  
   
 <!-- Application -->  
 <script src="hvac.js" type="text/javascript"></script>  
@@ -520,7 +539,12 @@ body {
           <div class="col-sm-12">
             <div style="background-color: white; height: 200px; background-image: url( 'graph.png' );">
               <svg id="comfort" width="100%" height="200">
-                <path d="M0 0" stroke="blue"></path>
+                <g id="range"></g>
+                <g id="plot" opacity="0">
+                  <circle cx="0" cy="0" r="6" stroke="rgba( 0, 0, 0, 0 )" fill="rgba( 0, 0, 0, 1 )"></circle>
+                  <circle cx="0" cy="0" r="10" stroke="rgba( 0, 0, 0, 1 )" fill="rgba( 0, 0, 0, 0 )"></circle>                  
+                </g>
+                <path id="chart" stroke-width="2" stroke="black" fill="rgba( 0, 0, 0, 0 )"></path>
               </svg>
             </div>
           </div>
@@ -528,15 +552,16 @@ body {
       </div>    
     </div>  
   
-    <div class="panel row">
+    <div id="controls" class="panel row" style="visibility: hidden;">
       <div class="col-sm-12">
         <div class="row">
           <p class="col-sm-12 pod display">Display Options</p>                
         </div>    
         <div class="row" style="padding-bottom: 10px;">
-          <button class="col-sm-4 turtle" style="height: 40px;"></button>
-          <button class="col-sm-4 funnel" style="height: 40px;"></button>
-          <button class="col-sm-4 kaazing" style="height: 40px;"></button>
+          <button class="col-sm-3 refresh" style="height: 40px;"></button>          
+          <button class="col-sm-3 turtle" style="height: 40px;"></button>
+          <button class="col-sm-3 funnel" style="height: 40px;"></button>
+          <button class="col-sm-3 kaazing" style="height: 40px;"></button>
         </div>
       </div>
     </div>          

@@ -1,8 +1,8 @@
 // Kaazing client ID
 var IOT_TOPIC = 'iot_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
-var PARSE_APP = '_PARSE_APP_';
-var PARSE_KEY = '_PARSE_JS_KEY_';
+// var PARSE_APP = '_PARSE_APP_';
+// var PARSE_KEY = '_PARSE_JS_KEY_';
 var REAL_TIME_ON = 1;
 var REAL_TIME_OFF = 0;
 var SVG_PATH = 'http://www.w3.org/2000/svg';
@@ -15,86 +15,63 @@ var interval = null;
 var kaazing = null;
 var realtime = false;
 
-function drawComfort( value ) 
+function drawRange()
 {
   var path = null;
-  var wave = null;
   
-  // Remove existing
-  while( comfort.children.length > 0 )
-  {
-    comfort.removeChild( comfort.children[0] ); 
-  }
-
   // Outer range
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'd', 
     'M0 140 ' + 
-    'L' + comfort.clientWidth + ' 30 ' + 
-    'L' + comfort.clientWidth + ' 100 ' + 
+    'L' + comfort.container.clientWidth + ' 30 ' + 
+    'L' + comfort.container.clientWidth + ' 100 ' + 
     'L30 200 ' +
     'L0 200 Z'
   );
   path.setAttribute( 'stroke', '#ffd33f' );
   path.setAttribute( 'stroke-width', '5' );  
   path.setAttribute( 'fill', 'rgba( 255, 211, 63, 0.50 )' );
-  comfort.appendChild( path );
+  comfort.range.appendChild( path );
   
   // Inner range
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'd', 
     'M0 150 ' + 
-    'L' + comfort.clientWidth + ' 40 ' + 
-    'L' + comfort.clientWidth + ' 90 ' + 
+    'L' + comfort.container.clientWidth + ' 40 ' + 
+    'L' + comfort.container.clientWidth + ' 90 ' + 
     'L0 200 Z'                     
   );
   path.setAttribute( 'fill', '#70c047' );
-  comfort.appendChild( path );
-  
+  comfort.range.appendChild( path );  
+}
+
+function drawComfort( value ) 
+{
+  var offset = null;
+  var wave = null;
+    
   if( value != null )
   {
-    var offset = ( ( comfort.clientWidth - 20 ) * Math.random() );
-    
-    // Inner value
-    path = document.createElementNS( SVG_PATH, 'circle' );
-    path.setAttribute( 'cx', offset );
-    path.setAttribute( 'cy', 100 + ( 90 * value ) );
-    path.setAttribute( 'r', 6 );
-    path.setAttribute( 'fill', 'black' );
-    comfort.appendChild( path );
+    // Random vertical placement
+    offset = ( ( comfort.container.clientWidth - 20 ) * Math.random() ) + 10;
 
-    // Ring around value
-    path = document.createElementNS( SVG_PATH, 'circle' );
-    path.setAttribute( 'cx', offset );
-    path.setAttribute( 'cy', 100 + ( 90 * value ) );
-    path.setAttribute( 'r', 10 );
-    path.setAttribute( 'stroke', 'black' );
-    path.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );
-    comfort.appendChild( path );  
-
-    // Polling
-    if( interval == null )
-    {
-      interval = setInterval( queryLatest, 5000 ); 
-    }    
-  } else if( value == null ) {
-    path = document.createElementNS( SVG_PATH, 'path' );
-    path.setAttribute( 'stroke', 'black' );
-    path.setAttribute( 'stroke-width', 2 );
-    path.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );
+    // Place plot
+    comfort.plot.setAttribute( 'transform', 'translate( ' + offset + ', ' + ( 100 + ( 90 * value ) ) + ' )' );
+    comfort.plot.setAttribute( 'opacity', 1 );
+  } else if( value == null ) {    
+    comfort.plot.setAttribute( 'opacity', 0 );          
     
-    for( var h = 0; h < comfort_history.length; h++ )
+    for( var h = 0; h < comfort.history.length; h++ )
     {
       if( h == 0 )
       {
-        wave = 'M0 ' + ( 100 + ( 90 * comfort_history[h].comfort ) ) + ' ';
+        wave = 'M0 ' + ( 100 + ( 90 * comfort.history[h].comfort ) ) + ' ';
       } else {
-        wave = wave + 'L' + h + ' ' + ( 100 + ( 90 * comfort_history[h].comfort ) ) + ' ';  
+        wave = wave + 'L' + h + ' ' + ( 100 + ( 90 * comfort.history[h].comfort ) ) + ' ';  
       }
     }
     
-    path.setAttribute( 'd', wave );
-    comfort.appendChild( path );
+    comfort.chart.setAttribute( 'd', wave );
   }  
 }
 
@@ -110,6 +87,29 @@ function queryLatest()
   } );
 }
 
+function doFiveClick()
+{ 
+  if( interval != null )
+  {
+    clearInterval( interval );
+    interval = null;
+  }
+  
+  // Start real time
+  kaazing.publish( IOT_TOPIC, JSON.stringify( {
+    attention: 'server',
+    value: REAL_TIME_OFF
+  } ) );  
+  
+  queryLatest();
+  
+  comfort.plot.setAttribute( 'opacity', 1 );
+  comfort.chart.setAttribute( 'd', 'M0 0' );    
+  comfort.chart.setAttribute( 'opacity', 0 );
+  
+  interval = setInterval( queryLatest, 5000 );
+}
+
 function doGatewayConnect() {
   console.log( 'Client connected.' );
   
@@ -120,19 +120,21 @@ function doGatewayConnect() {
 function doGatewayMessage( message ) {
   var data = null;
   var parts = null;
-    
+  
+  comfort.asof.innerHTML = 'As of Today at ' + moment().format( 'h:mm:ss A' );
+  
   data = JSON.parse( message );
   
   if( data.attention == 'client' ) 
   {
     parts = data.value.split( ',' );
     
-    if( comfort_history.length >= comfort.clientWidth )
+    if( comfort.history.length >= comfort.container.clientWidth )
     {
-      comfort_history.splice( 0, 1 );  
+      comfort.history.splice( 0, 1 );  
     }
     
-    comfort_history.push( {
+    comfort.history.push( {
       comfort: parseFloat( parts[0] ),
       usage: parseFloat( parts[1] ),
       index: parseFloat( parts[2] )
@@ -144,17 +146,43 @@ function doGatewayMessage( message ) {
 
 function doKaazingClick() 
 {
-  // Stop polling
-  clearInterval( interval );
-  
-  // Setup history
-  comfort_history = [];
+  if( interval != null )
+  {
+    // Stop polling
+    clearInterval( interval );    
+    interval = null;
+  }
+    
+  comfort.plot.setAttribute( 'opacity', 0 );  
+  comfort.chart.setAttribute( 'opacity', 1 );  
+  comfort.chart.setAttribute( 'd', 'M0 0' );    
   
   // Start real time
   kaazing.publish( IOT_TOPIC, JSON.stringify( {
     attention: 'server',
     value: REAL_TIME_ON
   } ) );
+}
+
+function doManualClick()
+{
+  if( interval != null )
+  {
+    clearInterval( interval );  
+    interval = null;
+  }
+  
+  comfort.asof.innerHTML = 'As of the Last 30 Days';    
+  
+  comfort.plot.setAttribute( 'opacity', 1 );
+  comfort.chart.setAttribute( 'd', 'M0 0' );  
+  comfort.chart.setAttribute( 'opacity', 0 );  
+  
+  // Turn off real time
+  kaazing.publish( IOT_TOPIC, JSON.stringify( {
+    attention: 'server',
+    value: REAL_TIME_OFF
+  } ) );  
 }
 
 function doLatestError( error ) 
@@ -165,33 +193,75 @@ function doLatestError( error )
 
 function doLatestSuccess( result ) 
 {
+  comfort.asof.innerHTML = 'As of Today at ' + moment().format( 'h:mm:ss A' );  
+  
   drawComfort( result.get( 'comfort' ) );
 }
 
-function doTurtleClick()
+function doOneClick()
 { 
+  if( interval != null )
+  {
+    clearInterval( interval );
+    interval = null;
+  }
+  
+  comfort.plot.setAttribute( 'opacity', 1 );  
+  comfort.chart.setAttribute( 'd', 'M0 0' );    
+  comfort.chart.setAttribute( 'opacity', 0 );  
+  
+  queryLatest();
+  
+  // Turn off real time
   kaazing.publish( IOT_TOPIC, JSON.stringify( {
     attention: 'server',
     value: REAL_TIME_OFF
-  } ) );
+  } ) );  
+  
+  interval = setInterval( queryLatest, 1000 );  
 }
 
 function doWindowLoad()
 {
   var button = null;
+  var controls = null;
+  
+  // Show controls
+  if( URLParser( window.location.href ).hasParam( "controls" ) )
+  {
+    console.log( 'Controls requested.' );
+    
+    controls = document.querySelector( '#controls' );
+    controls.style.visibility = 'visible';
+  }
   
   // Gateway
   kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );  
   
   // Modes
+  button = document.querySelector( '.refresh' );
+  button.addEventListener( 'click', doManualClick );
+  
   button = document.querySelector( '.turtle' );
-  button.addEventListener( 'click', doTurtleClick );
+  button.addEventListener( 'click', doFiveClick );  
+  
+  button = document.querySelector( '.funnel' );
+  button.addEventListener( 'click', doOneClick );
   
   button = document.querySelector( '.kaazing' );
   button.addEventListener( 'click', doKaazingClick );  
 
-  // Common elements
-  comfort = document.querySelector( '#comfort' );
+  comfort = {
+    asof: document.querySelector( '.as-of' ),
+    chart: document.querySelector( '#chart' ),
+    container: document.querySelector( '#comfort' ),
+    history: new Array(),
+    plot: document.querySelector( '#plot' ),
+    range: document.querySelector( '#range' )
+  };
+  
+  // Populate range
+  drawRange();
   
   // Polling
   queryLatest();
