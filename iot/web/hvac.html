@@ -459,30 +459,30 @@ button:focus {
         
           <div class="col-sm-1 happy"></div>
           <div class="col-sm-1" style="padding: 0;">
-            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">75%</p>
+            <p id="usage-usage" style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">75%</p>
             <p style="margin: 0; padding: 0; margin-top: -5px; color: #655f5f; text-align: center;">usage</p>
           </div>
           <svg class="col-sm-4" height="50">
-            <g transform="translate( 32, 0 )">
+            <g id="usage-callout" transform="translate( 32, 0 )">
               <rect x="0" y="0" width="50" height="20" fill="#6fc048" rx="10" ry="10"></rect>
               <path d="M25 28 l6 -8 l-12 0 l6 8" fill="#6fc048"></path>
-              <text x="25" y="15" width="50" text-anchor="middle" fill="white">25%</text>              
+              <text id="usage-label" x="25" y="15" width="50" text-anchor="middle" fill="white">25%</text>              
             </g>
-            <rect x="0" y="30" width="25%" height="10" rx="5" ry="5" fill="#655f5f"></rect>                        
+            <rect id="usage-slider" x="0" y="30" width="25%" height="10" rx="5" ry="5" fill="#655f5f"></rect>                        
             <rect x="0" y="30" width="100%" height="10" stroke-width="2" stroke="#655f5f" rx="5" ry="5" fill="rgba( 0, 0, 0, 0 )"></rect>
           </svg>
           <div class="col-sm-1 leaf"></div>
           <div class="col-sm-1" style="padding: 0;">
-            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">0.60</p>
+            <p id="live-usage" style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0;  color: #655f5f; text-align: center;">0.60</p>
             <p style="margin: 0; padding: 0; margin-top: -5px; color: #655f5f; text-align: center;">index</p>        
           </div>
           <svg class="col-sm-4" height="50">
-            <g transform="translate( 90, 0 )">
+            <g id="live-callout" transform="translate( 90, 0 )">
               <rect x="0" y="0" width="50" height="20" fill="#6fc048" rx="10" ry="10"></rect>
               <path d="M25 28 l6 -8 l-12 0 l6 8" fill="#6fc048"></path>
-              <text x="25" y="15" width="50" text-anchor="middle" fill="white">50%</text>              
+              <text id="live-label" x="25" y="15" width="50" text-anchor="middle" fill="white">50%</text>              
             </g>
-            <rect x="0" y="30" width="50%" height="10" rx="5" ry="5" fill="#655f5f"></rect>            
+            <rect id="live-slider" x="0" y="30" width="50%" height="10" rx="5" ry="5" fill="#655f5f"></rect>            
             <rect x="0" y="30" width="100%" height="10" stroke-width="2" stroke="#655f5f" rx="5" ry="5" fill="rgba( 0, 0, 0, 0 )"></rect>
           </svg>          
           
@@ -522,16 +522,16 @@ button:focus {
         <div class="row">
           <div class="col-sm-2 happy" style="margin-top: 10px;"></div>
           <div class="col-sm-2" style="margin-top: 10px; padding: 0; text-align: center;">
-            <p style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0; color: #655f5f;">75%</p>
+            <p id="comfort-percent" style="font-size: 1.50em; font-weight: 600; margin: 0; padding: 0; color: #655f5f;">75%</p>
             <p style="margin: 0; margin-top: -5px; padding: 0; color: #655f5f;">usage</p>
           </div>
           <svg class="col-sm-8" height="65">
-            <g transform="translate( 32, 10 )">
+            <g id="comfort-callout" transform="translate( 0, 10 )">
               <rect x="0" y="0" width="50" height="20" fill="#6fc048" rx="10" ry="10"></rect>
               <path d="M25 28 l6 -8 l-12 0 l6 8" fill="#6fc048"></path>
-              <text x="25" y="15" width="50" text-anchor="middle" fill="white">25%</text>              
+              <text id="comfort-label" x="25" y="15" width="50" text-anchor="middle" fill="white">12%</text>              
             </g>
-            <rect x="0" y="40" width="25%" height="10" rx="5" ry="5" fill="#655f5f"></rect>                        
+            <rect id="comfort-slider" x="0" y="40" width="12%" height="10" rx="5" ry="5" fill="#655f5f"></rect>                        
             <rect x="0" y="40" width="100%" height="10" stroke-width="2" stroke="#655f5f" rx="5" ry="5" fill="rgba( 0, 0, 0, 0 )"></rect>
           </svg>          
         </div>

@@ -10,10 +10,11 @@ var SVG_PATH = 'http://www.w3.org/2000/svg';
 var Iot = Parse.Object.extend( 'Iot' );
 
 var comfort = null;
-var comfort_history = null;
 var interval = null;
 var kaazing = null;
+var live = null;
 var realtime = false;
+var usage = null;
 
 function drawRange()
 {
@@ -48,19 +49,82 @@ function drawRange()
 function drawComfort( value ) 
 {
   var offset = null;
+  var result = null;
+  var transform = null;
   var wave = null;
     
   if( value != null )
   {
-    // Random vertical placement
+    result = scale( 
+      value,
+      -1,
+      1,
+      12,
+      88
+    );    
+
+    // Label
+    // Slider
+    comfort.usage.innerHTML = Math.round( result ) + '%';      
+    comfort.label.textContent = Math.round( result ) + '%';
+    comfort.slider.setAttribute( 'width', Math.round( result ) + '%' );
+    
+    // Callout
+    transform = scale( 
+      result,
+      12,
+      88,
+      0,
+      comfort.callout.parentElement.clientWidth - 50 - 30
+    );
+        
+    comfort.callout.setAttribute( 'transform', 
+      'translate( ' + 
+      Math.floor( transform ) + 
+      ', 10 )' 
+    );
+    
+    // Random horizontal placement
+    // Since there is no time axis
     offset = ( ( comfort.container.clientWidth - 20 ) * Math.random() ) + 10;
 
-    // Place plot
-    comfort.plot.setAttribute( 'transform', 'translate( ' + offset + ', ' + ( 100 + ( 90 * value ) ) + ' )' );
+    // Plot
+    comfort.plot.setAttribute( 'transform', 'translate( ' + offset + ', ' + ( 100 + ( 88 * value ) ) + ' )' );
     comfort.plot.setAttribute( 'opacity', 1 );
   } else if( value == null ) {    
+    result = scale( 
+      comfort.history[comfort.history.length - 1].comfort,
+      -1,
+      1,
+      12,
+      88
+    );
+    
+    // Label
+    // Slider
+    comfort.usage.innerHTML = Math.round( result ) + '%';      
+    comfort.label.textContent = Math.round( result ) + '%';
+    comfort.slider.setAttribute( 'width', Math.round( result ) + '%' );
+    
+    // Callout
+    transform = scale( 
+      result,
+      12,
+      88,
+      0,
+      comfort.callout.parentElement.clientWidth - 50 - 30
+    );
+    
+    comfort.callout.setAttribute( 'transform', 
+      'translate( ' + 
+      Math.floor( transform ) + 
+      ', 10 )' 
+    );
+    
+    // Hide plot
     comfort.plot.setAttribute( 'opacity', 0 );          
     
+    // Draw sine curve
     for( var h = 0; h < comfort.history.length; h++ )
     {
       if( h == 0 )
@@ -75,6 +139,140 @@ function drawComfort( value )
   }  
 }
 
+function drawIndex( value ) 
+{
+  var result = null;
+  var transform = null;
+    
+  if( value != null )
+  {
+    result = scale( 
+      value,
+      -1,
+      1,
+      12,
+      88
+    );    
+
+    // Label
+    // Slider
+    live.usage.innerHTML = parseFloat( value ).toFixed( 2 );      
+    live.label.textContent = Math.round( result ) + '%';
+    live.slider.setAttribute( 'width', Math.round( result ) + '%' );
+    
+    // Callout
+    transform = scale( 
+      result,
+      12,
+      88,
+      0,
+      live.callout.parentElement.clientWidth - 50 - 30
+    );    
+
+    live.callout.setAttribute( 'transform', 
+      'translate( ' + 
+      Math.floor( transform ) + 
+      ', 0 )' 
+    );
+  } else if( value == null ) {    
+    result = scale( 
+      comfort.history[comfort.history.length - 1].index,
+      -1,
+      1,
+      12,
+      88
+    );    
+    
+    // Label
+    // Slider
+    live.usage.innerHTML = parseFloat( comfort.history[comfort.history.length - 1].index ).toFixed( 2 );      
+    live.label.textContent = Math.round( result ) + '%';
+    live.slider.setAttribute( 'width', Math.round( result ) + '%' );
+    
+    // Callout
+    transform = scale( 
+      result,
+      12,
+      88,
+      0,
+      live.callout.parentElement.clientWidth - 50 - 30
+    );
+
+    live.callout.setAttribute( 'transform', 
+      'translate( ' + 
+      Math.floor( transform ) + 
+      ', 0 )' 
+    );
+  }  
+}
+
+function drawUsage( value ) 
+{
+  var result = null;
+  var transform = null;
+    
+  if( value != null )
+  {
+    result = scale( 
+      value,
+      -1,
+      1,
+      12,
+      88
+    );    
+
+    // Label
+    // Slider
+    usage.usage.innerHTML = Math.round( result ) + '%';      
+    usage.label.textContent = Math.round( result ) + '%';
+    usage.slider.setAttribute( 'width', Math.round( result ) + '%' );
+    
+    // Callout
+    transform = scale( 
+      result,
+      12,
+      88,
+      0,
+      usage.callout.parentElement.clientWidth - 50 - 30
+    );
+
+    usage.callout.setAttribute( 'transform', 
+      'translate( ' + 
+      Math.floor( transform ) + 
+      ', 0 )' 
+    );
+  } else if( value == null ) {    
+    result = scale( 
+      comfort.history[comfort.history.length - 1].usage,
+      -1,
+      1,
+      12,
+      88
+    );        
+
+    // Label
+    // Slider
+    usage.usage.innerHTML = Math.round( result ) + '%';      
+    usage.label.textContent = Math.round( result ) + '%';
+    usage.slider.setAttribute( 'width', Math.round( result ) + '%' );
+    
+    // Callout
+    transform = scale( 
+      result,
+      12,
+      88,
+      0,
+      usage.callout.parentElement.clientWidth - 50 - 30
+    );
+
+    usage.callout.setAttribute( 'transform', 
+      'translate( ' + 
+      Math.floor( transform ) + 
+      ', 0 )' 
+    );
+  }  
+}
+
 function queryLatest()
 {
   var query = null;
@@ -85,6 +283,12 @@ function queryLatest()
     success: doLatestSuccess,
     error: doLatestError
   } );
+}
+
+function scale( value, old_top, old_bottom, new_top, new_bottom )
+{
+  // minTo + (maxTo - minTo) * ((value - minFrom) / (maxFrom - minFrom))
+  return new_bottom + ( new_top - new_bottom ) * ( ( value - old_bottom ) / ( old_top - old_bottom ) ); 
 }
 
 function doFiveClick()
@@ -141,6 +345,8 @@ function doGatewayMessage( message ) {
     } );
     
     drawComfort( null );
+    drawUsage( null );
+    drawIndex( null );
   }
 }
 
@@ -196,6 +402,8 @@ function doLatestSuccess( result )
   comfort.asof.innerHTML = 'As of Today at ' + moment().format( 'h:mm:ss A' );  
   
   drawComfort( result.get( 'comfort' ) );
+  drawUsage( result.get( 'usage' ) );
+  drawIndex( result.get( 'index' ) );  
 }
 
 function doOneClick()
@@ -253,11 +461,29 @@ function doWindowLoad()
 
   comfort = {
     asof: document.querySelector( '.as-of' ),
+    callout: document.querySelector( '#comfort-callout' ),
     chart: document.querySelector( '#chart' ),
     container: document.querySelector( '#comfort' ),
     history: new Array(),
+    label: document.querySelector( '#comfort-label' ),
     plot: document.querySelector( '#plot' ),
-    range: document.querySelector( '#range' )
+    range: document.querySelector( '#range' ),
+    slider: document.querySelector( '#comfort-slider' ),
+    usage: document.querySelector( '#comfort-percent' )
+  };
+
+  live = {
+    callout: document.querySelector( '#live-callout' ),
+    label: document.querySelector( '#live-label' ),
+    slider: document.querySelector( '#live-slider' ),
+    usage: document.querySelector( '#live-usage' ),
+  };  
+  
+  usage = {
+    callout: document.querySelector( '#usage-callout' ),
+    label: document.querySelector( '#usage-label' ),
+    slider: document.querySelector( '#usage-slider' ),
+    usage: document.querySelector( '#usage-usage' ),
   };
   
   // Populate range
