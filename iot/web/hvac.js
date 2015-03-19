@@ -1,8 +1,8 @@
 // Kaazing client ID
 var IOT_TOPIC = 'iot_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
-// var PARSE_APP = '_PARSE_APP_';
-// var PARSE_KEY = '_PARSE_JS_KEY_';
+var PARSE_APP = '_PARSE_APP_';
+var PARSE_KEY = '_PARSE_JS_KEY_';
 var REAL_TIME_ON = 1;
 var REAL_TIME_OFF = 0;
 var SVG_PATH = 'http://www.w3.org/2000/svg';
@@ -287,7 +287,6 @@ function queryLatest()
 
 function scale( value, old_top, old_bottom, new_top, new_bottom )
 {
-  // minTo + (maxTo - minTo) * ((value - minFrom) / (maxFrom - minFrom))
   return new_bottom + ( new_top - new_bottom ) * ( ( value - old_bottom ) / ( old_top - old_bottom ) ); 
 }
 
