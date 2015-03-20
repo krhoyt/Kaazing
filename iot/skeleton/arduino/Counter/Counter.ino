@@ -17,8 +17,8 @@ void setup() {
 // Loop
 // Increment counter
 // Print counter
+// Check for seed
 void loop() {
-  
   // Increment
   counter = counter + 1;
   
@@ -27,6 +27,11 @@ void loop() {
   // Record ends with newline
   Serial.print( "#" );
   Serial.println( counter );
+  
+  // Set new seed
+  if( Serial.available() ) {
+    counter = Serial.read();
+  }
   
   // Buffer
   delay( 25 );

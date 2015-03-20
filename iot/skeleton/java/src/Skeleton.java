@@ -1,9 +1,19 @@
 import java.awt.EventQueue;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParser.Event;
 
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
@@ -22,14 +32,21 @@ import jssc.SerialPortException;
 // Gateway AMQP client
 // http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22amqp.client.java%22
 
+// Java JSON processing
+// http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22javax.json%22
+
 public class Skeleton implements SerialPortEventListener {
 
 	// Constants
-	private static final String KAAZING_ID = "nKkG23KJnb";
 	private static final char 	SERIAL_END = '\r';
-	private static final char 	SERIAL_START = '#';
+	private static final char 	SERIAL_START = '#';	
+	private static final String ACTION_GET = "get";
+	private static final String	ACTION_SET = "set";
+	private static final String KAAZING_ID = "nKkG23KJnb";
+	private static final String KEY_ACTION = "action";
+	private static final String KEY_COUNTER = "counter";
 	private static final String SERIAL_PORT = "port.txt";	
-	private static final String TOPIC = "skeleton_topic";		
+	private static final String TOPIC = "skeleton_topic";			
 	
 	// Gateway
 	private Gateway			gateway = null;
@@ -71,7 +88,46 @@ public class Skeleton implements SerialPortEventListener {
 			
 			@Override
 			public void onMessage( String body ) {
-				System.out.println( "Message: " + body );
+				Event		e = null;
+				InputStream	stream = null;
+				JsonParser	parser = null;
+				String		action = null;
+				String		counter = null;
+				
+				// String to InputStream
+				stream = new ByteArrayInputStream( body.getBytes( StandardCharsets.UTF_8 ) );
+				parser = Json.createParser( stream );				
+				
+				// Iterate through map keys
+				while( parser.hasNext() ) {
+					e = parser.next();
+					
+					if( e == Event.KEY_NAME ) {
+						switch( parser.getString() ) {
+							case KEY_ACTION:
+								parser.next();
+								action = parser.getString();
+								break;
+								
+							case KEY_COUNTER:
+								parser.next();
+								counter = parser.getString();
+								break;								
+						}
+					}
+				}
+				
+				// Send new counter value
+				if( action.equals( ACTION_SET ) ) {
+					System.out.println( "Seed: " + counter );
+					
+					// Serial send
+					try {
+						serial.writeInt( Integer.parseInt( counter ) );
+					} catch( SerialPortException spe ) {
+						spe.printStackTrace();
+					}
+				}
 			}
 			
 			@Override
@@ -162,8 +218,6 @@ public class Skeleton implements SerialPortEventListener {
                     	// Look for record end
                         if( b == SERIAL_END ) {
                             reading = false;
-
-                            System.out.println( "Arduino: " + builder.toString() );                            
                             
                             // Process message
                             // Send to gateway
@@ -171,7 +225,7 @@ public class Skeleton implements SerialPortEventListener {
                             	
                             	@Override 
                             	public void run() {
-                            		process( builder.toString() );                            		
+                            		process(  builder.toString() );                            		
                             	}
                                 
                             } );                         
@@ -189,8 +243,32 @@ public class Skeleton implements SerialPortEventListener {
 
 	// Process serial port data
 	// Send to gateway
+	// Send as JSON
 	private void process( String message ) {
-		gateway.publish( TOPIC, message );		
+		JsonObject			result;
+		JsonObjectBuilder	builder;
+		StringWriter		sw;
+				
+		// Build JSON structure
+		builder = Json.createObjectBuilder();
+		builder.add( "action", ACTION_GET );
+		builder.add( "counter", message );
+		
+		// Encode
+		result = builder.build();
+		
+		// Stringify
+		sw = new StringWriter();
+		
+		try( JsonWriter writer = Json.createWriter( sw ) ) {
+			writer.writeObject( result );
+		}
+		
+		// Publish message
+		// May not be connected yet
+		if( gateway.isConnected() ) {
+			gateway.publish( TOPIC, sw.toString() );
+		}
 	}	
 	
 	public static void main( String[] args ) {
