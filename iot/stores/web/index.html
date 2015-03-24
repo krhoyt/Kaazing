@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<!-- ### -->
+<!-- Must be served by web server -->  
+<!-- ### -->
+  
+<title>Barcode Scanner</title>
+
+<!-- Styles -->
+<style type="text/css">
+.amazon {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  position: relative;
+}
+  
+.amazon > p {
+  bottom: 0;
+  font-family: sans-serif;
+  font-size: 2em;
+  font-weight: 600;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  text-align: center
+}
+</style>
+  
+<!-- Gateway -->  
+<script src="gateway.js" type="text/javascript"></script>  
+
+<!-- Application -->
+<script type="text/javascript">
+// Constants  
+var ACTION_SHOW = 'show';
+var TOPIC = 'stores_topic';
+var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
+  
+// Application
+var kaazing = null;  
+  
+// Called when connected to Gateway
+// Subscribe to topic
+function doGatewayConnect()
+{
+  console.log( 'Client connected.' );
+  
+  // Subscribe
+  kaazing.on( Gateway.EVENT_MESSAGE, doGatewayMessage );
+  kaazing.subscribe( TOPIC );    
+}
+  
+// Called when message arrives
+function doGatewayMessage( message )
+{
+  var amazon = null;
+  var data = null;
+  
+  // Parse JSON
+  data = JSON.parse( message );
+  
+  // Decision tree for incoming action
+  // Display actual counter value
+  if( data.action == ACTION_SHOW )
+  {
+    amazon = document.querySelector( ".amazon" );
+    amazon.style.backgroundImage = 'url( ' + data.image + ' )';
+  }
+}
+
+// Called when set button is clicked
+// Sends new seed value to hardware
+function doSetClick()
+{
+  var message = null;
+  var seed = null;
+  
+  // Get value
+  seed = document.querySelector( '.seed' );
+  
+  // Build message
+  message = {
+    action: ACTION_SET,
+    counter: seed.value
+  };
+  
+  // Send to Gateway
+  kaazing.publish( TOPIC, JSON.stringify( message ) );
+}
+  
+// Called when document is loaded
+// Connect to Gateway
+function doWindowLoad()
+{
+  // Connect to Gateway
+  kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );
+  
+  // Align user interface
+  doWindowResize();
+}
+  
+// Called when document is resized
+// Fits user interface
+function doWindowResize()
+{
+  var amazon = null;
+  
+  amazon = document.querySelector( '.amazon' );
+  amazon.style.height = ( window.innerHeight - 100 ) + 'px';
+  amazon.style.width = ( window.innerHeight - 100 ) + 'px';
+  amazon.style.marginLeft = Math.round( ( window.innerWidth - amazon.clientWidth ) / 2 ) + 'px';
+  amazon.style.marginTop = Math.round( ( window.innerHeight - amazon.clientHeight ) / 2 ) + 'px';  
+}
+  
+// Listen for document to load
+window.addEventListener( 'load', doWindowLoad );
+window.addEventListener( 'resize', doWindowResize );  
+</script>  
+  
+</head>
+<body>
+
+<!-- Result -->
+<div class="amazon">
+
+  <!-- Title -->
+  <p></p>
+  
+</div>
+  
+</body>
+</html>

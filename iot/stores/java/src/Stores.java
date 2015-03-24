@@ -19,9 +19,7 @@ import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
-
-// Amazon (Product Advertising API)
-// https://aws.amazon.com/tools
+import jssc.SerialPortList;
 
 // JSSC (Java Simple Serial Connection) 
 // http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jssc%22
@@ -38,17 +36,24 @@ import jssc.SerialPortException;
 // Java JSON processing
 // http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22javax.json%22
 
+// Apache Commons Codec
+// http://commons.apache.org/proper/commons-codec/
+
 public class Stores implements SerialPortEventListener {
 
 	// Constants
 	private static final char 	SERIAL_END = '\r';	
-	private static final String ACTION_GET = "get";
-	private static final String	ACTION_SET = "set";
+	private static final String ACTION_SHOW = "show";
 	private static final String KAAZING_ID = "nKkG23KJnb";
 	private static final String KEY_ACTION = "action";
-	private static final String KEY_COUNTER = "counter";
+	private static final String KEY_IMAGE = "image";	
+	private static final String KEY_TITLE = "title";
+	private static final String KEY_UPC = "upc";	
 	private static final String SERIAL_PORT = "port.txt";	
 	private static final String TOPIC = "stores_topic";			
+	
+	// Amazon
+	private Amazon			amazon = null;
 	
 	// Gateway
 	private Gateway			gateway = null;
@@ -60,14 +65,41 @@ public class Stores implements SerialPortEventListener {
 	// Constructor
 	// Open serial port
 	// Connect to Gateway
-	public Stores() {
+	public Stores( boolean list ) {
 		initAmazon();
-		// initGateway();
-		initSerial();
+		initGateway();
+		initSerial( list );
+	}
+	
+	public Stores() {
+		this( false );
 	}
 	
 	private void initAmazon() {
+		amazon = new Amazon();
 		
+		amazon.callback = new AmazonListener() {
+			
+			@Override
+			public void onResult( AmazonResult scan ) {
+				System.out.println( scan.getUpc() );
+				System.out.println( scan.getTitle() );
+				System.out.println( scan.getImage() );			
+				
+                // Process message
+                // Send to gateway
+                EventQueue.invokeLater( new Runnable() {
+                	
+                	@Override 
+                	public void run() {
+                		process(  scan );                            		
+                	}
+                    
+                } );
+				
+			}
+			
+		};
 	}
 	
 	// Initialize gateway
@@ -93,12 +125,10 @@ public class Stores implements SerialPortEventListener {
 			}
 			
 			@Override
-			public void onMessage( String body ) {
+			public void onMessage( String body ) {	
 				Event		e = null;
 				InputStream	stream = null;
 				JsonParser	parser = null;
-				String		action = null;
-				String		counter = null;
 				
 				// String to InputStream
 				stream = new ByteArrayInputStream( body.getBytes( StandardCharsets.UTF_8 ) );
@@ -112,26 +142,8 @@ public class Stores implements SerialPortEventListener {
 						switch( parser.getString() ) {
 							case KEY_ACTION:
 								parser.next();
-								action = parser.getString();
 								break;
-								
-							case KEY_COUNTER:
-								parser.next();
-								counter = parser.getString();
-								break;								
 						}
-					}
-				}
-				
-				// Send new counter value
-				if( action.equals( ACTION_SET ) ) {
-					System.out.println( "Seed: " + counter );
-					
-					// Serial send
-					try {
-						serial.writeInt( Integer.parseInt( counter ) );
-					} catch( SerialPortException spe ) {
-						spe.printStackTrace();
 					}
 				}
 			}
@@ -159,11 +171,21 @@ public class Stores implements SerialPortEventListener {
 
 	// Initialize serial port
 	// Serial port in external text file
-	private void initSerial() {
+	private void initSerial( boolean list ) {
 		byte[]			data;
 		File			file;
 		FileInputStream	stream;
+		String[]		names;
 		String			port;
+		
+		// List serial ports (optional)
+		if( list ) {
+			names = SerialPortList.getPortNames();
+			
+	        for( int p = 0; p < names.length; p++ ) {
+	            System.out.println( names[p] );
+	        }					
+		}
 		
 		// Incoming stream
 		builder = new StringBuilder();
@@ -180,7 +202,7 @@ public class Stores implements SerialPortEventListener {
 			stream.read( data );
 			stream.close();
 			
-			port = new String( data, StandardCharsets.UTF_8 );
+			port = new String( data, StandardCharsets.UTF_8 ).trim();
 		} catch( UnsupportedEncodingException uee ) {
 			uee.printStackTrace();
 		} catch( IOException ioe ) {
@@ -189,6 +211,7 @@ public class Stores implements SerialPortEventListener {
 		
 		if( port != null ) {
 			// Serial port
+			System.out.println( "Port: " + port );
 			serial = new SerialPort( port );
 			
 			try {
@@ -224,22 +247,9 @@ public class Stores implements SerialPortEventListener {
                 for( byte b:buffer ) {
                 	// Look for record end
                     if( b == SERIAL_END ) {
-                    	System.out.println( builder.toString() );
+                    	amazon.search( builder.toString().trim() );                    	
+                    	
                     	builder.setLength( 0 );
-                    	
-                    	/*
-                        // Process message
-                        // Send to gateway
-                        EventQueue.invokeLater( new Runnable() {
-                        	
-                        	@Override 
-                        	public void run() {
-                        		process(  builder.toString() );                            		
-                        	}
-                            
-                        } );
-                        */
-                    	
                     } else {
                     	// Keep adding until complete record
                         builder.append( ( char )b );
@@ -254,15 +264,17 @@ public class Stores implements SerialPortEventListener {
 	// Process serial port data
 	// Send to gateway
 	// Send as JSON
-	private void process( String message ) {
+	private void process( AmazonResult scan ) {
 		JsonObject			result;
 		JsonObjectBuilder	builder;
 		StringWriter		sw;
 				
 		// Build JSON structure
 		builder = Json.createObjectBuilder();
-		builder.add( "action", ACTION_GET );
-		builder.add( "counter", message );
+		builder.add( KEY_ACTION, ACTION_SHOW );
+		builder.add( KEY_UPC, scan.getUpc() );
+		builder.add( KEY_TITLE, scan.getTitle() );
+		builder.add( KEY_IMAGE, scan.getImage() );		
 		
 		// Encode
 		result = builder.build();
@@ -287,7 +299,15 @@ public class Stores implements SerialPortEventListener {
 			@Override
 			public void run() 
 			{
-				Stores iot = new Stores();
+				Stores iot;
+				
+				if( args.length > 0 ) {
+					if( args[0].equals( "-list" ) ) {
+						iot = new Stores( true );
+					}
+				} else {
+					iot = new Stores();
+				}
 			}
 			
 		} );		

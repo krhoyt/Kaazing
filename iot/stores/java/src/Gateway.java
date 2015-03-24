@@ -12,7 +12,6 @@ import org.kaazing.net.ws.amqp.ChannelListener;
 import org.kaazing.net.ws.amqp.ConnectionEvent;
 import org.kaazing.net.ws.amqp.ConnectionListener;
 
-
 public class Gateway {
 	
 	private static final String CLIENT_ID = "abc123";
