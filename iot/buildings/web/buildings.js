@@ -1,10 +1,8 @@
 // Kaazing client ID
 var IOT_TOPIC = 'iot_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
-var PARSE_APP = 'FIK3mcc7YaxtFCqtyytPFFCpmwq7uPmETSRM9rq3';
-var PARSE_KEY = 'vqCIltH2jD7S91COxEq91gWhfRBPzYdgeA2tUfzf';
-// var PARSE_APP = '_PARSE_APP_';
-// var PARSE_KEY = '_PARSE_JS_KEY_';
+var PARSE_APP = '_PARSE_APP_';
+var PARSE_KEY = '_PARSE_JS_KEY_';
 var REAL_TIME_ON = 1;
 var REAL_TIME_OFF = 0;
 var SVG_PATH = 'http://www.w3.org/2000/svg';
