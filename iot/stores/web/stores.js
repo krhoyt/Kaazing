@@ -1,4 +1,5 @@
 // Constants  
+var ACTION_REMOVE = 'remove';
 var ACTION_SHOW = 'show';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
 var PREVIEW_GAP = 50;
@@ -42,6 +43,43 @@ function line() {
   list.appendChild( item );
 }
  
+// Called to remove an item
+// Remove from cart
+// Remove from display
+// Total
+function remove( upc )
+{
+  var item = null;
+  var list = null;
+  
+  // Match in data model
+  for( var i = 0; i < cart.length; i++ )
+  {
+    if( cart[i].upc == upc ) 
+    {
+      index = i;
+      break;
+    }
+  }
+  
+  // Remove from cart
+  cart.splice( index, 1 );  
+  
+  // Get specific line item
+  item = document.querySelector( '.line[data-upc="' + upc + '"]' );
+  
+  // Clean up listeners
+  item.children[0].removeEventListener( 'click', doThumbnailClick );
+  item.children[4].removeEventListener( 'click', doRemoveClick );
+  
+  // Remove from display
+  list = document.querySelector( '.list' );
+  list.removeChild( item );
+  
+  // Tally
+  total();  
+}
+
 // Called to update totals
 // Includes item count
 function total() {
@@ -102,6 +140,8 @@ function doGatewayMessage( message )
     console.log( data.title );
     console.log( data.price );    
     console.log( data.image );
+  } else if( data.action == ACTION_REMOVE ) {
+    remove( data.upc );  
   }
 }
 
@@ -134,40 +174,19 @@ function doPreviewClickComplete()
 }
 
 // Called to remove an item from the list
-// Lookup ID based on UPC
-// Remove from cart
-// Remove from display
+// Publish message to remove line item
 function doRemoveClick() 
 {
-  var list = null;
   var upc = null;
   
   // Get identifier
   upc = this.parentElement.getAttribute( 'data-upc' );  
-  
-  // Match in data model
-  for( var i = 0; i < cart.length; i++ )
-  {
-    if( cart[i].upc == upc ) 
-    {
-      index = i;
-      break;
-    }
-  }
-  
-  // Remove from cart
-  cart.splice( index, 1 );
-  
-  // Clean up listeners
-  this.parentElement.children[0].removeEventListener( 'click', doThumbnailClick );
-  this.parentElement.children[4].removeEventListener( 'click', doRemoveClick );
-  
-  // Remove from display
-  list = document.querySelector( '.list' );
-  list.removeChild( this.parentElement );
-  
-  // Tally
-  total();
+    
+  // Remove displays
+  kaazing.publish( TOPIC, JSON.stringify( {
+    action: ACTION_REMOVE,
+    upc: upc
+  } ) );
 }
 
 // Called when line item thumbnail is clicked
@@ -207,14 +226,13 @@ function doWindowLoad()
   // Easter egg for Peter
   button = document.querySelector( 'button' );
   button.addEventListener( 'click', function() {
-    cart.push( {
+    kaazing.publish( TOPIC, JSON.stringify( {
+      action: ACTION_SHOW,
       image: 'dobos-torta.jpg',
       price: 3,      
       title: "Dobos Torta",
-      upc: Date.now()      
-    } );
-    line();
-    total();
+      upc: Date.now()              
+    } ) );
   } );
   
   // Initialize cart
