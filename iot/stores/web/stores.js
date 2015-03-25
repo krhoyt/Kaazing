@@ -1,7 +1,8 @@
 // Constants  
 var ACTION_SHOW = 'show';
-var TOPIC = 'stores_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
+var PREVIEW_GAP = 50;
+var TOPIC = 'stores_topic';
   
 // Application
 var cart = null;
@@ -29,6 +30,9 @@ function line() {
   item.children[0].style.backgroundImage = 'url( ' + cart[cart.length - 1].image + ' )';
   item.children[1].innerHTML = cart[cart.length - 1].title;
   item.children[3].innerHTML = cart[cart.length - 1].price.toLocaleString();
+
+  // Allow for preview
+  item.children[0].addEventListener( 'click', doThumbnailClick );  
   
   // Allow for remove
   item.children[4].addEventListener( 'click', doRemoveClick );
@@ -101,6 +105,28 @@ function doGatewayMessage( message )
   }
 }
 
+function doPreviewClick()
+{
+  var preview = null;
+  
+  preview = document.querySelector( '.preview' );
+  preview.removeEventListener( 'click', doPreviewClick );
+  
+  TweenMax.to( preview, 1, {
+    left: 0 - preview.clientWidth - 10,
+    onComplete: doPreviewClickComplete
+  } );
+}
+
+function doPreviewClickComplete()
+{
+  var preview = null;
+  
+  // Hide
+  preview = document.querySelector( '.preview' );
+  preview.style.visibility = 'hidden';
+}
+
 function doRemoveClick() 
 {
   var list = null;
@@ -122,6 +148,10 @@ function doRemoveClick()
   // Remove from cart
   cart.splice( index, 1 );
   
+  // Clean up listeners
+  this.parentElement.children[0].removeEventListener( 'click', doThumbnailClick );
+  this.parentElement.children[4].removeEventListener( 'click', doRemoveClick );
+  
   // Remove from display
   list = document.querySelector( '.list' );
   list.removeChild( this.parentElement );
@@ -129,7 +159,33 @@ function doRemoveClick()
   // Tally
   total();
 }
+
+function doThumbnailClick()
+{
+  var preview = null;
   
+  // Element
+  preview = document.querySelector( '.preview' );
+  
+  // Background
+  preview.style.backgroundImage = this.style.backgroundImage;
+  
+  // Size and position
+  preview.style.height = ( window.innerHeight - PREVIEW_GAP ) + 'px';
+  preview.style.width = ( window.innerHeight - PREVIEW_GAP ) + 'px';
+  preview.style.left = ( window.innerWidth + 10 ) + 'px';
+  preview.style.top = Math.round( ( window.innerHeight - preview.clientHeight ) / 2 ) + 'px';
+  preview.style.visibility = 'visible';
+  
+  // Event to put away
+  preview.addEventListener( 'click', doPreviewClick );
+  
+  // Show
+  TweenMax.to( preview, 1, {
+    left: Math.round( ( window.innerWidth - preview.clientWidth ) / 2 )
+  } );
+}
+
 // Called when document is loaded
 // Connect to Gateway
 function doWindowLoad()
@@ -139,9 +195,10 @@ function doWindowLoad()
   button = document.querySelector( 'button' );
   button.addEventListener( 'click', function() {
     cart.push( {
-      upc: Date.now(),
-      title: "Nikon D5100 18-55 VR 16.2MP 3",
-      price: 1299
+      image: 'dobos-torta.jpg',
+      price: 3,      
+      title: "Dobos Torta",
+      upc: Date.now()      
     } );
     line();
     total();

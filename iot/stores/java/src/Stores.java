@@ -185,7 +185,7 @@ public class Stores implements SerialPortEventListener {
 			names = SerialPortList.getPortNames();
 			
 	        for( int p = 0; p < names.length; p++ ) {
-	            System.out.println( names[p] );
+	            System.out.println( "List: " + names[p] );
 	        }					
 		}
 		

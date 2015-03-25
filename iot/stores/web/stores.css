@@ -142,7 +142,15 @@ body {
   right: 0;
   top: 82px;
 }
-  
+ 
+.preview {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  visibility: hidden;
+}
+
 .summary {
   background-color: #f1f6f0;
   border-top: solid 2px white;

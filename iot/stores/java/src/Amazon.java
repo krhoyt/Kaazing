@@ -99,6 +99,7 @@ public class Amazon {
 		Document				document;
 		DocumentBuilder			builder;		
 		DocumentBuilderFactory	factory;
+		Node 					amount;
 		Node					image;
         
         try {
@@ -111,8 +112,8 @@ public class Amazon {
             image = document.getElementsByTagName( "LargeImage" ).item( 0 );
             scan.setImage( image.getFirstChild().getTextContent() );
                  
-            // TODO: Parse price from results
-            scan.setPrice( 0 );
+            amount = document.getElementsByTagName( "ListPrice" ).item( 0 );
+            scan.setPrice( Float.parseFloat( amount.getFirstChild().getTextContent() ) / 100 );            
         } catch( Exception e ) {
             e.printStackTrace();
         }
@@ -184,6 +185,8 @@ public class Amazon {
 		Map<String, String>	params;
 		String				request;
 
+		// System.out.println( "Scanned: " + upc );
+		
 		scan = new AmazonResult( upc );
 		
         params = new HashMap<String, String>();
@@ -193,12 +196,12 @@ public class Amazon {
         params.put( "ItemId", upc );
         params.put( "IdType", "UPC" );
         params.put( "SearchIndex", "All" ); 
-        params.put( "ResponseGroup", "Small, Images" );
+        params.put( "ResponseGroup", "Medium, Images" );
         params.put( "AssociateTag", associateTag );
         
         request = sign( params );
         
-        System.out.println( "Signed Request is \"" + request + "\"" );
+        // System.out.println( "Signed Request is \"" + request + "\"" );
         
         fetch( request );
 	}
