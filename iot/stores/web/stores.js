@@ -194,6 +194,7 @@ function doRemoveClick()
 function doThumbnailClick()
 {
   var preview = null;
+  var scaling = null;
   
   // Element
   preview = document.querySelector( '.preview' );
@@ -201,9 +202,16 @@ function doThumbnailClick()
   // Background
   preview.style.backgroundImage = this.style.backgroundImage;
   
+  if( window.innerWidth > window.innerHeight )
+  {
+    scaling = window.innerHeight;  
+  } else {
+    scaling = window.innerWidth;
+  }
+  
   // Size and position
-  preview.style.height = ( window.innerHeight - PREVIEW_GAP ) + 'px';
-  preview.style.width = ( window.innerHeight - PREVIEW_GAP ) + 'px';
+  preview.style.height = ( scaling - PREVIEW_GAP ) + 'px';
+  preview.style.width = ( scaling - PREVIEW_GAP ) + 'px';
   preview.style.left = ( window.innerWidth + 10 ) + 'px';
   preview.style.top = Math.round( ( window.innerHeight - preview.clientHeight ) / 2 ) + 'px';
   preview.style.visibility = 'visible';
