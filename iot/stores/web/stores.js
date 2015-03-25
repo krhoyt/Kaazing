@@ -105,19 +105,25 @@ function doGatewayMessage( message )
   }
 }
 
+// Called to put away preview
 function doPreviewClick()
 {
   var preview = null;
   
+  // Access element
+  // Remove listener
   preview = document.querySelector( '.preview' );
   preview.removeEventListener( 'click', doPreviewClick );
   
+  // Move out of screen
   TweenMax.to( preview, 1, {
     left: 0 - preview.clientWidth - 10,
     onComplete: doPreviewClickComplete
   } );
 }
 
+// Called when the preview is put away
+// Removes from display
 function doPreviewClickComplete()
 {
   var preview = null;
@@ -127,6 +133,10 @@ function doPreviewClickComplete()
   preview.style.visibility = 'hidden';
 }
 
+// Called to remove an item from the list
+// Lookup ID based on UPC
+// Remove from cart
+// Remove from display
 function doRemoveClick() 
 {
   var list = null;
@@ -160,6 +170,8 @@ function doRemoveClick()
   total();
 }
 
+// Called when line item thumbnail is clicked
+// Shows larger preview image
 function doThumbnailClick()
 {
   var preview = null;
@@ -192,6 +204,7 @@ function doWindowLoad()
 {
   var button = null;
   
+  // Easter egg for Peter
   button = document.querySelector( 'button' );
   button.addEventListener( 'click', function() {
     cart.push( {
@@ -204,6 +217,7 @@ function doWindowLoad()
     total();
   } );
   
+  // Initialize cart
   cart = [];
   
   // Connect to Gateway
