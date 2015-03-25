@@ -47,6 +47,7 @@ public class Stores implements SerialPortEventListener {
 	private static final String KAAZING_ID = "nKkG23KJnb";
 	private static final String KEY_ACTION = "action";
 	private static final String KEY_IMAGE = "image";	
+	private static final String KEY_PRICE = "price";	
 	private static final String KEY_TITLE = "title";
 	private static final String KEY_UPC = "upc";	
 	private static final String SERIAL_PORT = "port.txt";	
@@ -84,6 +85,7 @@ public class Stores implements SerialPortEventListener {
 			public void onResult( AmazonResult scan ) {
 				System.out.println( scan.getUpc() );
 				System.out.println( scan.getTitle() );
+				System.out.println( scan.getPrice() );				
 				System.out.println( scan.getImage() );			
 				
                 // Process message
@@ -274,7 +276,8 @@ public class Stores implements SerialPortEventListener {
 		builder.add( KEY_ACTION, ACTION_SHOW );
 		builder.add( KEY_UPC, scan.getUpc() );
 		builder.add( KEY_TITLE, scan.getTitle() );
-		builder.add( KEY_IMAGE, scan.getImage() );		
+		builder.add( KEY_IMAGE, scan.getImage() );
+		builder.add( KEY_PRICE, scan.getPrice() );		
 		
 		// Encode
 		result = builder.build();

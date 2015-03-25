@@ -110,6 +110,9 @@ public class Amazon {
             
             image = document.getElementsByTagName( "LargeImage" ).item( 0 );
             scan.setImage( image.getFirstChild().getTextContent() );
+                 
+            // TODO: Parse price from results
+            scan.setPrice( 0 );
         } catch( Exception e ) {
             e.printStackTrace();
         }
@@ -195,7 +198,7 @@ public class Amazon {
         
         request = sign( params );
         
-        // System.out.println( "Signed Request is \"" + request + "\"" );
+        System.out.println( "Signed Request is \"" + request + "\"" );
         
         fetch( request );
 	}

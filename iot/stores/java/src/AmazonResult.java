@@ -1,24 +1,26 @@
 public class AmazonResult {
-	private String	image = null;	
+	private float	price = 0;
+	private String	image = null;
 	private String	title = null;
 	private String	upc = null;
 	
-	public AmazonResult( String title, String image, String upc ) {
+	public AmazonResult( String title, String image, String upc, float price ) {
 		setTitle( title );
 		setImage( image );
 		setUpc( upc );
+		setPrice( price );
 	}
 	
 	public AmazonResult( String title, String image ) {
-		this( title, image, null );
+		this( title, image, null, 0 );
 	}
 	
 	public AmazonResult( String upc ) {
-		this( null, null, upc );
+		this( null, null, upc, 0 );
 	}
 	
 	public AmazonResult() {
-		this( null, null, null );
+		this( null, null, null, 0 );
 	}
 
 	public String getImage() {
@@ -43,5 +45,13 @@ public class AmazonResult {
 
 	public void setUpc(String upc) {
 		this.upc = upc;
+	}
+
+	public float getPrice() {
+		return price;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
 	}
 }
