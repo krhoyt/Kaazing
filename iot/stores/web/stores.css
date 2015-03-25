@@ -219,3 +219,121 @@ body {
 .template {
   display: none;
 }
+
+@media (max-width: 767px) {
+  .cart {
+    background-position: 20px center;    
+    border-bottom: solid 1px #e0e6df;
+    height: 40px;
+  }
+  
+  .cart h3 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 40px;
+    padding: 0 0 0 50px;
+    text-shadow: 0 1px 0 white;
+  }  
+  
+  .cart .count {
+    border: solid 1px #eda832;
+    border-radius: 20px;
+    box-shadow: 0 1px 0 0 rgba( 255, 255, 255, 0.70 ) inset;
+    font-size: 8px;
+    height: 20px;
+    line-height: 20px;
+    margin: 10px 20px 0 0;
+    text-shadow: 0 1px 0 #d1a04c;
+    width: 20px;
+  }  
+  
+  .line {
+    border-bottom: solid 1px #e0e6df;
+    border-top: solid 1px white;
+    height: 61px;
+  }
+
+  .line .currency {
+    font-size: 11px;
+    height: 18px;
+    left: 77px;
+    line-height: 18px;
+    top: 30px;
+  }  
+
+  .line .price {
+    font-size: 11px;
+    height: 18px;
+    left: 87px;
+    line-height: 18px;
+    top: 30px;
+  }  
+
+  .line .remove {
+    background-size: auto 6px;
+    height: 37px;
+    right: 10px;
+    top: 12px;
+    width: 37px;
+  }
+
+  .line .thumbnail {
+    border: solid 1px #d3ddd2;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 white;
+    height: 37px;
+    left: 20px;
+    top: 12px;
+    width: 37px;
+  }
+
+  .line .title {
+    font-size: 10px;
+    height: 18px;
+    left: 77px;
+    line-height: 18px;
+    top: 12px;
+  }  
+  
+  .list {
+    bottom: 51px;
+    top: 41px;
+  }  
+  
+  .summary {
+    border-top: solid 1px white;
+    height: 50px;
+  }    
+  
+  .summary button {
+    border: solid 1px #eda832;
+    border-radius: 27px;
+    box-shadow: 0 1px 0 0 rgba( 255, 255, 255, 0.70 ) inset,
+                0 2px 2px 0 rgba( 0, 0, 0, 0.10 );
+    font-size: 12px;
+    height: 27px;
+    line-height: 20px;
+    margin: 11px 20px 0 0;
+    padding: 0 20px 0 20px;
+    text-shadow: 0 -1px 0 #d1a04c;
+  }  
+  
+  .summary h4 {
+    font-size: 11px;
+    line-height: 50px;
+    padding: 0 0 0 20px;
+    text-shadow: 0 1px 0 white;
+  }  
+  
+  .summary .amount {
+    font-size: 11px;
+    line-height: 50px;
+    margin: 0 0 0 5px;
+  }  
+  
+  .summary .currency {
+    font-size: 11px;
+    line-height: 50px;
+    margin: 0 0 0 10px;
+  }    
+}

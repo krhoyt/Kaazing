@@ -238,6 +238,8 @@ function doWindowLoad()
   // Initialize cart
   cart = [];
   
+  // alert( window.innerWidth );
+  
   // Connect to Gateway
   kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect ); 
 }
