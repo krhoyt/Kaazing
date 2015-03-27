@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "org.kaazing.cars"
+        applicationId "org.kaazing.stores"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
@@ -19,7 +19,20 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+
+    maven {
+        url "http://dl.bintray.com/journeyapps/maven"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
+
+    compile 'com.journeyapps:zxing-android-embedded:2.1.0@aar'
+    compile 'com.journeyapps:zxing-android-legacy:2.1.0@aar'
+    compile 'com.journeyapps:zxing-android-integration:2.1.0@aar'
+    compile 'com.google.zxing:core:3.2.0'
 }

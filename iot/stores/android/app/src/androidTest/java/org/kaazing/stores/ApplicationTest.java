@@ -1,4 +1,4 @@
-package org.kaazing.cars;
+package org.kaazing.stores;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
