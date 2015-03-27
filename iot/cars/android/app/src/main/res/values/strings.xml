@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Telemetry</string>
+
+    <string name="compass_default">999&#xb0;</string>
+    <string name="uuid_default">96c8a526-d66c-44d5-8f2d-82d5cc8577dd</string>
+
+    <string name="x_tilt">X Tilt:</string>
+    <string name="y_tilt">Y Tilt:</string>
+    <string name="z_tilt">Z Tilt:</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>

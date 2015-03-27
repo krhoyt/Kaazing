@@ -23,7 +23,7 @@ import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
-public class IoT implements SerialPortEventListener {
+public class Buildings implements SerialPortEventListener {
 
 	// Constants
 	private static final char 	SERIAL_END = '\r';
@@ -32,7 +32,7 @@ public class IoT implements SerialPortEventListener {
 	private static final int	REAL_TIME_ON = 1;
 	private static final String KAAZING_ID = "nKkG23KJnb";
 	private static final String SERIAL_PORT = "port.txt";	
-	private static final String TOPIC = "iot_topic";	
+	private static final String TOPIC = "buildings_topic";	
 	
 	// Gateway
 	private boolean	realtime = false;
@@ -53,7 +53,7 @@ public class IoT implements SerialPortEventListener {
 	// Constructor
 	// Initialize gateway
 	// Initialize serial port
-	public IoT() {
+	public Buildings() {
 		initParse();
 		initGateway();
 		initSerial();
@@ -291,7 +291,7 @@ public class IoT implements SerialPortEventListener {
 			@Override
 			public void run() 
 			{
-				IoT iot = new IoT();
+				Buildings iot = new Buildings();
 			}
 			
 		} );

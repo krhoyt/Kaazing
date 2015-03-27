@@ -1,5 +1,5 @@
 // Kaazing client ID
-var IOT_TOPIC = 'iot_topic';
+var IOT_TOPIC = 'buildings_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
 var PARSE_APP = '_PARSE_APP_';
 var PARSE_KEY = '_PARSE_JS_KEY_';
