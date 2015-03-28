@@ -44,16 +44,15 @@
 
     </RelativeLayout>
 
-    <TextView
+    <ListView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="024543504924"
-        android:id="@+id/scan_code"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:gravity="center_horizontal"
-        android:textSize="36dp"
-        android:textColor="@android:color/black" />
+        android:layout_height="fill_parent"
+        android:id="@+id/list_view"
+        android:layout_below="@+id/scan_button"
+        android:layout_alignLeft="@+id/scan_button"
+        android:layout_alignStart="@+id/scan_button"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
 </RelativeLayout>

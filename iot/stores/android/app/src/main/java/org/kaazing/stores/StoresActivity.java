@@ -1,31 +1,48 @@
 package org.kaazing.stores;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
+
 public class StoresActivity extends ActionBarActivity {
 
-    private RelativeLayout  btnScan = null;
-    private TextView        txtScan = null;
+    private ListView                lstItems = null;
+    private RelativeLayout          btnScan = null;
+
+    private ArrayList<StoreItem>    items = null;
+    private StoreAdapter            adapter = null;
 
     public void onActivityResult( int requestCode, int resultCode, Intent intent ) {
         IntentResult    scanResult;
+        StoreItem       item;
         String          resultContents;
 
         scanResult = IntentIntegrator.parseActivityResult( requestCode, resultCode, intent );
 
         if( scanResult != null) {
             resultContents = scanResult.getContents();
-            txtScan.setText( resultContents );
+
+            item = new StoreItem();
+            item.title = resultContents;
+            items.add( 0, item );
+            adapter.notifyDataSetChanged();
+
+            Log.i( "SCAN", resultContents );
         }
     }
 
@@ -34,8 +51,22 @@ public class StoresActivity extends ActionBarActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_stores );
 
-        txtScan = ( TextView )findViewById( R.id.scan_code );
-        txtScan.setText( "" );
+        // TODO: Testing
+        StoreItem   item = null;
+
+        adapter = new StoreAdapter( this, items );
+        lstItems = ( ListView )findViewById( R.id.list_view );
+        lstItems.setAdapter( adapter );
+
+        // TODO: Testing
+        for( int i = 0; i < 100; i++ ) {
+            item = new StoreItem();
+            item.title = "Test";
+            items.add( item );
+        }
+
+        // TODO: Testing
+        adapter.notifyDataSetChanged();
 
         btnScan = ( RelativeLayout )findViewById( R.id.scan_button );
         btnScan.setOnClickListener( new View.OnClickListener() {
@@ -68,5 +99,26 @@ public class StoresActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected( item );
+    }
+
+    // TODO: Remove item from list
+    public void onRemoveItem( View view ) {
+        RelativeLayout  parent;
+        TextView        txtTitle;
+
+        for( int i = 0; i < lstItems.getChildCount(); i++ ) {
+            lstItems.getChildAt( i ).setBackgroundColor( Color.BLUE );
+        }
+
+        // Get row of click
+        parent = ( RelativeLayout )view.getParent();
+
+        // Reference to child
+        txtTitle = ( TextView )parent.getChildAt( 0 );
+        txtTitle.setText( "Removed!" );
+
+        // Refresh display
+        parent.setBackgroundColor( Color.CYAN );
+        parent.refreshDrawableState();
     }
 }
