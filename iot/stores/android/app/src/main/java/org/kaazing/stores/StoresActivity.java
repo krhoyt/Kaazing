@@ -3,26 +3,26 @@ package org.kaazing.stores;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-
 public class StoresActivity extends ActionBarActivity {
 
-    private Button      btnScan;
-    private TextView    txtScan;
+    private RelativeLayout  btnScan = null;
+    private TextView        txtScan = null;
 
     public void onActivityResult( int requestCode, int resultCode, Intent intent ) {
-        String resultContents;
+        IntentResult    scanResult;
+        String          resultContents;
 
-        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        scanResult = IntentIntegrator.parseActivityResult( requestCode, resultCode, intent );
+
         if( scanResult != null) {
             resultContents = scanResult.getContents();
             txtScan.setText( resultContents );
@@ -30,14 +30,14 @@ public class StoresActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stores);
+    protected void onCreate( Bundle savedInstanceState ) {
+        super.onCreate( savedInstanceState );
+        setContentView( R.layout.activity_stores );
 
         txtScan = ( TextView )findViewById( R.id.scan_code );
         txtScan.setText( "" );
 
-        btnScan = ( Button )findViewById( R.id.scan_button );
+        btnScan = ( RelativeLayout )findViewById( R.id.scan_button );
         btnScan.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick( View v ) {
@@ -49,24 +49,24 @@ public class StoresActivity extends ActionBarActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu( Menu menu ) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stores, menu);
+        getMenuInflater().inflate( R.menu.menu_stores, menu );
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected( MenuItem item ) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if( id == R.id.action_settings ) {
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected( item );
     }
 }
