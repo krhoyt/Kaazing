@@ -54,6 +54,7 @@ public class StoresActivity extends ActionBarActivity {
         // TODO: Testing
         StoreItem   item = null;
 
+        items = new ArrayList<StoreItem>();
         adapter = new StoreAdapter( this, items );
         lstItems = ( ListView )findViewById( R.id.list_view );
         lstItems.setAdapter( adapter );
