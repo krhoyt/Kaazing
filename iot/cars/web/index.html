@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+  
+<title>Vehicle Dashboard</title>
+
+<style type="text/css">
+body {
+  margin: 0;
+  padding: 0;
+}
+  
+svg {
+  bottom: 0;
+  height: 350px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.dashboard {
+  background-color: black;
+  border-top-left-radius: 350px;
+  border-top-right-radius: 350px;
+  bottom: 0;
+  box-shadow: 0 -2px 10px rgba( 0, 0, 0, 0.40 );
+  height: 350px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+  
+.map {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+</style>  
+
+<script src="https://maps.googleapis.com/maps/api/js?key=API_KEY" type="text/javascript"></script>  
+  
+<script type="text/javascript">
+var RADIUS_VSS = 262;
+var RADIUS_VSS_DASH = 275;
+var RADIUS_RPM = 238;
+var RADIUS_RPM_DASH = 225;
+var SVG_PATH = 'http://www.w3.org/2000/svg';
+  
+var ecu = {
+  vss: 0.35,
+  rpm: 0.60,
+  temp: 0.50
+};
+var map = {
+  google: null,
+  root: null
+};
+var svg = {
+  element_rpm: null,
+  element_temp: null,
+  element_vss: null,
+  radius_rpm: ( 2 * Math.PI * RADIUS_RPM ) * ( 180 / 360 ),
+  radius_vss: ( 2 * Math.PI * RADIUS_VSS ) * ( 180 / 360 ),
+  root: null
+};
+
+function draw()
+{
+  vss();
+  rpm();
+  temp();
+}
+  
+function rpm()
+{
+  var path = null;
+  
+  // RPM
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 10 );
+  path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) - RADIUS_RPM ) + ', 325 ' + 
+    'A 238, 238 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_RPM ) + ( 2 * RADIUS_RPM ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );  
+  
+  // RPM dashes
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 6 );
+  path.setAttribute( 'stroke', 'white' );
+  // path.setAttribute( 'stroke-dasharray', '18.84, 2' );
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) - RADIUS_RPM_DASH ) + ', 325 ' + 
+    'A 225, 225 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_RPM_DASH ) + ( 2 * RADIUS_RPM_DASH ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );    
+  
+  // RPM red zone
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 6 );
+  path.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );
+  path.setAttribute( 'stroke', 'red' );
+  path.setAttribute( 'stroke-dashoffset', svg.radius_rpm + ( svg.radius_rpm * 0.247 ) );  
+  path.setAttribute( 'stroke-dasharray', svg.radius_rpm );        
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) - RADIUS_RPM_DASH ) + ', 325 ' + 
+    'A 225, 225 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_RPM_DASH ) + ( 2 * RADIUS_RPM_DASH ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );   
+  
+  // RPM tick marks
+  for( var d = 0; d < 6; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - RADIUS_RPM_DASH );
+    path.setAttribute( 'y', 323 );
+    path.setAttribute( 'width', 15 );
+    path.setAttribute( 'height', 2 );
+    
+    if( d > 3 )
+    {
+      path.setAttribute( 'fill', 'red' );      
+    } else {
+      path.setAttribute( 'fill', 'white' );      
+    }
+
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( 36.10 * d ) + ', ' + ( window.innerWidth / 2 ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }    
+  
+  // RPM dashes
+  for( var d = 0; d < 24; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - RADIUS_RPM_DASH - 4 );
+    path.setAttribute( 'y', 323 );
+    path.setAttribute( 'width', 12 );
+    path.setAttribute( 'height', 2 );
+    
+    if( ( ( d + 1 ) % 5 ) == 0 ) 
+    {
+      path.setAttribute( 'fill', 'rgba( 255, 255, 255, 0 )' );      
+    } else {
+      path.setAttribute( 'fill', 'black' );      
+    }
+  
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( ( 7.22 * d ) + 7.22 ) + ', ' + ( window.innerWidth / 2 ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }         
+}
+
+function temp() 
+{
+  var path = null;
+  
+  // Temperature
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 10 );
+  path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
+  // 325 - 100 = 225
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 225 ' +
+    'A 100, 100 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 100 ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );   
+  
+  // Temperature dashes
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 6 );
+  path.setAttribute( 'stroke', 'white' );
+  path.setAttribute( 'fill', 'rgba( 255, 255, 255, 0 )' );
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 212 ' + 
+    'A 113, 113 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 113 ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );   
+  
+  // Temperature red zone
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 6 );
+  path.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );
+  path.setAttribute( 'stroke', 'red' );
+  path.setAttribute( 'fill', 'rgba( 255, 0, 0, 0 )' );
+  path.setAttribute( 'stroke-dashoffset', 314 );  
+  path.setAttribute( 'stroke-dasharray', 314 + ( 314 * 0.14 ) );        
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 212 ' + 
+    'A 113, 113 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 113 ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );     
+  
+  // Temperature tick marks
+  for( var d = 0; d < 3; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 110 );
+    path.setAttribute( 'y', 323 );
+    path.setAttribute( 'width', 15 );
+    path.setAttribute( 'height', 2 );
+    
+    if( d == 2 )
+    {
+      path.setAttribute( 'fill', 'red' );            
+    } else {
+      path.setAttribute( 'fill', 'white' );            
+    }
+
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( -45 * d ) + ', ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }      
+  
+  // Temperature dash marks
+  for( var d = 0; d < 2; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 108 );
+    path.setAttribute( 'y', 323 );
+    path.setAttribute( 'width', 8 );
+    path.setAttribute( 'height', 2 );
+    
+    path.setAttribute( 'fill', 'black' );            
+
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( ( -45 * d ) - 22.5 ) + ', ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }        
+}
+  
+function update() 
+{
+  // RPM
+  if( svg.element_rpm == null )
+  {
+    svg.element_rpm = document.createElementNS( SVG_PATH, 'path' );
+    svg.element_rpm.setAttribute( 'stroke-width', 10 );
+    svg.element_rpm.setAttribute( 'stroke', 'rgb( 81, 141, 163 )' );
+    svg.element_rpm.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );  
+    svg.element_rpm.setAttribute( 'stroke-dashoffset', svg.radius_rpm );  
+    svg.element_rpm.setAttribute( 'stroke-dasharray', svg.radius_rpm + ( svg.radius_rpm * ecu.rpm ) );        
+    svg.element_rpm.setAttribute( 'd', 
+      'M ' + ( ( window.innerWidth / 2 ) - RADIUS_RPM ) + ', 325 ' + 
+      'A 238, 238 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_RPM ) + ( 2 * RADIUS_RPM ) ) + ', 325' 
+    );
+    svg.root.appendChild( svg.element_rpm );         
+  } else {
+    svg.element_rpm.setAttribute( 'stroke-dasharray', svg.radius_rpm + ( svg.radius_rpm * ecu.rpm ) );    
+  }
+  
+  // VSS
+  if( svg.element_vss == null )
+  {
+    svg.element_vss = document.createElementNS( SVG_PATH, 'path' );
+    svg.element_vss.setAttribute( 'stroke-width', 10 );
+    svg.element_vss.setAttribute( 'stroke', 'rgb( 98, 189, 106 )' );
+    svg.element_vss.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );  
+    svg.element_vss.setAttribute( 'stroke-dashoffset', svg.radius_vss );  
+    svg.element_vss.setAttribute( 'stroke-dasharray', svg.radius_vss + ( svg.radius_vss * ecu.vss ) );        
+    svg.element_vss.setAttribute( 'd', 
+      'M ' + ( ( window.innerWidth / 2 ) - RADIUS_VSS ) + ', 325 ' + 
+      'A 262, 262 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_VSS ) + ( 2 * RADIUS_VSS ) ) + ', 325' 
+    );
+    svg.root.appendChild( svg.element_vss );         
+  } else {
+    svg.element_vss.setAttribute( 'stroke-dasharray', svg.radius_vss + ( svg.radius_vss * ecu.vss ) );    
+  }  
+  
+  // Temperature
+  if( svg.element_temp == null )
+  {
+    svg.element_temp = document.createElementNS( SVG_PATH, 'path' );
+    svg.element_temp.setAttribute( 'stroke-width', 10 );
+    svg.element_temp.setAttribute( 'stroke', 'rgb( 81, 141, 163 )' );
+    svg.element_temp.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );
+    svg.element_temp.setAttribute( 'stroke-dashoffset', 157 + ( 157 * ecu.temp ) );  
+    svg.element_temp.setAttribute( 'stroke-dasharray', 157 );            
+    svg.element_temp.setAttribute( 'd', 
+      'M ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 225 ' +
+      'A 100, 100 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 100 ) ) + ', 325' 
+    );
+    svg.root.appendChild( svg.element_temp );   
+  } else {
+    svg.element_temp.setAttribute( 'stroke-dashoffset', 157 + ( 157 * ecu.temp ) );        
+  }
+}
+  
+function vss() 
+{
+  var path = null;
+  
+  // VSS
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 10 );
+  path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) - RADIUS_VSS ) + ', 325 ' + 
+    'A 262, 262 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_VSS ) + ( 2 * RADIUS_VSS ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );
+
+  // VSS dashes
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 6 );
+  path.setAttribute( 'fill', 'rgba( 0, 0, 0, 0 )' );
+  path.setAttribute( 'stroke', 'white' );
+  // path.setAttribute( 'stroke-dasharray', '62, 2' );
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) - RADIUS_VSS_DASH ) + ', 325 ' + 
+    'A 275, 275 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_VSS_DASH ) + ( 2 * RADIUS_VSS_DASH ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );  
+    
+  // VSS tick marks
+  for( var d = 0; d < 11; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - RADIUS_VSS_DASH - 12 );
+    path.setAttribute( 'y', 323 );
+    path.setAttribute( 'width', 15 );
+    path.setAttribute( 'height', 2 );
+    path.setAttribute( 'fill', 'white' );
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( 18.04 * d ) + ', ' + ( window.innerWidth / 2 ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }
+  
+  // VSS dashes
+  for( var d = 0; d < 11; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - RADIUS_VSS_DASH - 6 );
+    path.setAttribute( 'y', 323 );
+    path.setAttribute( 'width', 12 );
+    path.setAttribute( 'height', 2 );
+    path.setAttribute( 'fill', 'black' );
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( ( 18.04 * d ) + 9.02 ) + ', ' + ( window.innerWidth / 2 ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }        
+}  
+
+function doWindowLoad()
+{
+  var options = null;
+  var script = null;
+
+  options = {
+    center: new google.maps.LatLng( 39.4975231, -104.7791048 ),
+    zoom: 16        
+  };  
+  
+  map.root = document.querySelector( '.map' );
+  map.google = new google.maps.Map( map.root, options );  
+    
+  svg.root = document.querySelector( 'svg' );
+  svg.root.style.width = window.innerWidth + 'px';
+    
+  draw();
+  update();
+}
+  
+window.addEventListener( 'load', doWindowLoad );  
+</script>  
+  
+</head>  
+<body>
+
+<div class="map"></div> 
+  
+<div class="dashboard">
+  <svg></svg>    
+</div>
+  
+</body>
+</html>
