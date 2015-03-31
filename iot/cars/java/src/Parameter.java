@@ -1,4 +1,5 @@
 public class Parameter {
 	public boolean	supported = false;
-	public String	pid = null;
+	public String	code = null;
+	public String	sensor = null;
 }
