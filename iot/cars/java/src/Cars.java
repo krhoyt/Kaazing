@@ -1,44 +1,68 @@
 import java.awt.EventQueue;
-import java.util.Vector;
+import java.math.BigInteger;
 
-import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.DiscoveryListener;
-import javax.bluetooth.LocalDevice;
-import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRecord;
-
-public class Cars implements DiscoveryListener {
-
-	public static final Vector<RemoteDevice> devicesDiscovered = new Vector();	
+public class Cars {
 	
-	private static Object lock = new Object();	
+	private EngineControlUnit	ecu = null;
 	
 	public Cars() {
-		initBluetooth();
-	}
+		// initSerial();
+		boolean		supported;
+		BigInteger	convert;
+		String		binary;
+		String		pids;
+		String[]	parts;
+		String		result;
 		
-	private void initBluetooth() {
-		DiscoveryAgent	agent;
-		LocalDevice		local;
+		pids = "41 00 BE 3F A8 13" + '\r' + "41 00 98 3A 80 13";
+		System.out.println( "Original: " + pids );
+				
+		pids = pids.replaceAll( "\r", " " );
+		pids = pids.replaceAll( "41 00 ", "" );
+		System.out.println( "Cleaned: " + pids );
 		
-		try {
-			local = LocalDevice.getLocalDevice();
+		parts = pids.split( " " );
+		System.out.println( "Count: " + parts.length );
+		
+		result = new String();
+		
+		for( int p = 0; p < parts.length; p++ ) {
+			convert = new BigInteger( parts[p], 16 );
+			binary = convert.toString( 2 );
 			
-			agent = local.getDiscoveryAgent();
-			agent.startInquiry( DiscoveryAgent.GIAC, this );
-			
-			try {
-				synchronized( lock ) {
-					lock.wait();
-				}
-			} catch( InterruptedException ie ) {
-				ie.printStackTrace();
+			while( binary.length() < 8 ) {
+				binary = "0" + binary;
 			}
-		} catch( Exception e ) {
-			e.printStackTrace();
+			
+			System.out.println( parts[p] + ": " + binary );
+			
+			result = result + binary;			
+		}
+		
+		System.out.println( "Full: " + result );
+		
+		for( int c = 0; c < result.length(); c++ ) {
+			convert = new BigInteger(  String.valueOf( c ), 10 );			
+			binary = convert.toString( 16 );
+			
+			while( binary.length() < 2 ) {
+				binary = "0" + binary;
+			}
+			
+			if( result.substring( c, c + 1 ).equals( "0" ) )
+			{
+				supported = false;
+			} else {
+				supported = true;
+			}
+			
+			System.out.println( binary + ": " + supported );
 		}
 	}
+		
+	private void initSerial() {
+		ecu = new EngineControlUnit();
+	}	
 	
 	public static void main( String[] args ) {
 		EventQueue.invokeLater( new Runnable() {
@@ -51,37 +75,5 @@ public class Cars implements DiscoveryListener {
 			
 		} );
 	}
-
-	@Override
-	public void deviceDiscovered( RemoteDevice device, DeviceClass deviceClass ) {
-		String name;
-		        
-		try {
-			name = device.getFriendlyName( false );
-		} catch (Exception e) {
-			name = device.getBluetoothAddress();
-		}
-
-		System.out.println( "Device found: " + name );
-	}
-
-	@Override
-	public void inquiryCompleted( int state ) {
-		synchronized( lock ) {
-			lock.notify();
-		}
-	}
-
-	@Override
-	public void serviceSearchCompleted(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void servicesDiscovered(int arg0, ServiceRecord[] arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 }
