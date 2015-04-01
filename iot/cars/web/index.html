@@ -22,8 +22,10 @@ svg {
 
 .dashboard {
   background-color: black;
+  /*
   border-top-left-radius: 350px;
   border-top-right-radius: 350px;
+  */
   bottom: 0;
   box-shadow: 0 -2px 10px rgba( 0, 0, 0, 0.40 );
   height: 350px;
@@ -33,7 +35,7 @@ svg {
 }
   
 .map {
-  bottom: 0;
+  bottom: 350px;
   left: 0;
   position: absolute;
   right: 0;
@@ -41,9 +43,18 @@ svg {
 }
 </style>  
 
+<!-- Google Maps -->
 <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY" type="text/javascript"></script>  
   
+<!-- Animation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js" type="text/javascript"></script>
+  
+<!-- Kaazing Gateway -->
+<script src="gateway.js" type="text/javascript"></script>  
+  
 <script type="text/javascript">
+var IOT_TOPIC = 'cars_topic';
+var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';  
 var RADIUS_VSS = 262;
 var RADIUS_VSS_DASH = 275;
 var RADIUS_RPM = 238;
@@ -55,6 +66,7 @@ var ecu = {
   rpm: 0.60,
   temp: 0.50
 };
+var kaazing = null;
 var map = {
   google: null,
   root: null
@@ -67,7 +79,7 @@ var svg = {
   radius_vss: ( 2 * Math.PI * RADIUS_VSS ) * ( 180 / 360 ),
   root: null
 };
-
+  
 function draw()
 {
   vss();
@@ -345,12 +357,38 @@ function vss()
     svg.root.appendChild( path );    
   }        
 }  
+  
+function doGatewayConnect() {
+  console.log( 'Client connected.' );
+  
+  // Listen on topic for messages
+  kaazing.on( Gateway.EVENT_MESSAGE, doGatewayMessage );
+  kaazing.subscribe( IOT_TOPIC );  
+}  
 
+function doGatewayMessage( message ) {
+  var data = null;
+
+  // Parse data
+  data = JSON.parse( message );
+  
+  // Update dashboard
+  TweenMax.to( ecu, 1, {
+    rpm: data.rpm / 5000,
+    vss: data.speed / 100,
+    temp: data.coolant / 300,
+    onUpdate: update
+  } )
+}  
+  
 function doWindowLoad()
 {
   var options = null;
   var script = null;
 
+  // Gateway
+  kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );    
+  
   options = {
     center: new google.maps.LatLng( 39.4975231, -104.7791048 ),
     zoom: 16        
