@@ -192,7 +192,7 @@ public class EngineControlUnit implements SerialPortEventListener {
 			index = index + 1;
 		}
 		
-		if( index == ( parameters.size() ) ) {
+		if( index == parameters.size() ) {
 			index = 0;
 			callback.onUpdate();
 		}

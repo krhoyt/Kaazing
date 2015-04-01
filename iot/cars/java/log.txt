@@ -1,0 +1,16 @@
+{"time":1427901723158,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901724034,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901725023,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901725947,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901726832,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901727727,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901728586,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901729432,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901730326,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901731236,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901732134,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901733037,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901733922,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901734823,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901735751,"coolant":113.0,"speed":0.0,"rpm":0.0}
+{"time":1427901736607,"coolant":113.0,"speed":0.0,"rpm":0.0}

@@ -1,47 +1,256 @@
 import java.awt.EventQueue;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
 
 public class Cars {
 	
-	private EngineControlUnit	ecu = null;
+	private static final int	PLAYBACK_DELAY = 5;
+	private static final int	PLAYBACK_RATE = 1;	
+	private static final String	FILE_CONFIG = "port.txt";
+	private static final String	FILE_LOG = "log.txt";
+	private static final String KAAZING_ID = "nKkG23KJnb";
+	private static final String KEY_COOLANT = "coolant";
+	private static final String KEY_RPM = "rpm";
+	private static final String KEY_SPEED = "speed";
+	private static final String KEY_TIME = "time";
+	private static final String TOPIC = "cars_topic";	
 	
+	private EngineControlUnit			ecu = null;
+	private Gateway						kaazing = null;
+	private int							record = -1;
+	private String						port = null;
+	private String[]					history = null;
+	private ScheduledExecutorService	service = null;
+	
+	public Cars( boolean playback ) {
+		if( playback ) {
+			initGateway();			
+			initPlayback();
+		} else {
+			loadConfig();
+			initSerial();
+			initGateway();			
+		}
+	}
+		
 	public Cars() {
+		this( false );
+	}
+	
+	private void initGateway() {
+		// Instantiate
+		kaazing = new Gateway();
+
+		// Debugging
+		kaazing.setVerbose( false );
+		
+		// Event handlers
+		kaazing.callback = new GatewayListener() {
+			
+			@Override
+			public void onUnsubscribe() {
+				System.out.println( "Client unsubscribed." );				
+			}
+			
+			@Override
+			public void onSubscribe() {
+				System.out.println( "Client subscribed." );
+			}
+			
+			@Override
+			public void onMessage( String body ) {	
+				// System.out.println( "Message arrived." );
+				System.out.println( body );
+			}
+			
+			@Override
+			public void onError( String message ) {
+				System.out.println( message );
+			}
+			
+			@Override
+			public void onDisconnect() {
+				System.out.println( "Client disconnected." );			
+			}
+			
+			@Override
+			public void onConnect() {
+				System.out.println( "Client connected." );	
+				kaazing.subscribe( TOPIC );
+			}
+			
+		};
+		
+		// Connect to gateway
+		kaazing.connect( KAAZING_ID );			
+	}
+	
+	private void initPlayback() {
+		byte[]			data;		
+		File			file;
+		FileInputStream	stream;
+		String			contents;
+		
+		try {
+			// Read previously recorded data
+			file = new File( FILE_LOG );			
+			stream = new FileInputStream( file );
+			data = new byte[( int )file.length()];
+			stream.read( data );
+			stream.close();
+			
+			// Trim up and split out to array
+			contents = new String( data, StandardCharsets.UTF_8 ).trim();
+			history = contents.split( "\n" );
+		} catch( UnsupportedEncodingException uee ) {
+			uee.printStackTrace();
+		} catch( IOException ioe ) {
+			ioe.printStackTrace();
+		}			
+		
+		// Iterate over array values
+		service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleWithFixedDelay( new Runnable() {
+			
+			@Override
+			public void run() {
+				// If connected to Kaazing Gateway
+				// Loop through rows at set interval
+				if( kaazing != null ) {
+					if( record == -1 ) {
+						record = 0;
+					} else {
+						record = record + 1;
+					}
+					
+					if( record == history.length ) {
+						record = 0;
+					}	
+					
+					kaazing.publish( TOPIC, history[record].trim() );				
+				}			
+			}
+			
+		}, PLAYBACK_DELAY, PLAYBACK_RATE, TimeUnit.SECONDS );		
+	}
+	
+	private void initSerial() {
+		String[]	preferred;
+		
 		// Close port when exiting
 		Runtime.getRuntime().addShutdownHook( new Thread() {
 			public void run() {
 				ecu.close();
 			}
-		} );
-		
-		initSerial();		
-	}
-		
-	private void initSerial() {
-		String[]	preferred;
+		} );		
 		
 		preferred = new String[3];
 		preferred[0] = EngineControlUnit.PID_COOLANT_TEMP;
 		preferred[1] = EngineControlUnit.PID_ENGINE_RPM;
 		preferred[2] = EngineControlUnit.PID_VEHICLE_VSS;
 		
-		ecu = new EngineControlUnit( preferred );
+		ecu = new EngineControlUnit( port, preferred );
 		ecu.callback = new CarsListener() {
 			
 			@Override
 			public void onUpdate() {
-				Parameter	pid;
+				BufferedWriter		bw;
+				double				coolant;
+				double				rpm;				
+				double				speed;
+				FileWriter			fw;
+				JsonObject			result;
+				JsonObjectBuilder	builder;				
+				Parameter			pid;	
+				PrintWriter			out;
+				StringWriter		sw;
 				
+				// Get values
 				pid = ecu.find( EngineControlUnit.PID_COOLANT_TEMP );
-				System.out.println( "Coolant: " + ecu.calculate( pid ) );
+				coolant = ecu.calculate( pid );
 				
 				pid = ecu.find( EngineControlUnit.PID_ENGINE_RPM );
-				System.out.println( "RPM: " + ecu.calculate( pid ) );				
+				rpm = ecu.calculate( pid );				
 				
 				pid = ecu.find( EngineControlUnit.PID_VEHICLE_VSS );
-				System.out.println( "Speed: " + ecu.calculate( pid ) );							
+				speed = ecu.calculate( pid );
+						
+				// Build JSON structure
+				builder = Json.createObjectBuilder();
+				builder.add( KEY_TIME, System.currentTimeMillis() );
+				builder.add( KEY_COOLANT, coolant );
+				builder.add( KEY_SPEED, speed );
+				builder.add( KEY_RPM, rpm );		
+				
+				// Encode
+				result = builder.build();
+				
+				// Stringify
+				sw = new StringWriter();
+				
+				try( JsonWriter writer = Json.createWriter( sw ) ) {
+					writer.writeObject( result );
+				}
+				
+				// Log to recording file
+				// Future playback without car
+				try {
+					fw = new FileWriter( FILE_LOG, true );
+					bw = new BufferedWriter( fw );
+				    
+					out = new PrintWriter( bw );
+				    out.println( sw.toString() );
+				    out.close();
+				} catch( IOException ioe ) {
+					ioe.printStackTrace();
+				}				
+				
+				// Publish message
+				// May not be connected yet
+				if( kaazing.isConnected() ) {
+					kaazing.publish( TOPIC, sw.toString() );
+				}				
 			}
 			
 		};
 	}	
+	
+	private void loadConfig() {
+		byte[]			data;		
+		File			file;
+		FileInputStream	stream;
+		
+		try {
+			// Read port from file
+			file = new File( FILE_CONFIG );			
+			stream = new FileInputStream( file );
+			data = new byte[( int )file.length()];
+			stream.read( data );
+			stream.close();
+			
+			port = new String( data, StandardCharsets.UTF_8 ).trim();
+		} catch( UnsupportedEncodingException uee ) {
+			uee.printStackTrace();
+		} catch( IOException ioe ) {
+			ioe.printStackTrace();
+		}		
+	}
 	
 	public static void main( String[] args ) {
 		EventQueue.invokeLater( new Runnable() {
@@ -49,7 +258,13 @@ public class Cars {
 			@Override
 			public void run() 
 			{
-				Cars iot = new Cars();									
+				Cars	iot;
+				
+				if( args.length > 0 ) {
+					iot = new Cars( true );
+				} else {
+					iot = new Cars();
+				}									
 			}
 			
 		} );
