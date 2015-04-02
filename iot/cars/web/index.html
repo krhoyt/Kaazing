@@ -6,8 +6,12 @@
   
 <title>Vehicle Dashboard</title>
 
+<!-- Source Sans Pro -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">  
+  
 <style type="text/css">
 body {
+  font-family: 'Source Sans Pro', sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -22,10 +26,6 @@ svg {
 
 .dashboard {
   background-color: black;
-  /*
-  border-top-left-radius: 350px;
-  border-top-right-radius: 350px;
-  */
   bottom: 0;
   box-shadow: 0 -2px 10px rgba( 0, 0, 0, 0.40 );
   height: 350px;
@@ -41,6 +41,11 @@ svg {
   right: 0;
   top: 0;
 }
+  
+.temperature {
+  position: absolute;
+  bottom: 50px;
+}
 </style>  
 
 <!-- Google Maps -->
@@ -55,6 +60,9 @@ svg {
 <script type="text/javascript">
 var IOT_TOPIC = 'cars_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';  
+var MAX_COOLANT = 300;
+var MAX_RPM = 5000;
+var MAX_SPEED = 100;
 var RADIUS_VSS = 262;
 var RADIUS_VSS_DASH = 275;
 var RADIUS_RPM = 238;
@@ -89,6 +97,8 @@ function draw()
   
 function rpm()
 {
+  var adjacent = null;
+  var opposite = null;
   var path = null;
   
   // RPM
@@ -166,10 +176,53 @@ function rpm()
     path.setAttribute( 'transform', 'rotate( ' + ( ( 7.22 * d ) + 7.22 ) + ', ' + ( window.innerWidth / 2 ) + ', 323 )' );
     svg.root.appendChild( path );    
   }         
+  
+  // RPM indicators  
+  for( var d = 0; d < 6; d++ ) 
+  {
+    opposite = Math.sin( ( d * 36.08 ) * ( Math.PI / 180 ) ) * 202;
+    adjacent = Math.cos( ( d * 36.08 ) * ( Math.PI / 180 ) ) * 202;
+
+    path = document.createElementNS( SVG_PATH, 'text' );
+    path.textContent = d;
+    path.setAttribute( 'fill', 'white' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - adjacent );
+    path.setAttribute( 'font-size', 22 );
+    
+    if( d == 2 || d == 3 ) {
+      path.setAttribute( 'y', 325 + 10 - opposite );            
+    } else {
+      path.setAttribute( 'y', 325 + 5 - opposite );            
+    }
+    
+    if( d < 3 )
+    {
+      path.setAttribute( 'text-anchor', 'start' );      
+    } else if( d > 2 ) {
+      path.setAttribute( 'text-anchor', 'end' );            
+    }
+
+    svg.root.appendChild( path );          
+  }  
+  
+  // Units
+  opposite = Math.sin( 90 * ( Math.PI / 180 ) ) * 160;
+  adjacent = Math.cos( 90 * ( Math.PI / 180 ) ) * 160;
+
+  path = document.createElementNS( SVG_PATH, 'text' );
+  path.textContent = 'x1000/min';
+  path.setAttribute( 'fill', 'white' );
+  path.setAttribute( 'x', ( window.innerWidth / 2 ) - adjacent );
+  path.setAttribute( 'y', 325 - opposite );        
+  path.setAttribute( 'font-size', 14 );
+  path.setAttribute( 'text-anchor', 'middle' );      
+  svg.root.appendChild( path );          
 }
 
 function temp() 
 {
+  var adjacent = null;
+  var opposite = null;
   var path = null;
   
   // Temperature
@@ -244,6 +297,44 @@ function temp()
     path.setAttribute( 'transform', 'rotate( ' + ( ( -45 * d ) - 22.5 ) + ', ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 323 )' );
     svg.root.appendChild( path );    
   }        
+  
+  // Temperature values
+  for( var d = 0; d < 3; d++ ) 
+  {
+    opposite = Math.sin( ( d * 45 ) * ( Math.PI / 180 ) ) * 130;                                                                                                                                                                                                                                                                                                                                                          ( ( d * 36.08 ) * ( Math.PI / 180 ) ) * 202;
+    adjacent = Math.cos( ( d * 45 ) * ( Math.PI / 180 ) ) * 130;
+
+    path = document.createElementNS( SVG_PATH, 'text' );
+    
+    if( d == 2 )
+    {
+      path.textContent = ( d * 180 ) + '°F';      
+    } else {
+      path.textContent = d * 180;      
+    }
+    
+    path.setAttribute( 'fill', 'white' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + adjacent );
+    
+    if( d == 0 ) {
+      path.setAttribute( 'y', 325 + 4 - opposite );                      
+    } else if( d == 2 ) {
+      path.setAttribute( 'y', 325 - 4 - opposite );                            
+    } else {
+      path.setAttribute( 'y', 325 - opposite );                      
+    }
+
+    if( d == 2 ) {
+      path.setAttribute( 'text-anchor', 'middle' ); 
+    }
+    
+    path.setAttribute( 'font-size', 18 );
+    svg.root.appendChild( path );          
+  }    
+  
+  // Icon
+  path = document.querySelector( '.temperature' );
+  path.style.left = ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 25 ) + 'px';                              
 }
   
 function update() 
@@ -305,6 +396,8 @@ function update()
   
 function vss() 
 {
+  var adjacent = null;
+  var opposite = null;
   var path = null;
   
   // VSS
@@ -356,6 +449,49 @@ function vss()
     path.setAttribute( 'transform', 'rotate( ' + ( ( 18.04 * d ) + 9.02 ) + ', ' + ( window.innerWidth / 2 ) + ', 323 )' );
     svg.root.appendChild( path );    
   }        
+  
+  // Speed indicators  
+  for( var d = 0; d < 11; d++ ) 
+  {
+    opposite = Math.sin( ( d * 18.04 ) * ( Math.PI / 180 ) ) * 295;
+    adjacent = Math.cos( ( d * 18.04 ) * ( Math.PI / 180 ) ) * 295;
+
+    path = document.createElementNS( SVG_PATH, 'text' );
+    path.textContent = d * 10;
+    path.setAttribute( 'fill', 'white' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - adjacent );
+    path.setAttribute( 'font-size', 22 );
+    
+    if( d == 0 || d == 10 ) {
+      path.setAttribute( 'y', 325 + 5 - opposite );      
+    } else {
+      path.setAttribute( 'y', 325 - opposite );      
+    }
+    
+    if( d < 5 )
+    {
+      path.setAttribute( 'text-anchor', 'end' );      
+    } else if( d == 5) {
+      path.setAttribute( 'text-anchor', 'middle' );            
+    } else if( d > 5 ) {
+      path.setAttribute( 'text-anchor', 'start' );            
+    }
+
+    svg.root.appendChild( path );          
+  }
+  
+  // Units
+  opposite = Math.sin( 9.02 * ( Math.PI / 180 ) ) * 295;
+  adjacent = Math.cos( 9.02 * ( Math.PI / 180 ) ) * 295;
+
+  path = document.createElementNS( SVG_PATH, 'text' );
+  path.textContent = 'mph';
+  path.setAttribute( 'fill', 'white' );
+  path.setAttribute( 'x', ( window.innerWidth / 2 ) - adjacent );
+  path.setAttribute( 'y', 325 + 3 - opposite );        
+  path.setAttribute( 'font-size', 14 );
+  path.setAttribute( 'text-anchor', 'end' );      
+  svg.root.appendChild( path );        
 }  
   
 function doGatewayConnect() {
@@ -374,9 +510,9 @@ function doGatewayMessage( message ) {
   
   // Update dashboard
   TweenMax.to( ecu, 1, {
-    rpm: data.rpm / 5000,
-    vss: data.speed / 100,
-    temp: data.coolant / 300,
+    rpm: data.rpm / MAX_RPM,
+    vss: data.speed / MAX_SPEED,
+    temp: data.coolant / MAX_COOLANT,
     onUpdate: update
   } )
 }  
@@ -401,7 +537,6 @@ function doWindowLoad()
   svg.root.style.width = window.innerWidth + 'px';
     
   draw();
-  update();
 }
   
 window.addEventListener( 'load', doWindowLoad );  
@@ -415,6 +550,9 @@ window.addEventListener( 'load', doWindowLoad );
 <div class="dashboard">
   <svg></svg>    
 </div>
+  
+<!-- Assorted icons -->
+<img class="temperature" src="temperature.svg" width="25" height="25">
   
 </body>
 </html>
