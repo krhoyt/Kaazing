@@ -77,7 +77,9 @@ var ecu = {
 var kaazing = null;
 var map = {
   google: null,
-  root: null
+  path: [],
+  root: null,
+  route: null
 };
 var svg = {
   element_rpm: null,
@@ -508,6 +510,10 @@ function doGatewayMessage( message ) {
   // Parse data
   data = JSON.parse( message );
   
+  // Build polyline
+  map.route.getPath().push( new google.maps.LatLng( data.latitude, data.longitude ) );
+  map.google.panTo( new google.maps.LatLng( data.latitude, data.longitude ) );
+  
   // Update dashboard
   TweenMax.to( ecu, 1, {
     rpm: data.rpm / MAX_RPM,
@@ -532,7 +538,16 @@ function doWindowLoad()
   
   map.root = document.querySelector( '.map' );
   map.google = new google.maps.Map( map.root, options );  
-    
+  
+  map.route = new google.maps.Polyline( {
+    path: map.path,
+    geodesic: true,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+    strokeWeight: 5
+  } );  
+  map.route.setMap( map.google );
+  
   svg.root = document.querySelector( 'svg' );
   svg.root.style.width = window.innerWidth + 'px';
     

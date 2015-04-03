@@ -24,32 +24,43 @@ public class Cars {
 	private static final String	FILE_CONFIG = "port.txt";
 	private static final String	FILE_LOG = "log.txt";
 	private static final String KAAZING_ID = "nKkG23KJnb";
+	private static final String KEY_ANGLE = "angle";	
 	private static final String KEY_COOLANT = "coolant";
+	private static final String KEY_LATITUDE = "latitude";
+	private static final String KEY_LONGITUDE = "longitude";	
 	private static final String KEY_RPM = "rpm";
-	private static final String KEY_SPEED = "speed";
+	private static final String KEY_CAR_SPEED = "speed";
+	private static final String KEY_GPS_SPEED = "gps";	
 	private static final String KEY_TIME = "time";
 	private static final String TOPIC = "cars_topic";	
 	
 	private EngineControlUnit			ecu = null;
 	private Gateway						kaazing = null;
+	private Location					location = null;
+	
 	private int							record = -1;
 	private String						port = null;
 	private String[]					history = null;
 	private ScheduledExecutorService	service = null;
 	
-	public Cars( boolean playback ) {
+	public Cars( boolean playback, boolean offline ) {
 		if( playback ) {
 			initGateway();			
 			initPlayback();
+		} else if( offline ) {
+			loadConfig();
+			initSerial();
+			initLocation();
 		} else {
 			loadConfig();
 			initSerial();
-			initGateway();			
+			initLocation();
+			initGateway();						
 		}
 	}
 		
 	public Cars() {
-		this( false );
+		this( false, false );
 	}
 	
 	private void initGateway() {
@@ -98,6 +109,10 @@ public class Cars {
 		
 		// Connect to gateway
 		kaazing.connect( KAAZING_ID );			
+	}
+	
+	private void initLocation() {
+		location = new Location( "/dev/tty.usbserial" );
 	}
 	
 	private void initPlayback() {
@@ -178,6 +193,7 @@ public class Cars {
 				JsonObjectBuilder	builder;				
 				Parameter			pid;	
 				PrintWriter			out;
+				RecommendedMinimum	latest;
 				StringWriter		sw;
 				
 				// Get values
@@ -192,10 +208,19 @@ public class Cars {
 						
 				// Build JSON structure
 				builder = Json.createObjectBuilder();
+				
+				// ODB
 				builder.add( KEY_TIME, System.currentTimeMillis() );
 				builder.add( KEY_COOLANT, coolant );
-				builder.add( KEY_SPEED, speed );
+				builder.add( KEY_CAR_SPEED, speed );
 				builder.add( KEY_RPM, rpm );		
+				
+				// GPS
+				latest = location.getLatest();
+				builder.add( KEY_LATITUDE, latest.latitude );
+				builder.add( KEY_LONGITUDE, latest.longitude );
+				builder.add( KEY_GPS_SPEED, latest.speed );
+				builder.add( KEY_ANGLE, latest.angle );						
 				
 				// Encode
 				result = builder.build();
@@ -221,10 +246,13 @@ public class Cars {
 				}				
 				
 				// Publish message
+				// May be working offline				
 				// May not be connected yet
-				if( kaazing.isConnected() ) {
-					kaazing.publish( TOPIC, sw.toString() );
-				}				
+				if( kaazing != null ) {
+					if( kaazing.isConnected() ) {
+						kaazing.publish( TOPIC, sw.toString() );
+					}									
+				}
 			}
 			
 		};
@@ -260,7 +288,11 @@ public class Cars {
 				Cars	iot;
 				
 				if( args.length > 0 ) {
-					iot = new Cars( true );
+					if( args[0].equals( "playback" ) ) {
+						iot = new Cars( true, false );
+					} else if( args[0].equals( "offline" ) ) {
+						iot = new Cars( false, true );
+					}
 				} else {
 					iot = new Cars();
 				}									
