@@ -46,6 +46,16 @@ svg {
   position: absolute;
   bottom: 50px;
 }
+  
+.video {
+  width: 427px; 
+  height: 240px; 
+  background-color: rgba( 0, 0, 0, 0.50 ); 
+  position: absolute; 
+  right: 6px; 
+  top: 28px;  
+  visibility: hidden;
+}
 </style>  
 
 <!-- Google Maps -->
@@ -53,6 +63,9 @@ svg {
   
 <!-- Animation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js" type="text/javascript"></script>
+
+<!-- Query parameters -->
+<script src="URLParser.js" type="text/javascript"></script>
   
 <!-- Kaazing Gateway -->
 <script src="gateway.js" type="text/javascript"></script>  
@@ -510,6 +523,8 @@ function doGatewayMessage( message ) {
   // Parse data
   data = JSON.parse( message );
   
+  console.log( data.time );
+  
   // Build polyline
   map.route.getPath().push( new google.maps.LatLng( data.latitude, data.longitude ) );
   map.google.panTo( new google.maps.LatLng( data.latitude, data.longitude ) );
@@ -527,7 +542,17 @@ function doWindowLoad()
 {
   var options = null;
   var script = null;
+  var video = null;
 
+  // Video playback
+  if( URLParser( window.location.href ).hasParam( "playback" ) )
+  {
+    console.log( 'Video requested.' );
+    
+    video = document.querySelector( '.video' );
+    video.style.visibility = 'visible';
+  }  
+  
   // Gateway
   kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );    
   
@@ -568,6 +593,9 @@ window.addEventListener( 'load', doWindowLoad );
   
 <!-- Assorted icons -->
 <img class="temperature" src="temperature.svg" width="25" height="25">
+
+<!-- Video -->
+<div class="video"></div>
   
 </body>
 </html>

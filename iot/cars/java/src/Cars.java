@@ -19,8 +19,8 @@ import javax.json.JsonWriter;
 
 public class Cars {
 	
-	private static final int	PLAYBACK_DELAY = 5;
-	private static final int	PLAYBACK_RATE = 1;	
+	private static final int	PLAYBACK_DELAY = 5000;
+	private static final int	PLAYBACK_RATE = 1000;	
 	private static final String	FILE_CONFIG = "port.txt";
 	private static final String	FILE_LOG = "log.txt";
 	private static final String KAAZING_ID = "nKkG23KJnb";
@@ -119,7 +119,17 @@ public class Cars {
 		byte[]			data;		
 		File			file;
 		FileInputStream	stream;
+		int				end;
+		int				start;
+		long			difference;
+		long 			previous;
+		long 			sum;
+		long			timing;
 		String			contents;
+		
+		// Seed delay values			
+		previous = -1;
+		sum = 0;		
 		
 		try {
 			// Read previously recorded data
@@ -132,11 +142,33 @@ public class Cars {
 			// Trim up and split out to array
 			contents = new String( data, StandardCharsets.UTF_8 ).trim();
 			history = contents.split( "\n" );
+		
+			// Calculate delay
+			for( int h = 0; h < history.length; h++ ) {
+				start = history[h].indexOf( "time\":" ) + 6;
+				end = history[h].indexOf( "," );
+				timing = Long.parseLong( history[h].substring( start, end ) );
+				
+				if( previous == -1 ) {
+					previous = timing;
+					sum = 0;
+				} else {
+					difference = timing - previous;
+					previous = timing;
+					sum = sum + difference;
+				}
+			}
+			
+			System.out.println( "Average delay: " + ( int )( sum / history.length ) );
 		} catch( UnsupportedEncodingException uee ) {
 			uee.printStackTrace();
 		} catch( IOException ioe ) {
 			ioe.printStackTrace();
 		}			
+		
+		if( sum == 0 ) {
+			sum = PLAYBACK_RATE;
+		}
 		
 		// Iterate over array values
 		service = Executors.newSingleThreadScheduledExecutor();
@@ -161,7 +193,7 @@ public class Cars {
 				}			
 			}
 			
-		}, PLAYBACK_DELAY, PLAYBACK_RATE, TimeUnit.SECONDS );		
+		}, PLAYBACK_DELAY, ( int )( sum / history.length ), TimeUnit.MILLISECONDS );		
 	}
 	
 	private void initSerial() {
