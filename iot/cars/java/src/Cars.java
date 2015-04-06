@@ -23,6 +23,7 @@ public class Cars {
 	private static final int	PLAYBACK_RATE = 1000;	
 	private static final String	FILE_CONFIG = "port.txt";
 	private static final String	FILE_LOG = "log.txt";
+	private static final String	FILE_PLAY = "playback.txt";	
 	private static final String KAAZING_ID = "nKkG23KJnb";
 	private static final String KEY_ANGLE = "angle";	
 	private static final String KEY_COOLANT = "coolant";
@@ -133,7 +134,7 @@ public class Cars {
 		
 		try {
 			// Read previously recorded data
-			file = new File( FILE_LOG );			
+			file = new File( FILE_PLAY );			
 			stream = new FileInputStream( file );
 			data = new byte[( int )file.length()];
 			stream.read( data );
