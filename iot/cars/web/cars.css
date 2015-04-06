@@ -22,7 +22,48 @@ svg {
   position: absolute;
   right: 0;
 }
-  
+
+.icon.battery {
+  background-image: url( 'battery.svg' );  
+}
+
+.icon.engine {
+  background-image: url( 'engine.svg' );  
+}
+
+.icon.oil {
+  background-image: url( 'oil.svg' );  
+}
+
+.icon.warning {
+  background-image: url( 'warning.svg' );  
+}
+
+.indicators {
+  background-color: black;
+  border-radius: 40px;
+  border-bottom: solid 1px rgba( 255, 255, 255, 0.50 );
+  border-top: solid 1px black;
+  bottom: 20px;
+  height: 40px;
+  left: 20px;
+  padding-left: 10px;
+  padding-right: 20px;
+  position: absolute;
+  visibility: hidden;
+  width: auto;
+}
+
+.indicators .icon {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+  float: left;
+  height: 40px;
+  margin-left: 10px;
+  width: 40px;
+}
+
 .map {
   bottom: 350px;
   left: 0;
@@ -34,6 +75,7 @@ svg {
 .temperature {
   position: absolute;
   bottom: 50px;
+  visibility: hidden;
 }
   
 video {

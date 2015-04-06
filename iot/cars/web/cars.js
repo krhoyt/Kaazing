@@ -42,9 +42,15 @@ var video = {
   
 function draw()
 {
+  var indicators = null;
+  
   vss();
   rpm();
   temp();
+  
+  indicators = document.querySelector( '.indicators' );
+  indicators.style.left = ( ( window.innerWidth - indicators.clientWidth ) / 2 ) + 'px';
+  indicators.style.visibility = 'visible';
 }
   
 function rpm()
@@ -290,6 +296,7 @@ function temp()
   // Icon
   path = document.querySelector( '.temperature' );
   path.style.left = ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 25 ) + 'px';                              
+  path.style.visibility = 'visible';
 }
   
 function update() 
@@ -532,6 +539,7 @@ function doWindowLoad()
   // Gateway
   kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );    
   
+  // Mapping
   options = {
     center: new google.maps.LatLng( 39.4975231, -104.7791048 ),
     zoom: 16        
