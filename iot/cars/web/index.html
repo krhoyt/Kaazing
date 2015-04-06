@@ -47,7 +47,7 @@ svg {
   bottom: 50px;
 }
   
-.video {
+video {
   width: 427px; 
   height: 240px; 
   background-color: rgba( 0, 0, 0, 0.50 ); 
@@ -64,6 +64,9 @@ svg {
 <!-- Animation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js" type="text/javascript"></script>
 
+<!-- Video control -->
+<script src="http://popcornjs.org/code/dist/popcorn-complete.js"></script>  
+  
 <!-- Query parameters -->
 <script src="URLParser.js" type="text/javascript"></script>
   
@@ -94,6 +97,8 @@ var map = {
   root: null,
   route: null
 };
+var playing = null;
+var popcorn = null;
 var svg = {
   element_rpm: null,
   element_temp: null,
@@ -522,6 +527,16 @@ function doGatewayMessage( message ) {
 
   // Parse data
   data = JSON.parse( message );
+
+  // Start video on first message
+  if( popcorn != null )
+  {
+    if( !playing ) 
+    {
+      playing = true;
+      popcorn.play( 160 );        
+    }
+  }
   
   console.log( data.time );
   
@@ -549,7 +564,11 @@ function doWindowLoad()
   {
     console.log( 'Video requested.' );
     
-    video = document.querySelector( '.video' );
+    playing = false;
+    popcorn = Popcorn( 'video' );        
+    popcorn.preload( 'auto' );
+    
+    video = document.querySelector( 'video' );
     video.style.visibility = 'visible';
   }  
   
@@ -595,7 +614,9 @@ window.addEventListener( 'load', doWindowLoad );
 <img class="temperature" src="temperature.svg" width="25" height="25">
 
 <!-- Video -->
-<div class="video"></div>
+<video>
+  <source src="http://temp.kevinhoyt.com/kaazing/iot/cars/playback.mp4">
+</video>
   
 </body>
 </html>
