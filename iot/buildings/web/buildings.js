@@ -1,4 +1,4 @@
-// Kaazing client ID
+// Constants
 var IOT_TOPIC = 'buildings_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
 var PARSE_APP = '_PARSE_APP_';
@@ -7,8 +7,10 @@ var REAL_TIME_ON = 1;
 var REAL_TIME_OFF = 0;
 var SVG_PATH = 'http://www.w3.org/2000/svg';
 
+// Parse IoT object
 var Iot = Parse.Object.extend( 'Iot' );
 
+// Global
 var comfort = null;
 var interval = null;
 var kaazing = null;
@@ -16,6 +18,8 @@ var live = null;
 var realtime = false;
 var usage = null;
 
+// Called to embellish the large graph
+// Does so dynamically to match screen
 function drawRange()
 {
   var path = null;
@@ -273,10 +277,13 @@ function drawUsage( value )
   }  
 }
 
+// Called to get latest sensor values
+// Uses Parse
 function queryLatest()
 {
   var query = null;
   
+  // Query Parse
   query = new Parse.Query( Iot );
   query.descending( 'createdAt' );
   query.first( {
@@ -285,149 +292,214 @@ function queryLatest()
   } );
 }
 
+// Linear transform for charting
+// Maps a value in one range to a value in another range
 function scale( value, old_top, old_bottom, new_top, new_bottom )
 {
   return new_bottom + ( new_top - new_bottom ) * ( ( value - old_bottom ) / ( old_top - old_bottom ) ); 
 }
 
+// Called when five second button is clicked
+// Clears existing interval
+// Tells server not to publish data
+// Gets the latest sensor values from Parse
+// Updates the chart
+// Repeats every five seconds
 function doFiveClick()
 { 
+  // Clear existing
   if( interval != null )
   {
     clearInterval( interval );
     interval = null;
   }
   
-  // Start real time
+  // Stop real time
   kaazing.publish( IOT_TOPIC, JSON.stringify( {
     attention: 'server',
     value: REAL_TIME_OFF
   } ) );  
   
+  // Latest value from Parse
   queryLatest();
   
+  // Show plot dot on chart
   comfort.plot.setAttribute( 'opacity', 1 );
   comfort.chart.setAttribute( 'd', 'M0 0' );    
   comfort.chart.setAttribute( 'opacity', 0 );
   
+  // Repeat every five seconds
   interval = setInterval( queryLatest, 5000 );
 }
 
+// Called when Kaazing Gateway is connected
+// Subscribes for events
 function doGatewayConnect() {
   console.log( 'Client connected.' );
   
+  // Subscribe
   kaazing.on( Gateway.EVENT_MESSAGE, doGatewayMessage );
   kaazing.subscribe( IOT_TOPIC );  
 }
 
+// Called when a message arrives
+// Parses body to JSON
+// Assigns new values
+// Update charts
 function doGatewayMessage( message ) {
   var data = null;
   var parts = null;
   
+  // Parse JSON
+  data = JSON.parse( message );  
+  
+  // Date is now
   comfort.asof.innerHTML = 'As of Today at ' + moment().format( 'h:mm:ss A' );
-  
-  data = JSON.parse( message );
-  
+    
+  // Who is this message for
+  // Messages can be directed to server as well
+  // Looking for client messages
   if( data.attention == 'client' ) 
   {
+    // Split the CSV sensor values
     parts = data.value.split( ',' );
     
+    // Slide chart across screen
+    // FIFO array values
+    // Array size the pixel size of the chart
     if( comfort.history.length >= comfort.container.clientWidth )
     {
       comfort.history.splice( 0, 1 );  
     }
     
+    // Push the latest sensor values
     comfort.history.push( {
       comfort: parseFloat( parts[0] ),
       usage: parseFloat( parts[1] ),
       index: parseFloat( parts[2] )
     } );
     
+    // Draw the charts
     drawComfort( null );
     drawUsage( null );
     drawIndex( null );
   }
 }
 
+// Switch to real-time
+// Stop polling
+// Turn off plot dot
+// Tell server to go
 function doKaazingClick() 
 {
+  // Stop polling  
   if( interval != null )
   {
-    // Stop polling
     clearInterval( interval );    
     interval = null;
   }
-    
+ 
+  // Hide plot dot
+  // Show sine wave
   comfort.plot.setAttribute( 'opacity', 0 );  
   comfort.chart.setAttribute( 'opacity', 1 );  
   comfort.chart.setAttribute( 'd', 'M0 0' );    
   
-  // Start real time
+  // Tell server to start real time
   kaazing.publish( IOT_TOPIC, JSON.stringify( {
     attention: 'server',
     value: REAL_TIME_ON
   } ) );
 }
 
+// Switch to manual refresh
+// Clear intervals
+// Show plot dot
+// Turn off real time
 function doManualClick()
 {
+  // Clear interval
   if( interval != null )
   {
     clearInterval( interval );  
     interval = null;
   }
   
+  // Make look old
   comfort.asof.innerHTML = 'As of the Last 30 Days';    
   
+  // Hide sine wave
+  // Show plot dot
   comfort.plot.setAttribute( 'opacity', 1 );
   comfort.chart.setAttribute( 'd', 'M0 0' );  
   comfort.chart.setAttribute( 'opacity', 0 );  
   
   // Turn off real time
+  // Instructions to server
   kaazing.publish( IOT_TOPIC, JSON.stringify( {
     attention: 'server',
     value: REAL_TIME_OFF
   } ) );  
 }
 
+// Problem querying Parse
 function doLatestError( error ) 
 {
   console.log( 'Latest' );
   console.log( error );
 }
 
+// Latest sensor data from Parse
+// Charts values
 function doLatestSuccess( result ) 
 {
+  // Match date of data
   comfort.asof.innerHTML = 'As of Today at ' + moment().format( 'h:mm:ss A' );  
   
+  // Update charts
   drawComfort( result.get( 'comfort' ) );
   drawUsage( result.get( 'usage' ) );
   drawIndex( result.get( 'index' ) );  
 }
 
+// Called for one second interval
+// Clears existing intervals
+// Shows plot dot
+// Get latests data from Parse
+// Turn off real time
 function doOneClick()
 { 
+  // Clear interval
   if( interval != null )
   {
     clearInterval( interval );
     interval = null;
   }
   
+  // Show plot dot
+  // Hide sine wave
   comfort.plot.setAttribute( 'opacity', 1 );  
   comfort.chart.setAttribute( 'd', 'M0 0' );    
   comfort.chart.setAttribute( 'opacity', 0 );  
   
+  // Query latest data from Parse
   queryLatest();
   
   // Turn off real time
+  // Message to server
   kaazing.publish( IOT_TOPIC, JSON.stringify( {
     attention: 'server',
     value: REAL_TIME_OFF
   } ) );  
   
+  // Start polling every one second
   interval = setInterval( queryLatest, 1000 );  
 }
 
+// Called when document has loaded
+// Manages control display
+// Connect to Kaazing Gateway
+// Gets references for charting
 function doWindowLoad()
 {
   var button = null;
@@ -441,23 +513,29 @@ function doWindowLoad()
     controls = document.querySelector( '#controls' );
     controls.style.visibility = 'visible';
   }
-  
-  // Gateway
-  kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );  
-  
+    
   // Modes
+  // Manual refresh
   button = document.querySelector( '.refresh' );
   button.addEventListener( 'click', doManualClick );
   
+  // Every five seconds
   button = document.querySelector( '.turtle' );
   button.addEventListener( 'click', doFiveClick );  
   
+  // Once per second
   button = document.querySelector( '.funnel' );
   button.addEventListener( 'click', doOneClick );
   
+  // Real-time with Kaazing
   button = document.querySelector( '.kaazing' );
   button.addEventListener( 'click', doKaazingClick );  
 
+  // Gateway
+  kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );    
+  
+  // Charting components
+  // Comfort level
   comfort = {
     asof: document.querySelector( '.as-of' ),
     callout: document.querySelector( '#comfort-callout' ),
@@ -471,6 +549,7 @@ function doWindowLoad()
     usage: document.querySelector( '#comfort-percent' )
   };
 
+  // Live
   live = {
     callout: document.querySelector( '#live-callout' ),
     label: document.querySelector( '#live-label' ),
@@ -478,6 +557,7 @@ function doWindowLoad()
     usage: document.querySelector( '#live-usage' ),
   };  
   
+  // Usage
   usage = {
     callout: document.querySelector( '#usage-callout' ),
     label: document.querySelector( '#usage-label' ),
@@ -492,6 +572,8 @@ function doWindowLoad()
   queryLatest();
 }
 
+// Use Parse for data storage
 Parse.initialize( PARSE_APP, PARSE_KEY );
 
+// Listen for document to finish loading
 window.addEventListener( 'load', doWindowLoad );

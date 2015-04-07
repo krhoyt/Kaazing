@@ -13,13 +13,13 @@ body {
   background-color: #becfbc;
   font-family: 'Source Sans Pro', sans-serif;
   margin: 0;
+  overflow: hidden;  
   padding: 0;
-  overflow: hidden;
 }
   
 .cart {
   background-color: #f1f6f0;
-  background-image: url( 'cart.svg' );
+  background-image: url( 'img/cart.svg' );
   background-position: 40px center;
   background-repeat: no-repeat;
   background-size: auto 40%;
@@ -96,7 +96,7 @@ body {
 }  
   
 .line .remove {
-  background-image: url( 'letterx.svg' );
+  background-image: url( 'img/letterx.svg' );
   background-position: center;
   background-repeat: no-repeat;
   background-size: auto 12px;

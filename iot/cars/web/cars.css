@@ -12,9 +12,17 @@ svg {
   right: 0;
 }
 
+video {
+  height: 240px; 
+  left: 0;
+  position: absolute;  
+  top: 0;
+  width: 427px; 
+}
+
 .dashboard {
-  background-image: url( 'texture.png' );  
   background-color: black;
+  background-image: url( 'img/texture.png' );  
   bottom: 0;
   box-shadow: 0 -2px 10px rgba( 0, 0, 0, 0.40 );
   height: 350px;
@@ -24,40 +32,40 @@ svg {
 }
 
 .driver {
-  width: 427px; 
+  background-color: rgba( 0, 0, 0, 0.50 );   
   height: 240px;   
   position: absolute;   
   right: 6px; 
   top: 28px;  
   visibility: hidden;  
-  background-color: rgba( 0, 0, 0, 0.50 );   
+  width: 427px;   
 }
 
 .fuel {
+  bottom: 50px;  
   position: absolute;
-  bottom: 50px;
   visibility: hidden;
 }
 
 .icon.battery {
-  background-image: url( 'battery.svg' );  
+  background-image: url( 'img/battery.svg' );  
 }
 
 .icon.engine {
-  background-image: url( 'engine.svg' );  
+  background-image: url( 'img/engine.svg' );  
 }
 
 .icon.movie {
-  background-image: url( 'video.orange.svg' );
+  background-image: url( 'img/video.orange.svg' );
   display: none;
 }
 
 .icon.oil {
-  background-image: url( 'oil.svg' );  
+  background-image: url( 'img/oil.svg' );  
 }
 
 .icon.warning {
-  background-image: url( 'warning.svg' );  
+  background-image: url( 'img/warning.svg' );  
 }
 
 .indicators {
@@ -94,33 +102,22 @@ svg {
 }
   
 .temperature {
+  bottom: 50px;  
   position: absolute;
-  bottom: 50px;
   visibility: hidden;
 }
  
 .waiting {
-  position: absolute;
-  width: 427px; 
-  height: 131px;
-  left: 0;
-  top: 0;
   background-color: black;
   color: white;
-  text-align: center;
-  opacity: 1;
-  z-index: 100;
-  visibility: visible;
-  margin: 0;
   font-size: 22px;
-  padding-top: 109px;
-}
-
-video {
-  width: 427px; 
-  height: 240px; 
-  position: absolute;
+  height: 131px;
   left: 0;
+  margin: 0;
+  opacity: 1;
+  padding-top: 109px;
+  position: absolute;  
+  text-align: center;  
   top: 0;
-  z-index: 90;
+  width: 427px; 
 }

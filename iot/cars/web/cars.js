@@ -1,3 +1,4 @@
+// Constants
 var IOT_TOPIC = 'cars_topic';
 var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';  
 var MAX_COOLANT = 300;
@@ -10,14 +11,19 @@ var RADIUS_RPM_DASH = 225;
 var SVG_PATH = 'http://www.w3.org/2000/svg';
 var VIDEO_PATH = 'http://temp.kevinhoyt.com/kaazing/iot/cars/playback.mp4';
 var VIDEO_TYPE = 'video/mp4';
-  
+
+// Engine
 var ecu = {
   vss: 0.35,
   rpm: 0.60,
   temp: 0.50,
   fuel: 0.75
 };
+
+// Gateway
 var kaazing = null;
+
+// Map
 var map = {
   google: null,
   marker: null,
@@ -25,6 +31,8 @@ var map = {
   root: null,
   route: null
 };
+
+// Dashboard
 var svg = {
   element_fuel: null,
   element_rpm: null,
@@ -34,6 +42,8 @@ var svg = {
   radius_vss: ( 2 * Math.PI * RADIUS_VSS ) * ( 180 / 360 ),
   root: null
 };
+
+// Video
 var video = {
   element: null,
   first: null,
@@ -43,25 +53,30 @@ var video = {
   start: 0
 };
   
+// Called to draw dashboard
+// Only called once
 function draw()
 {
   var indicators = null;
   
+  // Parts
   vss();
   rpm();
   fuel();  
   temp();
   
+  // General indicators
   indicators = document.querySelector( '.indicators' );
   indicators.style.left = ( ( window.innerWidth - indicators.clientWidth ) / 2 ) + 'px';
   indicators.style.visibility = 'visible';
 }
   
+// Draws fuel gauge
 function fuel()
 {
   var path = null;
   
-  // Fuel
+  // Fuel status
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 10 );
   path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
@@ -72,7 +87,7 @@ function fuel()
   );
   svg.root.appendChild( path );     
   
-  // Fuel dashes
+  // Fuel measure
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 6 );
   path.setAttribute( 'stroke', 'white' );
@@ -144,13 +159,14 @@ function fuel()
   path.style.visibility = 'visible';  
 }
 
+// Revolutions per minute
 function rpm()
 {
   var adjacent = null;
   var opposite = null;
   var path = null;
   
-  // RPM
+  // RPM gauge
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 10 );
   path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
@@ -161,12 +177,11 @@ function rpm()
   );
   svg.root.appendChild( path );  
   
-  // RPM dashes
+  // RPM measure
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 6 );
   path.setAttribute( 'stroke', 'white' );
   path.setAttribute( 'fill', 'rgba( 255, 255, 255, 0 )' );  
-  // path.setAttribute( 'stroke-dasharray', '18.84, 2' );
   path.setAttribute( 'd', 
     'M ' + ( ( window.innerWidth / 2 ) - RADIUS_RPM_DASH ) + ', 325 ' + 
     'A 225, 225 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_RPM_DASH ) + ( 2 * RADIUS_RPM_DASH ) ) + ', 325' 
@@ -270,25 +285,25 @@ function rpm()
   svg.root.appendChild( path );          
 }
 
+// Temperature
 function temp() 
 {
   var adjacent = null;
   var opposite = null;
   var path = null;
   
-  // Temperature
+  // Temperature gauge
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 10 );
   path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
   path.setAttribute( 'fill', 'rgba( 72, 72, 72, 0 )' );
-  // 325 - 100 = 225
   path.setAttribute( 'd', 
     'M ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 225 ' +
     'A 100, 100 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 100 ) ) + ', 325' 
   );
   svg.root.appendChild( path );   
   
-  // Temperature dashes
+  // Temperature measure
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 6 );
   path.setAttribute( 'stroke', 'white' );
@@ -388,6 +403,9 @@ function temp()
   path.style.visibility = 'visible';
 }
   
+// Called to update dashboard
+// Updates drawing of gauges
+// Creates initial elements if needed
 function update() 
 {
   // RPM
@@ -448,6 +466,8 @@ function update()
   }
   
   // Fuel
+  // Fuel is static value
+  // Could be dynamic
   if( svg.element_fuel == null )
   {
     svg.element_fuel = document.createElementNS( SVG_PATH, 'path' );
@@ -465,13 +485,14 @@ function update()
   }  
 }
   
+// Speed
 function vss() 
 {
   var adjacent = null;
   var opposite = null;
   var path = null;
   
-  // VSS
+  // VSS gauge
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 10 );
   path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
@@ -482,12 +503,11 @@ function vss()
   );
   svg.root.appendChild( path );
 
-  // VSS dashes
+  // VSS measure
   path = document.createElementNS( SVG_PATH, 'path' );
   path.setAttribute( 'stroke-width', 6 );
   path.setAttribute( 'fill', 'rgba( 255, 255, 255, 0 )' );
   path.setAttribute( 'stroke', 'white' );
-  // path.setAttribute( 'stroke-dasharray', '62, 2' );
   path.setAttribute( 'd', 
     'M ' + ( ( window.innerWidth / 2 ) - RADIUS_VSS_DASH ) + ', 325 ' + 
     'A 275, 275 0 0, 1 ' + ( ( ( window.innerWidth / 2 ) - RADIUS_VSS_DASH ) + ( 2 * RADIUS_VSS_DASH ) ) + ', 325' 
@@ -566,6 +586,8 @@ function vss()
   svg.root.appendChild( path );        
 }  
   
+// Called when connected to Kaazing
+// Subscribes to car messages
 function doGatewayConnect() {
   console.log( 'Client connected.' );
   
@@ -574,6 +596,10 @@ function doGatewayConnect() {
   kaazing.subscribe( IOT_TOPIC );  
 }  
 
+// Called when a message has arrived
+// Gets JSON value
+// Calls to upate gauge values
+// May start video playback
 function doGatewayMessage( message ) {
   var data = null;
   var waiting = null;
@@ -582,8 +608,11 @@ function doGatewayMessage( message ) {
   data = JSON.parse( message );
 
   // Start video on first message
+  // Only if video is requested
   if( video.popcorn != null )
   {
+    // Not already playing
+    // Start playing video
     if( !video.playing ) 
     {
       // Video
@@ -625,6 +654,11 @@ function doGatewayMessage( message ) {
   } )
 }  
   
+// Called when document is loaded
+// Looks for query string behaviors
+// Connects to Kaazing Gateway
+// Initializes Google Maps
+// Draws dashboard
 function doWindowLoad()
 {
   var options = null;
@@ -636,25 +670,33 @@ function doWindowLoad()
   {
     console.log( 'Video requested.' );
     
+    // Dashboard indicator that video is loaded
     video.ready = document.querySelector( '.movie' );
     video.ready.style.display = 'inline';
     
+    // Where to start the video
     video.playing = false;
     video.start = parseInt( URLParser( window.location.href ).getParam( 'playback' ) );
-        
+    
+    // Popcorn wrapper for playback
     video.popcorn = Popcorn( 'video' );
     
-    video.element = document.querySelector( 'video' );
-    video.element.style.visibility = 'visible';
+    // Show video
+    video.screen = document.querySelector( '.driver' );
+    video.screen.style.visibility = 'visible';
     
-    source = document.createElement( 'source' );
+    // Set source at runtime
+    // Sems to impact preload
+    video.element = document.querySelector( 'video' );    
+    source = document.createElement( 'source' );    
     source.src = VIDEO_PATH;
     source.type = VIDEO_TYPE;
     video.element.appendChild( source );
 
+    // Change indicator when fully loaded
     video.element.addEventListener( 'canplaythrough', function( evt ) {
       console.log( 'Video loaded.' );
-      video.ready.style.backgroundImage = 'url( \'video.svg\' )';
+      video.ready.style.backgroundImage = 'url( \'img/video.svg\' )';
     } );
     video.element.load();
   }  
@@ -663,11 +705,15 @@ function doWindowLoad()
   kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );    
   
   // Mapping
+  // Start at home
   options = {
     center: new google.maps.LatLng( 39.4975231, -104.7791048 ),
     zoom: 16        
   };  
   
+  // Element
+  // Google Map
+  // Car marker
   map.root = document.querySelector( '.map' );
   map.google = new google.maps.Map( map.root, options );  
   map.marker = new google.maps.Marker( {
@@ -675,10 +721,11 @@ function doWindowLoad()
     map: map.google,
     icon: {
       anchor: new google.maps.Point( 12, 9 ),
-      url: 'car.svg'  
+      url: 'img/car.svg'  
     }
   } );
   
+  // Route polyline
   map.route = new google.maps.Polyline( {
     path: map.path,
     geodesic: true,
@@ -688,10 +735,13 @@ function doWindowLoad()
   } );  
   map.route.setMap( map.google );
   
+  // Dashboard reference
   svg.root = document.querySelector( 'svg' );
   svg.root.style.width = window.innerWidth + 'px';
     
+  // Draw dashboard
   draw();
 }
   
+// Listen for the document to load
 window.addEventListener( 'load', doWindowLoad );  
