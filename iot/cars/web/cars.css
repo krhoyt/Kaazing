@@ -23,12 +23,33 @@ svg {
   right: 0;
 }
 
+.driver {
+  width: 427px; 
+  height: 240px;   
+  position: absolute;   
+  right: 6px; 
+  top: 28px;  
+  visibility: hidden;  
+  background-color: rgba( 0, 0, 0, 0.50 );   
+}
+
+.fuel {
+  position: absolute;
+  bottom: 50px;
+  visibility: hidden;
+}
+
 .icon.battery {
   background-image: url( 'battery.svg' );  
 }
 
 .icon.engine {
   background-image: url( 'engine.svg' );  
+}
+
+.icon.movie {
+  background-image: url( 'video.orange.svg' );
+  display: none;
 }
 
 .icon.oil {
@@ -44,7 +65,7 @@ svg {
   border-radius: 40px;
   border-bottom: solid 1px rgba( 255, 255, 255, 0.50 );
   border-top: solid 1px black;
-  bottom: 20px;
+  bottom: 25px;
   height: 40px;
   left: 20px;
   padding-left: 10px;
@@ -77,13 +98,29 @@ svg {
   bottom: 50px;
   visibility: hidden;
 }
-  
+ 
+.waiting {
+  position: absolute;
+  width: 427px; 
+  height: 131px;
+  left: 0;
+  top: 0;
+  background-color: black;
+  color: white;
+  text-align: center;
+  opacity: 1;
+  z-index: 100;
+  visibility: visible;
+  margin: 0;
+  font-size: 22px;
+  padding-top: 109px;
+}
+
 video {
   width: 427px; 
   height: 240px; 
-  background-color: rgba( 0, 0, 0, 0.50 ); 
-  position: absolute; 
-  right: 6px; 
-  top: 28px;  
-  visibility: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 90;
 }

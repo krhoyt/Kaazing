@@ -14,7 +14,8 @@ var VIDEO_TYPE = 'video/mp4';
 var ecu = {
   vss: 0.35,
   rpm: 0.60,
-  temp: 0.50
+  temp: 0.50,
+  fuel: 0.75
 };
 var kaazing = null;
 var map = {
@@ -25,6 +26,7 @@ var map = {
   route: null
 };
 var svg = {
+  element_fuel: null,
   element_rpm: null,
   element_temp: null,
   element_vss: null,
@@ -37,6 +39,7 @@ var video = {
   first: null,
   playing: null,
   popcorn: null,
+  ready: null,
   start: 0
 };
   
@@ -46,6 +49,7 @@ function draw()
   
   vss();
   rpm();
+  fuel();  
   temp();
   
   indicators = document.querySelector( '.indicators' );
@@ -53,6 +57,93 @@ function draw()
   indicators.style.visibility = 'visible';
 }
   
+function fuel()
+{
+  var path = null;
+  
+  // Fuel
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 10 );
+  path.setAttribute( 'stroke', 'rgb( 72, 72, 72 )' );
+  path.setAttribute( 'fill', 'rgba( 72, 72, 72, 0 )' );
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) ) + ', 225 ' +
+    'A 100, 100 0 0, 0 ' + ( ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) ) - 100 ) + ', 325' 
+  );
+  svg.root.appendChild( path );     
+  
+  // Fuel dashes
+  path = document.createElementNS( SVG_PATH, 'path' );
+  path.setAttribute( 'stroke-width', 6 );
+  path.setAttribute( 'stroke', 'white' );
+  path.setAttribute( 'fill', 'rgba( 255, 255, 255, 0 )' );
+  path.setAttribute( 'd', 
+    'M ' + ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) ) + ', 212 ' + 
+    'A 113, 113 0 0, 0 ' + ( ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) - 113 ) ) + ', 325' 
+  );
+  svg.root.appendChild( path );     
+  
+  // Fuel tick marks
+  for( var d = 0; d < 3; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) + 110 );
+    path.setAttribute( 'y', 321 );
+    path.setAttribute( 'width', 15 );
+    path.setAttribute( 'height', 2 );
+    path.setAttribute( 'fill', 'white' );                
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( 270 + ( -45 * d ) ) + ', ' + ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }        
+  
+  // Fuel dash marks
+  for( var d = 0; d < 2; d++ )
+  {
+    path = document.createElementNS( SVG_PATH, 'rect' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) + 108 );
+    path.setAttribute( 'y', 323 );
+    path.setAttribute( 'width', 8 );
+    path.setAttribute( 'height', 2 );    
+    path.setAttribute( 'fill', 'black' );            
+    path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
+    path.setAttribute( 'transform', 'rotate( ' + ( 270 + ( -45 * d ) - 22.5 ) + ', ' + ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) ) + ', 323 )' );
+    svg.root.appendChild( path );    
+  }        
+  
+  // Fuel values
+  for( var d = 0; d < 3; d++ ) 
+  {
+    opposite = Math.sin( ( d * 45 ) * ( Math.PI / 180 ) ) * 130;                                                                                                                                                                                                                                                                                                                                                          ( ( d * 36.08 ) * ( Math.PI / 180 ) ) * 202;
+    adjacent = Math.cos( ( d * 45 ) * ( Math.PI / 180 ) ) * 130;
+
+    path = document.createElementNS( SVG_PATH, 'text' );
+    path.setAttribute( 'text-anchor', 'end' );           
+    path.setAttribute( 'fill', 'white' );
+    path.setAttribute( 'x', ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) - adjacent );
+    
+    if( d == 0 ) {
+      path.setAttribute( 'y', 325 + 4 - opposite );   
+      path.textContent = 'E';
+    } else if( d == 2 ) {
+      path.setAttribute( 'y', 325 - 4 - opposite );                       
+      path.setAttribute( 'text-anchor', 'middle' ); 
+      path.textContent = 'F';      
+    } else {
+      path.setAttribute( 'y', 325 - opposite );                      
+      path.textContent = '1/2';
+    }
+
+    path.setAttribute( 'font-size', 18 );
+    svg.root.appendChild( path );          
+  }      
+  
+  // Fuel icon
+  path = document.querySelector( '.fuel' );
+  path.style.left = ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) - 50 ) + 'px';                              
+  path.style.visibility = 'visible';  
+}
+
 function rpm()
 {
   var adjacent = null;
@@ -250,10 +341,8 @@ function temp()
     path.setAttribute( 'x', ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) + 108 );
     path.setAttribute( 'y', 323 );
     path.setAttribute( 'width', 8 );
-    path.setAttribute( 'height', 2 );
-    
+    path.setAttribute( 'height', 2 );    
     path.setAttribute( 'fill', 'black' );            
-
     path.setAttribute( 'stroke', 'rgba( 255, 255, 255, 0 )' );
     path.setAttribute( 'transform', 'rotate( ' + ( ( -45 * d ) - 22.5 ) + ', ' + ( ( window.innerWidth / 2 ) + ( window.innerWidth / 3 ) ) + ', 323 )' );
     svg.root.appendChild( path );    
@@ -357,6 +446,23 @@ function update()
   } else {
     svg.element_temp.setAttribute( 'stroke-dashoffset', 157 + ( 157 * ecu.temp ) );        
   }
+  
+  // Fuel
+  if( svg.element_fuel == null )
+  {
+    svg.element_fuel = document.createElementNS( SVG_PATH, 'path' );
+    svg.element_fuel.setAttribute( 'stroke-width', 10 );
+    svg.element_fuel.setAttribute( 'stroke', 'rgb( 81, 141, 163 )' );
+    svg.element_fuel.setAttribute( 'fill', 'rgba( 81, 141, 163, 0 )' );
+    svg.element_fuel.setAttribute( 'filter', 'url( #glow )' );            
+    svg.element_fuel.setAttribute( 'stroke-dashoffset', 157 + ( 157 * ecu.fuel ) );  
+    svg.element_fuel.setAttribute( 'stroke-dasharray', 157 );            
+    svg.element_fuel.setAttribute( 'd', 
+      'M ' + ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) ) + ', 225 ' +
+      'A 100, 100 0 0, 0 ' + ( ( ( window.innerWidth / 2 ) - ( window.innerWidth / 3 ) - 100 ) ) + ', 325' 
+    );
+    svg.root.appendChild( svg.element_fuel );   
+  }  
 }
   
 function vss() 
@@ -470,6 +576,7 @@ function doGatewayConnect() {
 
 function doGatewayMessage( message ) {
   var data = null;
+  var waiting = null;
 
   // Parse data
   data = JSON.parse( message );
@@ -479,10 +586,22 @@ function doGatewayMessage( message ) {
   {
     if( !video.playing ) 
     {
+      // Video
       video.first = data.time;
       video.playing = true;
       video.popcorn.play( video.start );        
+      
+      // Remove block
+      waiting = document.querySelector( '.waiting' );
+      
+      // Fade
+      TweenMax.to( waiting, 1, {
+        opacity: 0,
+        delay: 1
+      } );
     } else if( video.playing ) {
+      // Loop back to video start
+      // Not necessarily 0:00
       if( video.first == data.time ) 
       {
         video.popcorn.play( video.start );                
@@ -517,6 +636,9 @@ function doWindowLoad()
   {
     console.log( 'Video requested.' );
     
+    video.ready = document.querySelector( '.movie' );
+    video.ready.style.display = 'inline';
+    
     video.playing = false;
     video.start = parseInt( URLParser( window.location.href ).getParam( 'playback' ) );
         
@@ -532,6 +654,7 @@ function doWindowLoad()
 
     video.element.addEventListener( 'canplaythrough', function( evt ) {
       console.log( 'Video loaded.' );
+      video.ready.style.backgroundImage = 'url( \'video.svg\' )';
     } );
     video.element.load();
   }  
