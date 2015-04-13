@@ -126,7 +126,7 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void onError( String message ) {
-				System.out.println( message );
+				System.out.println( "Error: " + message );
 			}
 			
 			@Override
@@ -152,7 +152,7 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void onSave( String message ) {
-				System.out.println( message );
+				System.out.println( "Save: " + message );
 			}
 			
 		};
@@ -162,7 +162,7 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void run() {
-				System.out.println( latest );
+				System.out.println( "Latest: " + latest );
 				parse.save( latest );
 			}
 			

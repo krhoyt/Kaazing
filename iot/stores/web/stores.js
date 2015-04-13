@@ -28,7 +28,7 @@ function line() {
   item.classList.add( 'line' );
 
   // Populate
-  item.children[0].style.backgroundImage = 'url( img/' + cart[cart.length - 1].image + ' )';
+  item.children[0].style.backgroundImage = 'url( ' + cart[cart.length - 1].image + ' )';
   item.children[1].innerHTML = cart[cart.length - 1].title;
   item.children[3].innerHTML = cart[cart.length - 1].price.toLocaleString();
 
@@ -236,7 +236,7 @@ function doWindowLoad()
   button.addEventListener( 'click', function() {
     kaazing.publish( TOPIC, JSON.stringify( {
       action: ACTION_SHOW,
-      image: 'dobos-torta.jpg',
+      image: 'img/dobos-torta.jpg',
       price: 3,      
       title: "Dobos Torta",
       upc: Date.now()              
