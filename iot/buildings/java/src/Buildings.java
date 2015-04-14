@@ -202,6 +202,13 @@ public class Buildings implements SerialPortEventListener {
 			serial = new SerialPort( port );
 			
 			try {
+				// Purge used ports
+				if( serial != null && serial.isOpened() ) {
+				  serial.purgePort( 1 );
+				  serial.purgePort( 2 );
+				  serial.closePort();
+				}							
+				
 				// Open serial port
 				// Listen for data
 				serial.openPort();
