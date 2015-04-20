@@ -26,7 +26,6 @@ import jssc.SerialPortException;
 public class Buildings implements SerialPortEventListener {
 
 	// Constants
-	private static final boolean	DEBUG = false;
 	private static final char 		SERIAL_END = '\r';
 	private static final char 		SERIAL_START = '#';
 	private static final int		SENSOR_DELAY = 25; 
@@ -58,18 +57,27 @@ public class Buildings implements SerialPortEventListener {
 	private ScheduledExecutorService	service;
 	private ScheduledExecutorService	wave;	
 	
+	// Option
+	private boolean verbose = true;
+	
 	// Constructor
 	// Initialize gateway
 	// Initialize serial port
-	public Buildings( boolean hasDevice ) {
+	public Buildings( boolean generate, boolean verbose ) {
+		this.verbose = verbose;
+		
 		initParse();
 		initGateway();
 		
-		if( hasDevice ) {
-			initSerial();
+		if( generate ) {
+			initWave();			
 		} else {
-			initWave();
+			initSerial();
 		}
+	}
+	
+	public Buildings() {
+		this( false, false );
 	}
 	
 	// Initialize gateway
@@ -86,12 +94,16 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void onUnsubscribe() {
-				System.out.println( "Client unsubscribed." );				
+				if( verbose ) {
+					System.out.println( "Client unsubscribed." );
+				}
 			}
 			
 			@Override
 			public void onSubscribe() {
-				System.out.println( "Client subscribed." );
+				if( verbose ) {
+					System.out.println( "Client subscribed." );
+				}
 			}
 			
 			@Override
@@ -126,10 +138,16 @@ public class Buildings implements SerialPortEventListener {
 				
 				if( attention.equals( "server" ) ) {
 					if( Integer.parseInt( value ) == REAL_TIME_OFF ) {
-						System.out.println( "Real time off." );
+						if( verbose ) {
+							System.out.println( "Real time off." );							
+						}
+
 						realtime = false;						
 					} else if( Integer.parseInt( value ) == REAL_TIME_ON ) {
-						System.out.println( "Real time on." );
+						if( verbose ) {
+							System.out.println( "Real time on." );
+						}
+						
 						realtime = true;
 					}
 				}
@@ -137,7 +155,9 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void onError( String message ) {
-				System.out.println( "Error: " + message );
+				if( verbose ) {
+					System.out.println( "Error: " + message );
+				}
 			}
 			
 			@Override
@@ -147,7 +167,10 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void onConnect() {
-				System.out.println( "Client connected." );	
+				if( verbose ) {
+					System.out.println( "Client connected." );					
+				}
+	
 				gateway.subscribe( TOPIC );
 			}
 		};
@@ -163,7 +186,7 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void onSave( String message ) {
-				if( DEBUG ) {
+				if( verbose ) {
 					System.out.println( "Save: " + message );
 				}
 			}
@@ -175,7 +198,7 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void run() {
-				if( DEBUG ) {
+				if( verbose ) {
 					System.out.println( "Latest: " + latest );
 				}
 				
@@ -337,14 +360,25 @@ public class Buildings implements SerialPortEventListener {
 			@Override
 			public void run() 
 			{
+				boolean generate = false;				
+				boolean verbose = false;
+				
 				Buildings iot = null;
 				
 				if( args.length > 0 ) {
-					if( args[0].equals( "wave" ) ) {
-						iot = new Buildings( false );
+					for( int a = 0; a < args.length; a++ ) {
+						if( args[a].equals( "generate" ) ) {
+							generate = true;
+						}						
+						
+						if( args[a].equals( "verbose" ) ) {
+							verbose = true;
+						}												
 					}
+					
+					iot = new Buildings( generate, verbose );
 				} else {
-					iot = new Buildings( true );
+					iot = new Buildings();
 				}
 			}
 			
