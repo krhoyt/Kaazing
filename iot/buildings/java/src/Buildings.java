@@ -26,13 +26,15 @@ import jssc.SerialPortException;
 public class Buildings implements SerialPortEventListener {
 
 	// Constants
-	private static final char 	SERIAL_END = '\r';
-	private static final char 	SERIAL_START = '#';
-	private static final int	REAL_TIME_OFF = 0;	
-	private static final int	REAL_TIME_ON = 1;
-	private static final String KAAZING_ID = "nKkG23KJnb";
-	private static final String SERIAL_PORT = "port.txt";	
-	private static final String TOPIC = "buildings_topic";	
+	private static final boolean	DEBUG = false;
+	private static final char 		SERIAL_END = '\r';
+	private static final char 		SERIAL_START = '#';
+	private static final int		SENSOR_DELAY = 25; 
+	private static final int		REAL_TIME_OFF = 0;	
+	private static final int		REAL_TIME_ON = 1;
+	private static final String 	KAAZING_ID = "nKkG23KJnb";
+	private static final String 	SERIAL_PORT = "port.txt";	
+	private static final String 	TOPIC = "buildings_topic";	
 	
 	// Gateway
 	private boolean	realtime = false;
@@ -47,16 +49,27 @@ public class Buildings implements SerialPortEventListener {
 	private String			latest = null;
 	private StringBuilder	builder = null;
 	
-	// Timer
-	private ScheduledExecutorService	service;	
+	// Sine wave
+	private long	comfort = 0;	
+	private long	index = 0;	
+	private long	usage = 0;
+	
+	// Timers
+	private ScheduledExecutorService	service;
+	private ScheduledExecutorService	wave;	
 	
 	// Constructor
 	// Initialize gateway
 	// Initialize serial port
-	public Buildings() {
+	public Buildings( boolean hasDevice ) {
 		initParse();
 		initGateway();
-		initSerial();
+		
+		if( hasDevice ) {
+			initSerial();
+		} else {
+			initWave();
+		}
 	}
 	
 	// Initialize gateway
@@ -92,9 +105,7 @@ public class Buildings implements SerialPortEventListener {
 				// String to InputStream
 				stream = new ByteArrayInputStream( body.getBytes( StandardCharsets.UTF_8 ) );
 				parser = Json.createParser( stream );				
-				
-				// System.out.println( "Message: " + body );
-				
+								
 				while( parser.hasNext() ) {
 					e = parser.next();
 					
@@ -115,10 +126,10 @@ public class Buildings implements SerialPortEventListener {
 				
 				if( attention.equals( "server" ) ) {
 					if( Integer.parseInt( value ) == REAL_TIME_OFF ) {
-						System.out.println( "REAL TIME OFF." );
+						System.out.println( "Real time off." );
 						realtime = false;						
 					} else if( Integer.parseInt( value ) == REAL_TIME_ON ) {
-						System.out.println( "REAL TIME ON!" );
+						System.out.println( "Real time on." );
 						realtime = true;
 					}
 				}
@@ -152,7 +163,9 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void onSave( String message ) {
-				System.out.println( "Save: " + message );
+				if( DEBUG ) {
+					System.out.println( "Save: " + message );
+				}
 			}
 			
 		};
@@ -162,7 +175,10 @@ public class Buildings implements SerialPortEventListener {
 			
 			@Override
 			public void run() {
-				System.out.println( "Latest: " + latest );
+				if( DEBUG ) {
+					System.out.println( "Latest: " + latest );
+				}
+				
 				parse.save( latest );
 			}
 			
@@ -190,7 +206,8 @@ public class Buildings implements SerialPortEventListener {
 			stream.read( data );
 			stream.close();
 			
-			port = new String( data, "UTF-8" );
+			// Pesky newline
+			port = new String( data, "UTF-8" ).trim();
 		} catch( UnsupportedEncodingException uee ) {
 			uee.printStackTrace();
 		} catch( IOException ioe ) {
@@ -202,13 +219,6 @@ public class Buildings implements SerialPortEventListener {
 			serial = new SerialPort( port );
 			
 			try {
-				// Purge used ports
-				if( serial != null && serial.isOpened() ) {
-				  serial.purgePort( 1 );
-				  serial.purgePort( 2 );
-				  serial.closePort();
-				}							
-				
 				// Open serial port
 				// Listen for data
 				serial.openPort();
@@ -218,6 +228,35 @@ public class Buildings implements SerialPortEventListener {
 				spe.printStackTrace();
 			}			
 		}
+	}
+	
+	private void initWave() {
+		comfort = Math.round( Math.random() * 360 );
+		index = Math.round( Math.random() * 360 );
+		usage = Math.round( Math.random() * 360 );
+		
+		wave = Executors.newSingleThreadScheduledExecutor();
+		wave.scheduleAtFixedRate( new Runnable() {
+			
+			@Override
+			public void run() {
+				latest =  
+					String.format( "%.2f", Math.sin( usage * ( Math.PI / 180 ) ) ) + 
+					"," + 
+					String.format( "%.2f", Math.sin( index * ( Math.PI / 180 ) ) ) +
+					"," +
+					String.format( "%.2f", Math.sin( comfort * ( Math.PI / 180 ) ) );
+				
+				comfort = comfort + 1;
+				index = index + 1;
+				usage = usage + 1;
+				
+				if( realtime ) {
+					process( latest );
+				}
+			}
+			
+		}, 0, SENSOR_DELAY, TimeUnit.MILLISECONDS );		
 	}
 	
 	// Process serial port data
@@ -298,7 +337,15 @@ public class Buildings implements SerialPortEventListener {
 			@Override
 			public void run() 
 			{
-				Buildings iot = new Buildings();
+				Buildings iot = null;
+				
+				if( args.length > 0 ) {
+					if( args[0].equals( "wave" ) ) {
+						iot = new Buildings( false );
+					}
+				} else {
+					iot = new Buildings( true );
+				}
 			}
 			
 		} );
