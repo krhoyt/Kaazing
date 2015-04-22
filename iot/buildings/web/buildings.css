@@ -305,3 +305,8 @@ button:focus {
 .wrench {
   background-image: url( 'img/wrench.svg' );
 }  
+
+.selected {
+  background-color: #e5e5e1;
+  border-radius: 5px;
+}

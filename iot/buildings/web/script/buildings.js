@@ -330,6 +330,9 @@ function doFiveClick()
   
   // Repeat every five seconds
   interval = setInterval( queryLatest, 5000 );
+
+  setSelectedControlButton(".turtle");
+
 }
 
 // Called when Kaazing Gateway is connected
@@ -410,6 +413,8 @@ function doKaazingClick()
     attention: 'server',
     value: REAL_TIME_ON
   } ) );
+
+  setSelectedControlButton(".kaazing");
 }
 
 // Switch to manual refresh
@@ -440,6 +445,25 @@ function doManualClick()
     attention: 'server',
     value: REAL_TIME_OFF
   } ) );  
+
+  setSelectedControlButton(".refresh");
+}
+
+// Highlight the given button, and un-highlight the others.
+function setSelectedControlButton(selectedButton)
+{
+  function removeSelection(button) {
+    var b = $(button);
+    b.removeClass("selected");
+  }
+
+  removeSelection("button.refresh");
+  removeSelection("button.turtle");
+  removeSelection("button.funnel");
+  removeSelection("button.kaazing");
+
+  var b = $("button"+selectedButton);
+  b.addClass("selected");
 }
 
 // Problem querying Parse
@@ -494,6 +518,8 @@ function doOneClick()
   
   // Start polling every one second
   interval = setInterval( queryLatest, 1000 );  
+
+  setSelectedControlButton(".funnel");
 }
 
 // Called when document has loaded
@@ -530,6 +556,8 @@ function doWindowLoad()
   // Real-time with Kaazing
   button = document.querySelector( '.kaazing' );
   button.addEventListener( 'click', doKaazingClick );  
+
+  setSelectedControlButton(".refresh");
 
   // Gateway
   kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );    
