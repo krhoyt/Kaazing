@@ -1,4 +1,4 @@
-public interface ParseListener {
+public interface LocalListener {
 
 	void onSave( String message );
 

@@ -39,7 +39,8 @@ public class Buildings implements SerialPortEventListener {
 	private boolean	realtime = false;
 	private Gateway	gateway = null;
 	
-	// Parse
+	// Parse (or not)
+	private Local	local = null;
 	private Parse	parse = null;
 	
 	// Serial port
@@ -58,15 +59,22 @@ public class Buildings implements SerialPortEventListener {
 	private ScheduledExecutorService	wave;	
 	
 	// Option
+	private boolean offline = false;
 	private boolean verbose = true;
 	
 	// Constructor
 	// Initialize gateway
 	// Initialize serial port
-	public Buildings( boolean generate, boolean verbose ) {
+	public Buildings( boolean generate, boolean verbose, boolean offline ) {
+		this.offline = offline;
 		this.verbose = verbose;
 		
-		initParse();
+		if( offline ) {
+			initLocal();			
+		} else {
+			initParse();			
+		}
+
 		initGateway();
 		
 		if( generate ) {
@@ -77,7 +85,7 @@ public class Buildings implements SerialPortEventListener {
 	}
 	
 	public Buildings() {
-		this( false, false );
+		this( false, false, false );
 	}
 	
 	// Initialize gateway
@@ -177,6 +185,35 @@ public class Buildings implements SerialPortEventListener {
 		
 		// Connect to gateway
 		gateway.connect( KAAZING_ID );		
+	}
+	
+	// Initialize local data storage
+	private void initLocal() {
+		local = new Local();
+		local.callback = new LocalListener() {
+			
+			@Override
+			public void onSave( String message ) {
+				if( verbose ) {
+					System.out.println( "Save: " + message );
+				}
+			}
+			
+		};
+		
+		service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleWithFixedDelay( new Runnable() {
+			
+			@Override
+			public void run() {
+				if( verbose ) {
+					System.out.println( "Latest: " + latest );
+				}
+				
+				local.save( latest );
+			}
+			
+		}, 5, 5, TimeUnit.SECONDS );		
 	}
 	
 	// Initialize data storage
@@ -360,7 +397,8 @@ public class Buildings implements SerialPortEventListener {
 			@Override
 			public void run() 
 			{
-				boolean generate = false;				
+				boolean generate = false;
+				boolean offline = false;
 				boolean verbose = false;
 				
 				Buildings iot = null;
@@ -374,9 +412,13 @@ public class Buildings implements SerialPortEventListener {
 						if( args[a].equals( "verbose" ) ) {
 							verbose = true;
 						}												
+						
+						if( args[a].equals( "offline" ) ) {
+							offline = true;
+						}																		
 					}
 					
-					iot = new Buildings( generate, verbose );
+					iot = new Buildings( generate, verbose, offline );
 				} else {
 					iot = new Buildings();
 				}

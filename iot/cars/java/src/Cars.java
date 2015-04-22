@@ -44,7 +44,11 @@ public class Cars {
 	private String[]					history = null;
 	private ScheduledExecutorService	service = null;
 	
-	public Cars( boolean playback, boolean offline ) {
+	private boolean						verbose = false;
+	
+	public Cars( boolean playback, boolean offline, boolean verbose ) {
+		this.verbose = verbose;
+		
 		if( playback ) {
 			initGateway();			
 			initPlayback();
@@ -59,9 +63,9 @@ public class Cars {
 			initGateway();						
 		}
 	}
-		
+	
 	public Cars() {
-		this( false, false );
+		this( false, false, false );
 	}
 	
 	private void initGateway() {
@@ -318,14 +322,28 @@ public class Cars {
 			@Override
 			public void run() 
 			{
-				Cars	iot;
+				boolean	playback = false;
+				boolean offline = false;
+				boolean verbose = false;
+				
+				Cars	iot = null;
 				
 				if( args.length > 0 ) {
-					if( args[0].equals( "playback" ) ) {
-						iot = new Cars( true, false );
-					} else if( args[0].equals( "offline" ) ) {
-						iot = new Cars( false, true );
+					for( int a = 0; a < args.length; a++ ) {
+						if( args[a].equals( "playback" ) ) {
+							playback = true;
+						}
+						
+						if( args[a].equals( "offline" ) ) {
+							offline = true;
+						}
+						
+						if( args[a].equals( "verbose" ) ) {
+							verbose = true;
+						}						
 					}
+					
+					iot = new Cars( playback, offline, verbose );
 				} else {
 					iot = new Cars();
 				}									

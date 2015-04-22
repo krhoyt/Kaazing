@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<!-- Tablet-friendly -->
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+  
+<title>Vehicle Dashboard</title>
+
+<!-- Source Sans Pro -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">  
+  
+<!-- Application styles -->
+<link href="cars.css" rel="stylesheet" type="text/css">    
+
+<!-- Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnAma860uhvcxM9t9tVdFepn2ruuB5STk" type="text/javascript"></script>  
+  
+<!-- Animation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.1/TweenMax.min.js" type="text/javascript"></script>
+
+<!-- Video control -->
+<script src="http://popcornjs.org/code/dist/popcorn-complete.js"></script>  
+  
+<!-- Query parameters -->
+<script src="URLParser.js" type="text/javascript"></script>
+  
+<!-- Kaazing Gateway -->
+<script src="gateway-local.js" type="text/javascript"></script>  
+  
+<!-- Application -->
+<script src="cars.js" type="text/javascript"></script>  
+  
+</head>  
+<body>
+
+<!-- Map -->
+<div class="map"></div> 
+  
+<!-- Dashboard -->
+<div class="dashboard">
+  <svg>
+    <filter id="glow">
+        <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+        <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+    </filter>
+  </svg>    
+</div>
+  
+<!-- Fuel icon -->
+<img class="fuel" src="img/fuel.svg" width="25" height="25">
+  
+<!-- Temperature icon -->
+<img class="temperature" src="img/temperature.svg" width="25" height="25">  
+  
+<!-- Indicator icons -->
+<!-- Visual interest -->
+<div class="indicators">
+  <div class="icon warning"></div>
+  <div class="icon battery"></div>  
+  <div class="icon engine"></div>    
+  <div class="icon oil"></div>
+  <div class="icon movie"></div>  
+</div>
+  
+<!-- Video -->
+<div class="driver">
+  <video preload="auto"></video>  
+  <p class="waiting">Waiting for data.</p>
+</div>
+  
+</body>
+</html>
