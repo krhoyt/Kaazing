@@ -43,7 +43,10 @@ function add_to_board( board, piece )
   {
     for( var x = 0; x < TEMPLATE_WIDTH; x++ )
     {
-
+      if( piece.shape[piece.rotation][y][x] != BLANK )
+      {
+        board[y + piece.y][x + piece.x] == piece.color;
+      }
     }
   }
 }
@@ -298,7 +301,13 @@ function tick()
     // Piece cannot move down
     if( !is_valid_position( board, piece_falling, 0, 1 ) )
     {
-      // TODO: Add to board
+      // Add to board
+      add_to_board( board, piece_falling );
+      
+      // TODO: Increment score
+      // TODO: Increment level
+      // TODO: Increment fall frequency
+      
       // Piece done moving
       piece_falling = null;
     } else {

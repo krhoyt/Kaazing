@@ -30,7 +30,7 @@ function line() {
   // Populate
   item.children[0].style.backgroundImage = 'url( ' + cart[cart.length - 1].image + ' )';
   item.children[1].innerHTML = cart[cart.length - 1].title;
-  item.children[3].innerHTML = cart[cart.length - 1].price.toLocaleString();
+  item.children[3].innerHTML = cart[cart.length - 1].price.toFixed( 2 );
 
   // Allow for preview
   item.children[0].addEventListener( 'click', doThumbnailClick );  
@@ -102,7 +102,7 @@ function total() {
   
   // Display total
   amount = document.querySelector( '.amount' );
-  amount.innerHTML = total.toLocaleString();
+  amount.innerHTML = total.toFixed( 2 );
 }
   
 // Called when connected to Gateway
