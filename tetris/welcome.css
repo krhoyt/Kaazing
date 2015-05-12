@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+  
+.block {
+  position: relative;
+}
+  
+.board {
+  background-color: aliceblue;
+  bottom: 0;
+  position: absolute;
+}
+  
+.board_border {
+  background-color: orange;
+  position: absolute;
+}
+  
+.bob {
+  background-image: url( bob.jpg );
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+}
+ 
+.michel {
+  background-image: url( michel.jpg );
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+}
+  
+.mohsen {
+  background-image: url( mohsen.jpg );
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+}  
