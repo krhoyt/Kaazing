@@ -39,3 +39,10 @@ body {
   background-size: cover;
   position: absolute;
 }  
+
+.peter {
+  background-image: url( peter.jpg );
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+}

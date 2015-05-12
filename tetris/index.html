@@ -35,6 +35,19 @@ Date.seconds = function()
   return Math.floor( Date.now() / 1000 );
 }
 
+// Add to logical board
+// Piece landed and placed
+function add_to_board( board, piece )
+{
+  for( var y = 0; y < TEMPLATE_HEIGHT; y++ )
+  {
+    for( var x = 0; x < TEMPLATE_WIDTH; x++ )
+    {
+
+    }
+  }
+}
+
 // Rate of fall
 // Can be tuned
 function calculate_fall_frequency( level )
@@ -219,12 +232,8 @@ function is_on_board( x, y )
 function is_valid_position( board, piece, adjust_x, adjust_y )
 {
   var is_above_board = null;
-  var result = null;
   
   console.log( 'Check position.' );
-  
-  // Assume valid placement
-  result = true;
   
   // Within the context of the piece
   for( var x = 0; x < TEMPLATE_WIDTH; x++ )
@@ -242,20 +251,23 @@ function is_valid_position( board, piece, adjust_x, adjust_y )
       }
       
       // Not on the board
+      // TODO: Refactor out the mid-loop return statments
       if( !is_on_board( x + piece.x + adjust_x, y + piece.y + adjust_y ) )
       {
-        result = false;
+        return false;
       }
       
       // Something already there
       if( board[y + piece.y + adjust_y][x + piece.x + adjust_x] != BLANK )
       {
-        result = false;  
+        return false;
       }
     }
   }
   
-  return result;
+  // Everything checks out
+  // Valid placement
+  return true;
 }
   
 function tick()
@@ -325,7 +337,8 @@ function do_window_load()
   colors = [
     'mohsen',
     'bob',
-    'michel'
+    'michel',
+    'peter'
   ];
   
   // Pieces 
