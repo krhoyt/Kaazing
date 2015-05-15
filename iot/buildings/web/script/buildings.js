@@ -292,11 +292,35 @@ function queryLatest()
   } );
 }
 
+// Remove interval highlight
+function removeSelection( button ) 
+{
+  button = document.querySelector( button );
+  button.classList.remove( 'selected' );
+}
+
 // Linear transform for charting
 // Maps a value in one range to a value in another range
 function scale( value, old_top, old_bottom, new_top, new_bottom )
 {
   return new_bottom + ( new_top - new_bottom ) * ( ( value - old_bottom ) / ( old_top - old_bottom ) ); 
+}
+
+// Highlight the given button
+// Remove highlight from others
+function setSelectedControlButton( selected )
+{
+  var button = null;
+  
+  // Remove from all
+  removeSelection( '.refresh' );
+  removeSelection( '.turtle' );
+  removeSelection( '.funnel' );
+  removeSelection( '.kaazing' );
+
+  // Add back to specified
+  button = document.querySelector( selected );
+  button.classList.add( 'selected' );
 }
 
 // Called when five second button is clicked
@@ -331,8 +355,8 @@ function doFiveClick()
   // Repeat every five seconds
   interval = setInterval( queryLatest, 5000 );
 
-  setSelectedControlButton(".turtle");
-
+  // Highlight selected interval
+  setSelectedControlButton( '.turtle' );
 }
 
 // Called when Kaazing Gateway is connected
@@ -407,6 +431,8 @@ function doKaazingClick()
   comfort.plot.setAttribute( 'opacity', 0 );  
   comfort.chart.setAttribute( 'opacity', 1 );  
   comfort.chart.setAttribute( 'd', 'M0 0' );    
+
+  comfort.history = [];
   
   // Tell server to start real time
   kaazing.publish( IOT_TOPIC, JSON.stringify( {
@@ -414,7 +440,8 @@ function doKaazingClick()
     value: REAL_TIME_ON
   } ) );
 
-  setSelectedControlButton(".kaazing");
+  // Highlight selected interval
+  setSelectedControlButton( '.kaazing' );
 }
 
 // Switch to manual refresh
@@ -446,24 +473,8 @@ function doManualClick()
     value: REAL_TIME_OFF
   } ) );  
 
-  setSelectedControlButton(".refresh");
-}
-
-// Highlight the given button, and un-highlight the others.
-function setSelectedControlButton(selectedButton)
-{
-  function removeSelection(button) {
-    var b = $(button);
-    b.removeClass("selected");
-  }
-
-  removeSelection("button.refresh");
-  removeSelection("button.turtle");
-  removeSelection("button.funnel");
-  removeSelection("button.kaazing");
-
-  var b = $("button"+selectedButton);
-  b.addClass("selected");
+  // Highlight selected interval
+  setSelectedControlButton( '.refresh' );
 }
 
 // Problem querying Parse
@@ -519,7 +530,8 @@ function doOneClick()
   // Start polling every one second
   interval = setInterval( queryLatest, 1000 );  
 
-  setSelectedControlButton(".funnel");
+  // Highlight selected interval
+  setSelectedControlButton( '.funnel' );
 }
 
 // Called when document has loaded
@@ -557,7 +569,8 @@ function doWindowLoad()
   button = document.querySelector( '.kaazing' );
   button.addEventListener( 'click', doKaazingClick );  
 
-  setSelectedControlButton(".refresh");
+  // Highlight default interval
+  setSelectedControlButton( '.refresh' );
 
   // Gateway
   kaazing = Gateway.connect( KAAZING_ID, doGatewayConnect );    

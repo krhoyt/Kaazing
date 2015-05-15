@@ -292,11 +292,35 @@ function queryLatest()
   }
 }
 
+// Remove interval highlight
+function removeSelection( button ) 
+{
+  button = document.querySelector( button );
+  button.classList.remove( 'selected' );
+}
+
 // Linear transform for charting
 // Maps a value in one range to a value in another range
 function scale( value, old_top, old_bottom, new_top, new_bottom )
 {
   return new_bottom + ( new_top - new_bottom ) * ( ( value - old_bottom ) / ( old_top - old_bottom ) ); 
+}
+
+// Highlight the given button
+// Remove highlight from others
+function setSelectedControlButton( selected )
+{
+  var button = null;
+  
+  // Remove from all
+  removeSelection( '.refresh' );
+  removeSelection( '.turtle' );
+  removeSelection( '.funnel' );
+  removeSelection( '.kaazing' );
+
+  // Add back to specified
+  button = document.querySelector( selected );
+  button.classList.add( 'selected' );
 }
 
 // Emulate live sensor data
@@ -332,8 +356,13 @@ function doFiveClick()
   comfort.chart.setAttribute( 'd', 'M0 0' );    
   comfort.chart.setAttribute( 'opacity', 0 );
   
+  kaazing = false;
+  
   // Repeat every five seconds
   interval = setInterval( queryLatest, 5000 );
+  
+  // Highlight selected interval
+  setSelectedControlButton( '.turtle' );  
 }
 
 // Called when a message arrives
@@ -384,10 +413,15 @@ function doKaazingClick()
   comfort.chart.setAttribute( 'opacity', 1 );  
   comfort.chart.setAttribute( 'd', 'M0 0' );    
 
+  comfort.history = [];
+  
   kaazing = true;
   
   // Start polling every one second
   interval = setInterval( queryLatest, 40 );    
+  
+  // Highlight selected interval
+  setSelectedControlButton( '.kaazing' );  
 }
 
 // Switch to manual refresh
@@ -411,6 +445,11 @@ function doManualClick()
   comfort.plot.setAttribute( 'opacity', 1 );
   comfort.chart.setAttribute( 'd', 'M0 0' );  
   comfort.chart.setAttribute( 'opacity', 0 );  
+  
+  kaazing = false;
+  
+  // Highlight selected interval
+  setSelectedControlButton( '.refresh' );  
 }
 
 // Latest emulation data
@@ -442,11 +481,16 @@ function doOneClick()
   comfort.chart.setAttribute( 'd', 'M0 0' );    
   comfort.chart.setAttribute( 'opacity', 0 );  
   
+  kaazing = false;
+  
   // Query latest data from Parse
   queryLatest();
   
   // Start polling every one second
   interval = setInterval( queryLatest, 1000 );  
+  
+  // Highlight selected interval
+  setSelectedControlButton( '.funnel' );  
 }
 
 // Called when document has loaded
@@ -479,6 +523,9 @@ function doWindowLoad()
   button = document.querySelector( '.kaazing' );
   button.addEventListener( 'click', doKaazingClick );  
 
+  // Highlight default interval
+  setSelectedControlButton( '.refresh' );  
+  
   // Emulated sensor data
   latest = {
     createdAt: new Date(),
