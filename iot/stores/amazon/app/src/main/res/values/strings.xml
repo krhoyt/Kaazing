@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Amazon Search</string>
+    <string name="test_upc">786936244175</string>
+    <string name="currency">$</string>
+    <string name="scan">Scan</string>
+    <string name="access_key">AKIAJGMAMREWAVMJ5SDQ</string>
+    <string name="secret_key">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</string>
+    <string name="associate_tag">kaazing-20</string>
+    <string name="action_settings">Settings</string>
+</resources>
