@@ -99,7 +99,7 @@ public class AmazonTask extends AsyncTask {
         Node                    amount;
         Node					image;
 
-        // Log.i( "REQUEST", request );
+        Log.i( "REQUEST", request );
 
         try {
             factory = DocumentBuilderFactory.newInstance();

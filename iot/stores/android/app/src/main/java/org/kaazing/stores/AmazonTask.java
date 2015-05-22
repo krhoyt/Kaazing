@@ -28,9 +28,9 @@ import org.w3c.dom.Node;
 
 public class AmazonTask extends AsyncTask {
 
-    private static final String AMAZON_ACCESS = "AKIAJGMAMREWAVMJ5SDQ";
-    private static final String AMAZON_SECRET = "gds5O91Eye4FzmZtg2jpiTyGYP8nbZMuUDfR+dz3";
-    private static final String AMAZON_TAG = "kaazing-20";
+    private static final String AMAZON_ACCESS = "_YOUR_ACCESS_KEY_";
+    private static final String AMAZON_SECRET = "_YOUR_SECRET_KEY_";
+    private static final String AMAZON_TAG = "_YOUR_ASSOCIATE_TAG_";
     private static final String HMAC_SHA256 = "HmacSHA256";
     private static final String REQUEST_ENDPOINT = "webservices.amazon.com";
     private static final String REQUEST_METHOD = "GET";
