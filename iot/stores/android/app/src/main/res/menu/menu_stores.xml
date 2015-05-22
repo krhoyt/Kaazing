@@ -1,0 +1,18 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".StoresActivity">
+
+    <item
+        android:id="@+id/action_scan"
+        android:title="@string/action_scan"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_checkout"
+        android:title="@string/action_checkout"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+
+</menu>
