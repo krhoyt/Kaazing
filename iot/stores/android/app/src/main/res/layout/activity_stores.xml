@@ -5,53 +5,58 @@
     android:layout_height="match_parent"
     tools:context=".StoresActivity">
 
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/backgroundView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/grocery_shopping" />
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="96px"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="#66000000"
-        android:clickable="true"
-        android:id="@+id/scan_button">
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Scan an item"
-            android:textColor="#FFFFFFFF"
-            android:layout_centerVertical="true"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:textSize="19dp" />
-
-        <ImageView
-            android:layout_width="62dp"
-            android:layout_height="78dp"
-            android:layout_marginTop="9dp"
-            android:layout_marginBottom="9dp"
-            android:src="@drawable/barcode"
-            android:layout_alignParentRight="true" />
-
-    </RelativeLayout>
-
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/list_view"
-        android:layout_below="@+id/scan_button"
-        android:layout_alignLeft="@+id/scan_button"
-        android:layout_alignStart="@+id/scan_button"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/footer_layout" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/footer_layout"
+        android:background="#ff000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="TOTAL:"
+            android:id="@+id/sum_text"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textStyle="bold"
+            android:textColor="#ffffffff"
+            android:layout_marginLeft="25dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="$"
+            android:textColor="#ffffffff"
+            android:layout_marginLeft="15dp"
+            android:id="@+id/currency_text"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/sum_text"
+            android:layout_toEndOf="@+id/sum_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="0.00"
+            android:textColor="#ffffffff"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/total_text"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/currency_text"
+            android:layout_toEndOf="@+id/currency_text" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

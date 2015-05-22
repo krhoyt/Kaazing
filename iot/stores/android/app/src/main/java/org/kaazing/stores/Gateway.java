@@ -1,4 +1,4 @@
-package org.kaazing.gateway;
+package org.kaazing.stores;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -199,12 +199,12 @@ public class Gateway extends Handler {
 
                 // Publish
                 publish.publishBasic(
-                    buffer,
-                    properties,
-                    EXCHANGE_PREFIX + getClientId(),
-                    topic,
-                    false,
-                    false
+                        buffer,
+                        properties,
+                        EXCHANGE_PREFIX + getClientId(),
+                        topic,
+                        false,
+                        false
                 );
             }
         } );
@@ -330,12 +330,12 @@ public class Gateway extends Handler {
                 dispatch.dispatchAsync( new Runnable() {
                     public void run() {
                         publish.declareExchange(
-                            EXCHANGE_PREFIX + getClientId(),
-                            "direct",
-                            false,
-                            false,
-                            false,
-                            null
+                                EXCHANGE_PREFIX + getClientId(),
+                                "direct",
+                                false,
+                                false,
+                                false,
+                                null
                         );
                     }
                 } );
@@ -743,10 +743,10 @@ public class Gateway extends Handler {
                 dispatch.dispatchAsync( new Runnable() {
                     public void run() {
                         consume.unbindQueue(
-                            QUEUE_PREFIX + now,
-                            EXCHANGE_PREFIX + getClientId(),
-                            topic,
-                            null
+                                QUEUE_PREFIX + now,
+                                EXCHANGE_PREFIX + getClientId(),
+                                topic,
+                                null
                         );
                     }
                 } );
@@ -762,13 +762,13 @@ public class Gateway extends Handler {
                 dispatch.dispatchAsync( new Runnable() {
                     public void run() {
                         consume.consumeBasic(
-                            QUEUE_PREFIX + now,
-                            TAG,
-                            false,
-                            false,
-                            false,
-                            false,
-                            null
+                                QUEUE_PREFIX + now,
+                                TAG,
+                                false,
+                                false,
+                                false,
+                                false,
+                                null
                         );
                     }
                 } );

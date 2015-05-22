@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Groceries</string>
-
+    <string name="app_name">Shopping Cart</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_scan">Scan</string>
+    <string name="action_checkout">Checkout</string>
 </resources>
