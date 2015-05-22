@@ -10,7 +10,6 @@ Chat is the "Hello World" of real-time data - what does it look like on Kaazing 
 
 Kaazing Gateway can run on a number of platforms.  Likewise, the Kaazing Gateway client libraries can support even more platforms.  This is an exploration of what a basic chat client looks like when using the various client libraries.  Web, Java (desktop), and Android (Java), are completed examples, and designed to interoperate with one-another.  The iOS (Swift) example has been started but is not yet complete, as the Kaazing Gateway client libraries only support Web Socket there, not AMQP publish/subscribe.
 
-
 HRMI
 =======
 
@@ -52,6 +51,13 @@ Telemetry
 Would it be possible to record data telemetry from an aircraft in real time?  
 
 This project establishes a baseline sensor array to provide the common "six pack" of instrumentation necessary to fly an aircraft.  Also included is an an RF radio to broadcast the data over distance while in flight.  The sensor array is attached to a Phantom DJI quadcopter as an example aircraft (expensing an actual commercial aircraft was out of the question).  Data is reported wirelessly, and is recorded in multiple formats for playback at a later date.  The data is also passed along in real time to Kaazing Gateway where it is made available for interested clients (web or native).
+
+Tetris
+=======
+
+Is Kaazing Gateway fast enough to use your phone as a game controller?
+
+This is a generic port of the classic game of Tetris.  It uses the entire browser screen for falling pieces, while the game board is managed entirely via the DOM (not Canvas).  A mock controller screen is available for smartphone screens.  It is designed to be held horizontally (landscape).  Once the controller has joined the game, it can move falling pieces in real-time.  Future features that would be nice to add include multiple players, hardware controller integration, and tracking of high score across all players.
 
 Tic Tac Toe
 =======
