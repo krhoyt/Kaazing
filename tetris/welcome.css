@@ -9,7 +9,7 @@ body {
 }
   
 .board {
-  background-color: aliceblue;
+  background-color: white;
   bottom: 0;
   position: absolute;
 }
@@ -25,7 +25,14 @@ body {
   background-size: cover;
   position: absolute;
 }
- 
+
+.kevin {
+  background-image: url( kevin.jpg );
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+}
+
 .michel {
   background-image: url( michel.jpg );
   background-repeat: no-repeat;
@@ -39,6 +46,12 @@ body {
   background-size: cover;
   position: absolute;
 }  
+
+.none {
+  background-color: white;
+  background-image: '';
+  position: absolute;
+}
 
 .peter {
   background-image: url( peter.jpg );

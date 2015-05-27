@@ -1,13 +1,3 @@
-<html>
-<head>
-
-<title>Welcome</title>
-
-<link href="welcome.css" rel="stylesheet" type="text/css">
-
-<script src="templates.array.js" type="text/javascript"></script>  
-  
-<script type="text/javascript">
 var BLANK = '.';
 var FPS = 24;
 var TEMPLATE_HEIGHT = 5;
@@ -384,13 +374,3 @@ function do_window_load()
 }
   
 window.addEventListener( 'load', do_window_load );  
-</script>  
-  
-</head>
-<body>  
- 
-<!-- Board -->
-<div class="board"></div>
-  
-</body>
-</html>
