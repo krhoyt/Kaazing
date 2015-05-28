@@ -20,21 +20,14 @@ android {
 }
 
 repositories {
-    mavenCentral()
-
-    maven {
-        url "http://dl.bintray.com/journeyapps/maven"
-    }
+    jcenter()
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.journeyapps:zxing-android-embedded:2.1.0@aar'
-    compile 'com.journeyapps:zxing-android-legacy:2.1.0@aar'
-    compile 'com.journeyapps:zxing-android-integration:2.1.0@aar'
+    compile 'com.journeyapps:zxing-android-embedded:3.0.0@aar'
     compile 'com.google.zxing:core:3.2.0'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'org.kaazing:amqp.client.java:5.0.0.6'
     compile 'org.kaazing:gateway.client.java:5.1.0.3'
     compile 'org.kaazing:gateway.client.java.transport:5.0.0.6'

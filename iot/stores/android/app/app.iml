@@ -87,17 +87,15 @@
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="net.api-1.1.0.9" level="project" />
-    <orderEntry type="library" exported="" name="gateway.client.java.transport-5.0.0.6" level="project" />
-    <orderEntry type="library" exported="" name="amqp.client.java-5.0.0.6" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
-    <orderEntry type="library" exported="" name="javax.json-1.0.4" level="project" />
-    <orderEntry type="library" exported="" name="gateway.client.java-5.1.0.3" level="project" />
-    <orderEntry type="library" exported="" name="zxing-android-embedded-2.1.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="core-3.2.0" level="project" />
-    <orderEntry type="library" exported="" name="zxing-android-integration-2.1.0" level="project" />
+    <orderEntry type="library" exported="" name="gateway.client.java.transport-5.0.0.6" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="zxing-android-embedded-3.0.0" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="commons-codec-1.10" level="project" />
-    <orderEntry type="library" exported="" name="zxing-android-legacy-2.1.0" level="project" />
+    <orderEntry type="library" exported="" name="amqp.client.java-5.0.0.6" level="project" />
+    <orderEntry type="library" exported="" name="javax.json-1.0.4" level="project" />
+    <orderEntry type="library" exported="" name="gateway.client.java-5.1.0.3" level="project" />
   </component>
 </module>
