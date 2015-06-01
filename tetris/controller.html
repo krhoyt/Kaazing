@@ -8,339 +8,33 @@
   
 <title>Controller</title>
 
-<style type="text/css">
-body {
-  background-color: #74798C;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
+<!-- Styles -->
+<link href="controller.css" rel="stylesheet" type="text/css">  
 
-.button {
-  background-color: white;
-  border-radius: 6px;
-  position: absolute;
-}
- 
-.button > div {
-  background-color: #CA070D;
-  margin-left: auto;
-  margin-right: auto;
-}
- 
-.controller {
-  overflow: hidden;
-  position: absolute;
-  visibility: hidden;
-}
+<!-- Kaazing Gateway -->
+<script src="script/gateway.js" type="text/javascript"></script>
   
-.direction {
-  background: rgba( 255, 0, 0, 0 );
-  position: absolute;
-}
+<!-- Parse query string for linking two devices -->
+<script src="script/URLParser.js" type="text/javascript"></script>
 
-.instructions {
-  color: white;
-  font-family: sans-serif;
-  font-size: 3em;
-  position: absolute;
-  text-align: center;
-  visibility: hidden;
-}
-  
-.noselect {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}  
-  
-.pad {
-  background-image: url( pad.svg );
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  position: absolute;
-  height: 70%;
-}
-  
-.surface {
-  background-color: black;
-  border-radius: 6px;
-  position: absolute;
-  width: 95%;
-  height: 85%;
-}
-</style>  
-  
-<script src="gateway.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-var KAAZING_ID = 'd71dfe3a-818e-4f9c-8af6-fb81649d9a6d';
-var TETRIS = 'tetris_topic';
-
-var kaazing = null;  
-var touch = null;
-
-  function send_command( command )
-{
-  kaazing.publish( TETRIS, JSON.stringify( command ) );
-}
-
-function do_clock_down()
-{
-  console.log( 'Clockwise down.' );  
-  
-  send_command( {
-    key: 'clock',
-    type: 'down'
-  } );
-}
-  
-function do_clock_up()
-{
-  console.log( 'Clockwise up.' );  
-  
-  send_command( {
-    key: 'clock',
-    type: 'up'
-  } );
-}      
-  
-function do_counter_down()
-{
-  console.log( 'Counter-clockwise down.' );  
-  
-  send_command( {
-    key: 'counter',
-    type: 'down'
-  } );
-}
-  
-function do_counter_up()
-{
-  console.log( 'Counter-clockwise up.' );  
-  
-  send_command( {
-    key: 'counter',
-    type: 'up'
-  } );
-}        
-  
-function do_down_down()
-{
-  console.log( 'Down down.' );  
-  
-  send_command( {
-    key: 'down',
-    type: 'down'
-  } );
-}
-  
-function do_down_up()
-{
-  console.log( 'Down up.' );  
-  
-  send_command( {
-    key: 'down',
-    type: 'up'
-  } );
-}    
-  
-function do_left_down()
-{
-  console.log( 'Left down.' );  
-  
-  send_command( {
-    key: 'left',
-    type: 'down'
-  } );
-}
-  
-function do_left_up()
-{
-  console.log( 'Left up.' );  
-  
-  send_command( {
-    key: 'left',
-    type: 'up'
-  } );
-}  
-  
-function do_right_down()
-{
-  console.log( 'Right down.' );  
-  
-  send_command( {
-    key: 'right',
-    type: 'down'
-  } );
-}
-  
-function do_right_up()
-{
-  console.log( 'Right up.' );  
-  
-  send_command( {
-    key: 'right',
-    type: 'up'
-  } );
-}    
-  
-function do_up_down()
-{
-  console.log( 'Up down.' );  
-  
-  send_command( {
-    key: 'up',
-    type: 'down'
-  } );
-}
-  
-function do_up_up()
-{
-  console.log( 'Up up.' );  
-  
-  send_command( {
-    key: 'up',
-    type: 'up'
-  } );
-}      
-    
-function do_window_load()
-{
-  var buttons = null;
-  var pad = null;
-  
-  // Touch support
-  touch = ( 'ontouchstart' in document.documentElement ) ? true : false;  
-  
-  // Gateway communication
-  kaazing = Gateway.connect( KAAZING_ID );
-  kaazing.on( Gateway.EVENT_CONNECT, function() {
-    console.log( 'Connected.' );  
-  } );
-  
-  // Direction pad
-  pad = document.querySelector( '.pad' );
-  pad.children[0].addEventListener( touch ? 'touchstart' : 'mousedown', do_up_down );
-  pad.children[0].addEventListener( touch ? 'touchend' : 'mouseup', do_up_up ); 
-  pad.children[1].addEventListener( touch ? 'touchstart' : 'mousedown', do_left_down );
-  pad.children[1].addEventListener( touch ? 'touchend' : 'mouseup', do_left_up ); 
-  pad.children[2].addEventListener( touch ? 'touchstart' : 'mousedown', do_down_down );
-  pad.children[2].addEventListener( touch ? 'touchend' : 'mouseup', do_down_up ); 
-  pad.children[3].addEventListener( touch ? 'touchstart' : 'mousedown', do_right_down );
-  pad.children[3].addEventListener( touch ? 'touchend' : 'mouseup', do_right_up );    
-  
-  // Rotation buttons
-  buttons = document.querySelectorAll( '.button' );
-  buttons[0].addEventListener( touch ? 'touchstart' : 'mousedown', do_clock_down );
-  buttons[0].addEventListener( touch ? 'touchend' : 'mouseup', do_clock_up );      
-  buttons[1].addEventListener( touch ? 'touchstart' : 'mousedown', do_counter_down );
-  buttons[1].addEventListener( touch ? 'touchend' : 'mouseup', do_counter_up );        
-  
-  // Layout
-  do_window_resize();
-}
-  
-function do_window_resize()
-{  
-  var buttons = null;
-  var controller = null;
-  var instructions = null;
-  var pad = null;
-  var surface = null;
-
-  // Going to reference these two regardless of orientation
-  controller = document.querySelector( '.controller' );  
-  instructions = document.querySelector( '.instructions' );    
-  
-  if( window.innerWidth > window.innerHeight )
-  {
-    // Hide instructions
-    instructions.style.visibility = 'hidden';
-    
-    // Controller
-    controller.style.width = window.innerWidth + 'px';
-    controller.style.height = ( window.innerWidth * 0.40 ) + 'px';    
-    controller.style.top = Math.round( ( window.innerHeight - controller.clientHeight ) / 2 ) + 'px';
-    controller.style.visibility = 'visible';
-    
-    // Decorative control area
-    surface = document.querySelector( '.surface' );
-    surface.style.left = Math.round( ( window.innerWidth - surface.clientWidth ) / 2 ) + 'px';
-    surface.style.top = Math.round( ( controller.clientHeight - surface.clientHeight ) / 2 ) + 'px';
-    
-    // Direction pad
-    pad = document.querySelector( '.pad' );
-    pad.style.width = pad.clientHeight + 'px';
-    pad.style.left = Math.round( window.innerWidth * 0.05 ) + 'px';
-    pad.style.top = Math.round( ( controller.clientHeight - pad.clientHeight ) / 2 ) + 'px';    
-    
-    // Up
-    pad.children[0].style.width = Math.round( pad.clientWidth * 0.38 ) + 'px';
-    pad.children[0].style.height = Math.round( pad.clientWidth * 0.30 ) + 'px';
-    pad.children[0].style.left = Math.round( pad.clientWidth * 0.30 ) + 'px';    
-    
-    // Left
-    pad.children[1].style.width = Math.round( pad.clientWidth * 0.30 ) + 'px';
-    pad.children[1].style.height = Math.round( pad.clientWidth * 0.38 ) + 'px';
-    pad.children[1].style.top = Math.round( pad.clientWidth * 0.30 ) + 'px';  
-
-    // Down
-    pad.children[2].style.width = Math.round( pad.clientWidth * 0.38 ) + 'px';
-    pad.children[2].style.height = Math.round( pad.clientWidth * 0.30 ) + 'px';
-    pad.children[2].style.left = Math.round( pad.clientWidth * 0.30 ) + 'px';  
-    pad.children[2].style.bottom = 0;    
-
-    // Right
-    pad.children[3].style.width = Math.round( pad.clientWidth * 0.30 ) + 'px';
-    pad.children[3].style.height = Math.round( pad.clientWidth * 0.38 ) + 'px';
-    pad.children[3].style.top = Math.round( pad.clientWidth * 0.30 ) + 'px';  
-    pad.children[3].style.right = 0;          
-    
-    // Rotation buttons
-    buttons = document.querySelectorAll( '.button' );
-
-    for( var b = 0; b < buttons.length; b++ )
-    {
-      buttons[b].style.height = Math.round( window.innerHeight * 0.35 ) + 'px';
-      buttons[b].style.width = Math.round( window.innerHeight * 0.35 ) + 'px';   
-      buttons[b].style.bottom = Math.round( window.innerHeight * 0.20 ) + 'px';
-      buttons[b].style.right = ( Math.round( window.innerWidth * 0.10 ) + ( b * ( buttons[b].clientWidth + ( window.innerWidth * 0.05 ) ) ) ) + 'px';
-
-      buttons[b].children[0].style.width = Math.round( buttons[b].clientWidth * 0.75 ) + 'px';
-      buttons[b].children[0].style.height = Math.round( buttons[b].clientWidth * 0.75 ) + 'px';
-      buttons[b].children[0].style.marginTop = Math.round( ( buttons[b].clientHeight - buttons[b].children[0].clientHeight ) / 2 ) + 'px';
-      buttons[b].children[0].style.borderRadius = buttons[b].children[0].clientWidth + 'px';
-    }        
-  } else {
-    // Hide controller
-    controller.style.visibility = 'hidden';
-    
-    // Position instructions to use in landscape mode
-    instructions.style.width = Math.round( window.innerWidth * 0.80 ) + 'px';
-    instructions.style.left = Math.round( ( window.innerWidth - instructions.clientWidth ) / 2 ) + 'px';
-    instructions.style.top = Math.round( ( window.innerHeight - instructions.clientHeight ) / 2 ) + 'px';    
-    instructions.style.visibility = 'visible';
-  }
-}
-  
-window.addEventListener( 'load', do_window_load );  
-window.addEventListener( 'resize', do_window_resize );    
-</script>  
+<!-- Controller logic -->
+<script src="script/controller.js" type="text/javascript"></script>  
   
 </head>
 <body>
 
+<!-- Landscape orientation only -->
 <div class="instructions">Please hold your device in a landscape orientation.</div>  
   
+<!-- Game controller -->
 <div class="controller">
   
+  <!-- Darker area for contrast -->
   <div class="surface"></div>
 
+  <!-- Direction pad -->
+  <!-- Pad is SVG -->
+  <!-- Invisible hot spots on top of SVG -->
   <div class="pad noselect">
     <div class="direction up"></div>
     <div class="direction left"></div>  
@@ -348,9 +42,12 @@ window.addEventListener( 'resize', do_window_resize );
     <div class="direction right"></div>      
   </div>  
 
+  <!-- Counter clockwise button -->
   <div class="button noselect">
     <div></div>
   </div>
+  
+  <!-- Clockwise button -->
   <div class="button noselect">
     <div></div>
   </div>  

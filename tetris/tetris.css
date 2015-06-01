@@ -59,3 +59,10 @@ body {
   background-size: cover;
   position: absolute;
 }
+
+#qrcode {
+  height: 300px;  
+  position: absolute;  
+  visibility: hidden;
+  width: 300px;
+}
