@@ -512,6 +512,20 @@ function do_message( message )
       {
         falling.rotation = ( falling.rotation + 1 ).mod( 4 );        
       }
+    } else if( data.key == 'up' ) {
+      move_down = false;
+      move_left = false;
+      move_right = false;
+      
+      for( var i = 0; i < BOARD_HEIGHT; i++ )
+      {
+        if( !is_valid_position( 0, i ) )
+        {
+          break;  
+        }
+      }
+      
+      falling.y = falling.y + ( i - 1 );
     }
   }
   
