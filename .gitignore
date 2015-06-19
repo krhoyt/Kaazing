@@ -2,6 +2,6 @@
 .idea
 .classpath
 .project
-.mp4
+*.mp4
 parse.txt
 amazon.txt
