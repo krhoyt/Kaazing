@@ -1,0 +1,102 @@
+<html>
+<head>
+
+<title>Account Verification</title>
+
+<!-- UUID from query string -->
+<script src="http://kaazing.org/demos/quick-start/run/script/URLParser.js"></script>  
+
+<!-- Parse -->
+<script src="http://www.parsecdn.com/js/parse-1.3.3.min.js"></script>  
+  
+<!-- Application -->
+<script type="text/javascript">
+// Constants
+var APPLICATION_ID = "ZBzdcXEpxqTcaig69vOIHhjw5OQ36SLzsWpOHhK8";
+var JAVASCRIPT_KEY = "Xt3X8AETCP7thbIjPk6SJKAcC8hPx0CPQZi7eIPw";  
+  
+// Parse data object
+Account = Parse.Object.extend( "Account" );  
+
+// Called when Parse presents an error
+// Dumps to console
+function doParseError( error ) 
+{
+  console.log( "Error (" + error.code + "): " + error.message );      
+}
+  
+// Called when account lookup is complete
+// Update and save verification field
+function doQuerySuccess( result )
+{
+  // Check that account was found
+  if( result == undefined )
+  {
+    console.log( "UUID not found in database." );
+  } else {
+    // Move UUID to token field
+    // Clear verification field
+    // Clear field means verified
+    result.set( "token", result.get( "verification" ) );
+    result.set( "verification", "" );
+    result.save( {
+      success: doVerificationSaved, 
+      error: doParseError
+    } );
+  }    
+}
+
+// Called when verification has been saved
+function doVerificationSaved( result )
+{
+  var element = null;
+  
+  // Console
+  console.log( "Account verified!" );    
+  
+  // On screen
+  element = document.createElement( "div" );
+  element.innerHTML = "Account verified!";
+  document.body.appendChild( element );
+}
+                          
+// Called when the page has loaded
+// Looks for query string
+// Updates database as necesary
+function doWindowLoad()
+{
+  var query = null;
+  var uuid = null;
+  
+  // Check for UUID parameter
+  if( URLParser( window.location.href ).hasParam( "uuid" ) )
+  {
+    // Get UUID value
+    uuid = URLParser( window.location.href ).getParam( "uuid" );
+    console.log( "Found UUID on query string: " + uuid );
+
+    // Query database for account
+    query = new Parse.Query( Account );
+    query.equalTo( "verification", uuid );
+    query.first( {
+      success: doQuerySuccess,
+      error: doParseError
+    } );
+  } else {
+    console.log( "UUID not provided." );
+  }      
+}
+  
+// Connecting to Parse
+Parse.initialize( APPLICATION_ID, JAVASCRIPT_KEY );  
+  
+// Start application when page loaded
+window.addEventListener( "load", doWindowLoad );
+</script>
+  
+</head>
+<body>
+
+
+</body>
+</html>

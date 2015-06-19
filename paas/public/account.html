@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">  
+  
+<title>Sandbox Account</title>  
+  
+<!-- Google Web Fonts -->
+<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet" type="text/css">    
+
+<!-- Styles -->
+<link rel="stylesheet" href="stylesheets/boilerplate.css">  
+<link rel="stylesheet" href="stylesheets/paas.css">  
+
+<!-- Cookies -->  
+<!-- https://github.com/ScottHamper/Cookies -->
+<script src="/javascripts/cookies.js" type="text/javascript"></script>    
+
+<!-- Date formatting -->
+<!-- http://momentjs.com -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js" type="text/javascript"></script>
+  
+<!-- Constants -->  
+<script src="javascripts/constants.js" type="text/javascript"></script>  
+  
+<!-- Application -->
+<script src="javascripts/account.js" type="text/javascript"></script>    
+
+</head>
+<body>
+
+<!-- Banner -->
+<div class="banner">
+
+  <!-- Logo -->
+  <div class="logo"></div>
+  
+  <!-- Logout -->
+  <button>
+    <p class="label">Logout</p>
+  </button>
+  
+</div>  
+
+<!-- Splash -->
+<div class="splash">
+            
+  <!-- Account details -->
+  <div class="account">
+    
+    <!-- Header -->
+    <p class="header">Account</p>
+    
+    <!-- Name -->
+    <input class="customer" type="text" placeholder="Name (optional)">
+    
+    <!-- Company -->
+    <input class="company" type="text" placeholder="Company (optional)">      
+    
+    <!-- Email -->
+    <input class="email" type="text" placeholder="Email">      
+    
+    <!-- Password -->
+    <input class="password" class="password" type="password" placeholder="Password">      
+    
+    <!-- Confirm -->
+    <input class="confirm" type="password" placeholder="Confirm Password">      
+    
+    <!-- Save -->
+    <button>
+        <p class="label">Update Account</p>
+    </button>      
+    
+  </div>
+
+  <!-- Token -->
+  <div class="token">
+    
+    <!-- Header -->
+    <p class="header">Token</p>
+    
+    <!-- Field -->
+    <div class="field">
+      <p class="placeholder">Token</p>
+    </div>
+    
+    <!-- Save -->
+    <button>
+      <p class="label">Reset Token</p>
+    </button>
+    
+  </div>
+
+  <!-- Activity -->
+  <div class="activity">
+    
+    <!-- Header -->
+    <p class="header">Activity</p>
+    
+    <!-- Usage -->
+    <div class="usage"></div>
+    
+  </div>
+        
+</div>
+
+</body>
+</html>

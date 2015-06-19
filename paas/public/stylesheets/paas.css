@@ -1,0 +1,441 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif;  
+}
+
+button {
+  background-image: linear-gradient( 180deg, 
+    rgb( 240, 183, 161 ) 0, 
+    rgb( 140, 51, 16 ) 50%, 
+    rgb( 117, 34, 1 ) 53%, 
+    rgb( 191, 110, 78 ) 100%
+  );
+  background-image: -webkit-linear-gradient( 270deg, 
+    rgb( 240, 183, 161 ) 0, 
+    rgb( 140, 51, 16 ) 50%, 
+    rgb( 117, 34, 1 ) 53%, 
+    rgb( 191, 110, 78 ) 100% 
+  );  
+  background-position: 0 0;
+  background-repeat: repeat repeat;
+  background-size: auto;
+  -webkit-background-size: auto;  
+  border: 1px solid rgba( 0, 0, 0, 0.40 );
+  border-bottom-left-radius: 4px;  
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  box-shadow: rgba( 0, 0, 0, 0.40 ) 0 1px 1px 0;  
+  -webkit-box-shadow: rgba( 0, 0, 0, 0.40 ) 0 1px 1px 0;  
+  clear: left;
+  display: block;
+  float: right;
+  height: 50px;
+  margin: 20px 0 0;
+  width: 50%;
+}
+
+input {
+  background-color: rgba( 0, 0, 0, 0.20 );  
+  border: 1px solid rgba( 0, 0, 0, 0.40 );
+  border-bottom-left-radius: 4px;  
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;  
+  border-top-left-radius: 4px;
+  box-shadow: rgba( 0, 0, 0, 0.40 ) 0 1px 0 0 inset;  
+  -webkit-box-shadow: rgba( 0, 0, 0, 0.40 ) 0 1px 0 0 inset;  
+  clear: left;
+  color: rgb( 255, 255, 255 );  
+  display: block;  
+  float: left;
+  font-size: 1.2em;
+  font-weight: 300;    
+  height: 50px;
+  margin: 30px 0 0;
+  min-height: 50px;
+  min-width: 0;
+  padding-left: 20px;
+  padding-right: 20px;    
+  text-shadow: rgba( 0, 0, 0, 0.40 ) 1px 1px 2px;  
+  width: 100%;
+}
+
+::-webkit-input-placeholder {
+  color: rgb( 255, 255, 255 );
+  text-shadow: rgba( 0, 0, 0, 0.40 ) 1px 1px 2px;  
+}
+
+.account {
+  clear: none;  
+  display: block;  
+  float: right;
+  height: auto;
+  margin: 0;
+  padding: 20px;
+  width: 45%;  
+}
+
+.activity {
+  clear: left;
+  display: block;
+  float: left;
+  height: auto;
+  margin: 0;
+  padding: 20px;  
+  width: 45%;
+}
+
+.banner {
+  background-color: black;    
+  height: 100px;   
+  width: 100%; 
+}
+
+.banner > button {
+  clear: none;  
+  float: right; 
+  margin: 25px 25px 0 0; 
+  padding-left: 20px; 
+  padding-right: 20px; 
+  width: auto;
+}
+
+.caption {
+  color: rgb( 255, 255, 255 );
+  clear: both;
+  display: block;
+  float: left;
+  font-size: 1.2em;
+  font-weight: 300;
+  height: auto;
+  line-height: 1em;
+  margin: 20px 0 0;
+  min-height: 0;
+  min-width: 0;
+  text-align: center;
+  text-shadow: rgba( 0, 0, 0, 0.40 ) 1px 1px 2px;
+  width: 100%;
+}
+
+.channels {
+  background-image: url( '../images/channels.svg' );  
+}
+
+.collapse {
+  display: none;
+}
+
+.connections {
+  background-image: url( '../images/connections.svg' );  
+}
+
+.features {
+  clear: left;
+  float: left;
+  height: auto;
+  margin: 30px 0 0;
+  width: 45%;
+}
+
+.features > div:nth-of-type( 1 ) {
+  clear: none;  
+  float: left;
+  height: auto;
+  margin-left: 0;
+  margin-top: 0;
+  width: 33%;
+}
+
+.features > div:nth-of-type( 2 ) {
+  clear: none;  
+  display: block;
+  float: left;
+  height: auto;
+  margin: 0;
+  width: 33%;
+}
+
+.features > div:nth-of-type( 3 ) {
+  clear: none;  
+  display: block;
+  float: left;
+  height: auto;
+  margin: 0;
+  width: 33%;
+}
+
+.field {
+  background-color: rgba( 0, 0, 0, 0.20 );  
+  border: 1px solid rgba( 0, 0, 0, 0.40 );
+  border-bottom-left-radius: 4px;  
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;  
+  box-shadow: rgba( 0, 0, 0, 0.40 ) 0 1px 0 0 inset;
+  -webkit-box-shadow: rgba( 0, 0, 0, 0.40 ) 0 1px 0 0 inset;  
+  clear: both;  
+  float: left;
+  height: 50px;
+  margin: 30px 0 0;
+  min-height: 50px;
+  min-width: 0;  
+  width: 100%;
+}
+
+.header {
+  clear: none;
+  color: rgb( 255, 255, 255 );
+  display: block;  
+  float: left;
+  font-size: 2em;
+  font-weight: 300;
+  height: auto;  
+  line-height: 1em;
+  margin: 0;
+  min-height: 0;  
+  text-align: left;
+  text-shadow: rgba( 0, 0, 0, 0.40 ) 1px 1px 2px;
+  width: auto;
+}
+
+.icon {
+  background-attachment: scroll;
+  background-position: 50% 50%;
+  background-repeat: no-repeat no-repeat;  
+  -webkit-background-size: contain;
+  background-size: contain;
+  clear: none;
+  float: left;
+  height: 90px;
+  margin: 0;
+  min-height: 50px;
+  min-width: 0;    
+  width: 100%;
+}
+
+.label {
+  clear: none;
+  color: rgb( 255, 255, 255 );
+  float: left;
+  font-size: 1.2em;
+  font-weight: normal;
+  height: 50px;  
+  line-height: 50px;
+  margin: 0;
+  min-height: 0;
+  min-width: 0;
+  text-align: center;
+  text-shadow: rgba( 0, 0, 0, 0.40 ) 0 2px 0;
+  width: 100%;
+}
+
+.login {
+  clear: none;
+  float: left;
+  height: auto;
+  margin: 0;
+  padding: 20px;
+  width: 45%;
+}
+
+.logo {
+  background-image: url( '../images/kaazing-logo.svg' );  
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: auto 45%;
+  float: left;
+  height: 100%;
+  margin-left: 50px;
+  width: 50%
+}
+
+.messages {
+  background-image: url( '../images/messages.svg' );  
+}
+
+.placeholder {
+  color: rgb( 255, 255, 255 );
+  clear: none;
+  float: left;
+  font-size: 1.2em;
+  font-weight: 300;
+  height: 50px;
+  line-height: 50px;
+  margin: 0;
+  min-height: 0;
+  min-width: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: left;
+  text-shadow: rgba( 0, 0, 0, 0.40 ) 1px 1px 2px;
+  width: 100%;
+}
+
+.sign-up {
+  clear: none;  
+  display: block;  
+  float: right;
+  height: auto;
+  margin: 0;
+  padding: 20px;
+  width: 45%;  
+}
+
+.sign-up > button {
+  width: 75%;
+}
+
+.splash {
+  background-image: url( '../images/sand-blur.jpg' );
+  background-position: 50% 50%;
+  background-repeat: no-repeat no-repeat;    
+  background-size: cover;  
+  -webkit-background-size: cover;
+  clear: none;
+  display: block;  
+  float: left;
+  height: auto;
+  margin: 0;
+  min-width: 0;  
+  padding: 30px;  
+  width: 100%;
+}
+
+.token {
+  clear: none;  
+  float: left;
+  height: auto;
+  margin: 0;
+  padding: 20px;  
+  width: 45%;
+}
+
+.usage {
+  background-color: rgba( 0, 0, 0, 0.20 );
+  clear: both;  
+  float: left;
+  height: 220px;
+  margin: 30px 0 0 0;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.usage > p {
+  background-color: rgba( 0, 0, 0, 0.20 );
+  border-bottom: 1px solid rgba( 255, 255, 255, 0.40 );
+}
+
+@media only screen and ( max-width: 992px ) {
+  .account > button {
+    width: 100%;
+  }
+  
+  .features > div:nth-of-type( 1 ) {
+    width: 45%;
+  }
+
+  .features > div:nth-of-type( 2 ) {
+    display: none;
+  }
+
+  .features > div:nth-of-type( 3 ) {
+    clear: none;
+    float: right;
+    margin: 0;
+    width: 45%;
+  }  
+  
+  .login > button {
+    width: 50%;
+  }
+
+  .sign-up > button {
+    width: 100%;
+  }
+  
+  .token > button {
+    width: 50%;
+  }  
+}
+
+@media only screen and ( max-width: 768px ) {
+  button {
+    width: 50%;
+  }
+
+  .account {
+    width: 100%;
+  }
+  
+  .activity {
+    width: 100%;
+  }  
+  
+  .login {
+    margin-top: 25px;      
+    width: 100%;
+  }
+
+  .logo {
+    width: 60%;  
+  }
+  
+  .sign-up {
+    width: 100%;
+  }
+  
+  .token {
+    margin-top: 25px;      
+    width: 100%;
+  }  
+}
+
+@media only screen and ( max-width: 500px ) {
+  button {
+    width: 100%;
+  }
+
+  .account {
+    margin-right: 0;
+  }  
+  
+  .activity {
+    margin-left: 0;
+  }  
+  
+  .features {
+    margin-left: 0;
+    margin-right: 0;      
+    width: 100%;
+  }
+
+  .features > div:nth-of-type( 2 ) {
+    display: none;      
+  }
+
+  .login {
+    margin-left: 0;
+  }
+
+  .sign-up {
+    margin-right: 0;
+  }
+  
+  .token {
+    margin-left: 0;
+  }  
+}
+
+@media only screen and ( max-width: 300px ) {
+  .features > div:nth-of-type( 1 ) {
+    width: 45%;  
+  }  
+
+  .features > div:nth-of-type( 2 ) {
+    display: none;  
+  }
+
+  .features > div:nth-of-type( 3 ) {
+    width: 45%;  
+  }
+}

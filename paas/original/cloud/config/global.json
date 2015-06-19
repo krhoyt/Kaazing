@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "PaaS": {
+            "applicationId": "ZBzdcXEpxqTcaig69vOIHhjw5OQ36SLzsWpOHhK8", 
+            "masterKey": "hP46QRW1OHtIc609Xf6AqDdfT8vxhmHrNOe7G1RQ"
+        }, 
+        "_default": {
+            "link": "PaaS"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.3.4"
+    }
+}
