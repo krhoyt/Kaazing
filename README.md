@@ -10,6 +10,13 @@ Chat is the "Hello World" of real-time data - what does it look like on Kaazing 
 
 Kaazing Gateway can run on a number of platforms.  Likewise, the Kaazing Gateway client libraries can support even more platforms.  This is an exploration of what a basic chat client looks like when using the various client libraries.  Web, Java (desktop), and Android (Java), are completed examples, and designed to interoperate with one-another.  The iOS (Swift) example has been started but is not yet complete, as the Kaazing Gateway client libraries only support Web Socket there, not AMQP publish/subscribe.
 
+First
+=======
+
+What do you do for your first project when you join a company based on real-time?
+
+In order to get my head around publish-subscribe using Kaazing Gateway, I wanted to connect to a server, send a message, and receive a message.  I did not want to manage two different screens, so this example is effectively an echo.  It sends a message to the server, which distributes it, eventually arriving back at the original screen.  The original screen in turn displays the message.  The code could be refined substantially as I learned more about publish-subscribe architectures during my employment.
+
 HRMI
 =======
 

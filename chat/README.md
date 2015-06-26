@@ -20,9 +20,9 @@ This is a Java Swing desktop client that mirrors the Web example.  It is designe
 Android
 ===
 
-Work in progress.  Furthest along of native mobile examples, but not quite done.
+An Android Java application which participates on the same topic as the Java and Web versions of the application.  This allows all three platforms to participate in a chat.  Much of the logic for the Android version is borrowed from the Java Swing version, but there is no concise library wrapper.
 
 Swift
 ===
 
-Start of the user interface.  Connectivity not yet implemented.
+User interface completed.  Connectivity not yet implemented.
