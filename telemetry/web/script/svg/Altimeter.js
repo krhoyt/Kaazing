@@ -13,7 +13,7 @@ function Altimeter( selector, animate )
     var result = null;
 
     result = {
-        animate: animate,
+        animate,
         altitude: 0,
         container: document.querySelector( selector ),
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
@@ -158,7 +158,7 @@ function Altimeter( selector, animate )
 
     // Forty (40) pixels per one hundred (100) feet
     // Animation iterations
-    result.updateAltitude = function() {
+    result.updateAltitude = () => {
         result.current.textContent = Math.round( result.altitude );
         result.gauge.setAttribute( "transform", "translate( 0, " + ( result.altitude * ( 40 / 100 ) ) + " )" );
     }
@@ -169,7 +169,7 @@ function Altimeter( selector, animate )
         if( this.animate )
         {
             TweenLite.to( this, 1, {
-                altitude: altitude,
+                altitude,
                 onUpdate: this.updateAltitude
             } );
         } else {

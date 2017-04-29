@@ -9,14 +9,14 @@ parse.initialize( 'ZBzdcXEpxqTcaig69vOIHhjw5OQ36SLzsWpOHhK8', 'Xt3X8AETCP7thbIjP
  */
 
 // GET - List
-router.get( '/:uuid', function( req, res, next ) {
+router.get( '/:uuid', (req, res, next) => {
   var Account = parse.Object.extend( 'Account' );  
   var query = null;
   
   query = new parse.Query( Account );
   query.equalTo( 'token', req.params.uuid );
   query.first( {
-    success: function( result ) {
+    success(result) {
       var Usage = parse.Object.extend( 'Usage' );
       var history = null;
       
@@ -27,7 +27,7 @@ router.get( '/:uuid', function( req, res, next ) {
         history = new parse.Query( Usage );
         history.equalTo( 'account', result );
         history.find( {
-          success: function( results ) {
+          success(results) {
             var listing = null;
             
             listing = [];
@@ -38,13 +38,13 @@ router.get( '/:uuid', function( req, res, next ) {
             }
             res.send( JSON.stringify( listing ) );
           },
-          error: function( error ) {
+          error(error) {
             
           }
         } );
       }
     },
-    error: function( error ) {
+    error(error) {
       
     }
   } );

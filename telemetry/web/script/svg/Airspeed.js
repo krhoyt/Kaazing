@@ -17,7 +17,7 @@ function Airspeed( selector, animate )
 
     result = {
         airspeed: 0,
-        animate: animate,
+        animate,
         container: document.querySelector( selector ),
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
     };
@@ -195,7 +195,7 @@ function Airspeed( selector, animate )
 
     // Forty-five (45) pixels per single foot
     // Animation iterations
-    result.updateAirspeed = function() {
+    result.updateAirspeed = () => {
         result.current.textContent = result.airspeed.toFixed( 2 );
         result.gauge.setAttribute( "transform", "translate( 0, " + ( result.airspeed * 45 ) + " )" );
     }
@@ -205,7 +205,7 @@ function Airspeed( selector, animate )
     result.setAirspeed = function( airspeed ) {
         if( this.animate ) {
             TweenLite.to( this, 1, {
-                airspeed: airspeed,
+                airspeed,
                 onUpdate: this.updateAirspeed
             } );
         } else {

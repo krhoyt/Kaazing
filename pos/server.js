@@ -54,14 +54,12 @@ Parse.initialize( PARSE_APPLICATION, PARSE_KEY );
 var messaging = new Stomp( BROKER_ADDRESS, 61613, null, null );
 
 // Connected to broker
-messaging.connect( function( sessionId )
-{
+messaging.connect( sessionId => {
     // Debug
     console.log( "Broker connected." );
 
     // Subscribe to inbound topic
-    messaging.subscribe( TOPIC_NAME, function( body, headers )
-    {
+    messaging.subscribe( TOPIC_NAME, (body, headers) => {
         var data = null;
 
         // Parse incoming model
@@ -101,7 +99,7 @@ function doClerkCreate( data )
     clerk = new Clerk();
     clerk.set( "authorization", data.content.authorization );
     clerk.save( null, {
-        success: function( result ) {
+        success(result) {
             // Create response message
             message = {
                 server: {
@@ -119,7 +117,7 @@ function doClerkCreate( data )
             // Send clerk data
             messaging.publish( data.client.reply, JSON.stringify( message ) );
         },
-        error: function( result, error ) {
+        error(result, error) {
             console.log( "Error creating clerk." );
         }
     } );
@@ -132,7 +130,7 @@ function doClerkRead( data )
     query = new Parse.Query( Clerk );
     query.equalTo( "authorization", data.content.authorization );
     query.first( {
-        success: function( result ) {
+        success(result) {
             var message = null;
 
             if( result == undefined )
@@ -165,7 +163,7 @@ function doClerkRead( data )
                 messaging.publish( data.client.reply, JSON.stringify( message ) );
             }
         },
-        error: function( error ) {
+        error(error) {
             console.log( "Failed reading clerk." );
         }
     } );
@@ -184,16 +182,16 @@ function doGeocodeRequest( data )
         method: "GET"
     };
 
-    geocode = Https.request( options, function( response ) {
+    geocode = Https.request( options, response => {
         var stream = null;
 
         stream = new String();
 
-        response.on( "data", function( incoming ) {
+        response.on( "data", incoming => {
             stream = stream + incoming;
         } );
 
-        response.on( "end", function() {
+        response.on( "end", () => {
             var location = null;
             var message = null;
 
@@ -222,7 +220,7 @@ function doGeocodeRequest( data )
     } );
 
     geocode.end();
-    geocode.on( "error", function( error ) {
+    geocode.on( "error", error => {
         console.log( error );
     } );
 }
@@ -240,7 +238,7 @@ function doLayoutRead( data )
     query.equalTo( "configurationId", configuration );
     query.include( "productId" );
     query.find( {
-        success: function( results ) {
+        success(results) {
             var found = null;
             var message = null;
 
@@ -297,7 +295,7 @@ function doLayoutRead( data )
             // Send location
             messaging.publish( data.client.reply, JSON.stringify( message ) );
         },
-        error: function( error ) {
+        error(error) {
             console.log( "Error reading layout." );
         }
     } );
@@ -322,7 +320,7 @@ function doLoginCreate( data )
     login.set( "clerkId", clerk );
     login.set( "registerId", register );
     login.save( null, {
-        success: function( result ) {
+        success(result) {
             var message = null;
 
             // Create response message
@@ -343,7 +341,7 @@ function doLoginCreate( data )
             // Send location
             messaging.publish( data.client.reply, JSON.stringify( message ) );
         },
-        error: function( result, error ) {
+        error(result, error) {
             console.log( "Error creating login." );
         }
     } );
@@ -366,7 +364,7 @@ function doRegisterCreate( data )
     register.set( "topic", data.client.reply );
     register.set( "location", point );
     register.save( null, {
-        success: function( result ) {
+        success(result) {
             var message = null;
 
             // Debug
@@ -395,7 +393,7 @@ function doRegisterCreate( data )
             // Send register details
             messaging.publish( data.client.reply, JSON.stringify( message ) );
         },
-        error: function( error ) {
+        error(error) {
             console.log( "Failed creating register." );
         }
     } );
@@ -420,7 +418,7 @@ function doTransactionCreate( data )
     transaction.set( "clerkId", clerk );
     transaction.set( "registerId", register );
     transaction.save( null, {
-        success: function( result ) {
+        success(result) {
             var message = null;
 
             // Assemble response
@@ -441,7 +439,7 @@ function doTransactionCreate( data )
             // Send transaction details
             messaging.publish( data.client.reply, JSON.stringify( message ) );
         },
-        error: function( result, error ) {
+        error(result, error) {
             console.log( "Error creating transaction." );
         }
     } );

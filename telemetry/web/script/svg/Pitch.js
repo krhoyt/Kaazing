@@ -18,7 +18,7 @@ function Pitch( selector, animate )
     var segment = null;
 
     result = {
-        animate: animate,
+        animate,
         pitch: 0,
         tilt: 0,
         container: document.querySelector( selector ),
@@ -140,7 +140,7 @@ function Pitch( selector, animate )
     }
 
     // Animation iterations
-    result.updateTilt = function() {
+    result.updateTilt = () => {
         var adjusted = Math.abs( result.tilt );
 
         if( adjusted > 45 && adjusted <= 90 )
@@ -166,7 +166,7 @@ function Pitch( selector, animate )
         if( this.animate )
         {
             TweenLite.to( this, 1, {
-                tilt: tilt,
+                tilt,
                 onUpdate: this.updateTilt
             } );
         } else {
@@ -177,7 +177,7 @@ function Pitch( selector, animate )
 
     // Twenty-five (25) pixels per five (5) degrees
     // Animation iterations
-    result.updatePitch = function() {
+    result.updatePitch = () => {
         result.pitchGauge.setAttribute( "transform", "translate( 0, " + ( result.pitch * ( 25 / 5 ) ) + " )" );
     }
 
@@ -187,7 +187,7 @@ function Pitch( selector, animate )
         if( this.animate )
         {
             TweenLite.to( this, 1, {
-                pitch: pitch,
+                pitch,
                 onUpdate: this.updatePitch
             } );
         } else {

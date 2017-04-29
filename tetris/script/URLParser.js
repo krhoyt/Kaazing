@@ -2,7 +2,10 @@
 // http://stackoverflow.com/posts/12397882/revisions
 
 function URLParser(u){
-    var path="",query="",hash="",params;
+    var path="";
+    var query="";
+    var hash="";
+    var params;
     if(u.indexOf("#") > 0){
         hash = u.substr(u.indexOf("#") + 1);
         u = u.substr(0 , u.indexOf("#"));
@@ -14,37 +17,37 @@ function URLParser(u){
     }else
         path = u;
     return {
-        getHost: function(){
+        getHost() {
             var hostexp = /\/\/([\w.-]*)/;
             var match = hostexp.exec(path);
             if (match != null && match.length > 1)
                 return match[1];
             return "";
         },
-        getPath: function(){
+        getPath() {
             var pathexp = /\/\/[\w.-]*(?:\/([^?]*))/;
             var match = pathexp.exec(path);
             if (match != null && match.length > 1)
                 return match[1];
             return "";
         },
-        getHash: function(){
+        getHash() {
             return hash;
         },
-        getParams: function(){
+        getParams() {
             return params
         },
-        getQuery: function(){
+        getQuery() {
             return query;
         },
-        setHash: function(value){
+        setHash(value) {
             if(query.length > 0)
                 query = "?" + query;
             if(value.length > 0)
                 query = query + "#" + value;
             return path + query;
         },
-        setParam: function(name, value){
+        setParam(name, value) {
             if(!params){
                 params= new Array();
             }
@@ -60,7 +63,7 @@ function URLParser(u){
                 query = query + "#" + hash;
             return path + query;
         },
-        getParam: function(name){
+        getParam(name) {
             if(params){
                 for (var i = 0; i < params.length; i++) {
                     var pair = params[i].split('=');
@@ -70,7 +73,7 @@ function URLParser(u){
             }
             console.log('Query variable %s not found', name);
         },
-        hasParam: function(name){
+        hasParam(name) {
             if(params){
                 for (var i = 0; i < params.length; i++) {
                     var pair = params[i].split('=');
@@ -80,7 +83,7 @@ function URLParser(u){
             }
             console.log('Query variable %s not found', name);
         },
-        removeParam: function(name){
+        removeParam(name) {
             query = "";
             if(params){
                 var newparams = new Array();
@@ -102,5 +105,5 @@ function URLParser(u){
                 query = query + "#" + hash;
             return path + query;
         },
-    }
+    };
 }

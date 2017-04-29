@@ -10,7 +10,7 @@ function Tilt( selector, animate )
     var result = null;
 
     result = {
-        animate: animate,
+        animate,
         pitch: 0,
         tilt: 0,
         container: document.querySelector( selector ),
@@ -207,7 +207,7 @@ function Tilt( selector, animate )
     // Degree per degree up to 45
     // 15 virtual degrees for last 45 real degrees
     // Animation iterations
-    result.updateTilt = function() {
+    result.updateTilt = () => {
         var adjusted = Math.abs( result.tilt );
 
         if( adjusted > 45 && adjusted <= 90 )
@@ -233,7 +233,7 @@ function Tilt( selector, animate )
         if( this.animate )
         {
             TweenLite.to( this, 1, {
-                tilt: tilt,
+                tilt,
                 onUpdate: this.updateTilt
             } );
         } else {

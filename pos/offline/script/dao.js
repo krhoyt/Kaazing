@@ -316,11 +316,11 @@ var dao = {
         registerId: null, // Pointer
         total: null
     },
-    loadConfiguration: function (shortCode, callback) {
+    loadConfiguration(shortCode, callback) {
         this.configuration.objectId = generateRandomString();
         callback.success(this.configuration);
     },
-    createRegister: function (register, callback) {
+    createRegister(register, callback) {
         this.register.objectId = generateRandomString();
         this.register.createdAt = new Date();
         this.register.updatedAt = new Date();
@@ -332,7 +332,7 @@ var dao = {
 
         callback.success(this.register);
     },
-    findClerk: function (authorization, callback) {
+    findClerk(authorization, callback) {
         var result = null;
 
         for (var c = 0; c < this.clerk.length; c++)
@@ -346,7 +346,7 @@ var dao = {
 
         callback.success(result);
     },
-    createClerk: function (clerk, callback) {
+    createClerk(clerk, callback) {
         clerk.objectId = generateRandomString();
         clerk.createdAt = new Date();
         clerk.updatedAt = new Date();
@@ -355,7 +355,7 @@ var dao = {
 
         callback.success(clerk);
     },
-    createLogin: function (login, callback) {
+    createLogin(login, callback) {
         login.objectId = generateRandomString();
         login.createdAt = new Date();
         login.updatedAt = new Date();
@@ -364,7 +364,7 @@ var dao = {
 
         callback.success(login);
     },
-    findProduct: function (productId) {
+    findProduct(productId) {
         var result = null;
 
         for (var p = 0; p < this.product.length; p++)
@@ -378,7 +378,7 @@ var dao = {
 
         return result;
     },
-    findLayout: function (configurationId, callback) {
+    findLayout(configurationId, callback) {
         for (var a = 0; a < this.layout.length; a++)
         {
             this.layout[a].productId = this.findProduct(this.layout[a].productId);
@@ -386,7 +386,7 @@ var dao = {
 
         callback.success(this.layout);
     },
-    createTransaction: function (transaction, callback) {
+    createTransaction(transaction, callback) {
         this.transaction.objectId = generateRandomString();
         this.transaction.createdAt = new Date();
         this.transaction.updatedAt = new Date();
@@ -395,7 +395,7 @@ var dao = {
 
         callback.success(this.transaction);
     },
-    createHandshake: function (handshake, callback) {
+    createHandshake(handshake, callback) {
         this.handshake.objectId = generateRandomString();
         this.handshake.transactionId = handshake.transactionId;
         this.handshake.createdAt = new Date();
@@ -408,7 +408,7 @@ var dao = {
 
         callback.success(this.handshake);
     },
-    createPurchase: function (purchase, callback) {
+    createPurchase(purchase, callback) {
         for (var p = 0; p < this.product.length; p++)
         {
             if(this.product[p].objectId == purchase.productId)
@@ -426,7 +426,7 @@ var dao = {
 
         callback.success(purchase);
     },
-    destroyPurchase: function (purchaseId, callback) {
+    destroyPurchase(purchaseId, callback) {
         var result = null;
 
         for (var p = 0; p < this.purchase.length; p++)
@@ -440,7 +440,7 @@ var dao = {
 
         callback.success(result[0]);
     },
-    findPurchaseAll: function (transaction, callback) {
+    findPurchaseAll(transaction, callback) {
         var results = null;
 
         results = [];
@@ -455,12 +455,12 @@ var dao = {
 
         callback.success(results);
     },
-    destroyPurchaseAll: function (purchases, callback) {
+    destroyPurchaseAll(purchases, callback) {
         this.purchase = [];
 
         callback.success();
     },
-    transactionFind: function (transactionId, callback) {
+    transactionFind(transactionId, callback) {
         this.handshake.objectId = generateRandomString();
         this.handshake.createdAt = new Date();
         this.handshake.updatedAt = new Date();

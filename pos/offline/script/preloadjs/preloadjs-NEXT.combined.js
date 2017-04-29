@@ -1,6 +1,6 @@
 this.createjs = this.createjs||{};
 
-(function() {
+((() => {
 	"use strict";
 
 	/**
@@ -29,7 +29,7 @@ this.createjs = this.createjs||{};
 	 **/
 	s.buildDate = /*date*/"Wed, 02 Apr 2014 17:54:19 GMT"; // injected by build process
 
-})();
+}))();
 /*
 * Event
 * Visit http://createjs.com/ for documentation, updates and examples.
@@ -72,7 +72,7 @@ this.createjs = this.createjs||{};
 // namespace:
 this.createjs = this.createjs||{};
 
-(function() {
+((() => {
 	"use strict";
 
 /**
@@ -283,7 +283,7 @@ var p = Event.prototype;
 	};
 
 createjs.Event = Event;
-}());
+})());
 /*
 * EventDispatcher
 * Visit http://createjs.com/ for documentation, updates and examples.
@@ -319,7 +319,7 @@ createjs.Event = Event;
 // namespace:
 this.createjs = this.createjs||{};
 
-(function() {
+((() => {
 	"use strict";
 
 /**
@@ -371,7 +371,7 @@ this.createjs = this.createjs||{};
  * @class EventDispatcher
  * @constructor
  **/
-var EventDispatcher = function() {
+var EventDispatcher = () => {
 /*	this.initialize(); */ // not needed.
 };
 var p = EventDispatcher.prototype;
@@ -388,7 +388,7 @@ var p = EventDispatcher.prototype;
 	 * @param {Object} target The target object to inject EventDispatcher methods into. This can be an instance or a
 	 * prototype.
 	 **/
-	EventDispatcher.initialize = function(target) {
+	EventDispatcher.initialize = target => {
 		target.addEventListener = p.addEventListener;
 		target.on = p.on;
 		target.removeEventListener = target.off =  p.removeEventListener;
@@ -422,7 +422,7 @@ var p = EventDispatcher.prototype;
 	 * @method initialize
 	 * @protected
 	 **/
-	p.initialize = function() {};
+	p.initialize = () => {};
 
 // public methods:
 	/**
@@ -494,7 +494,7 @@ var p = EventDispatcher.prototype;
 			listener = listener.handleEvent;
 		}
 		scope = scope||this;
-		return this.addEventListener(type, function(evt) {
+		return this.addEventListener(type, evt => {
 				listener.call(scope, evt, data);
 				once&&evt.remove();
 			}, useCapture);
@@ -596,19 +596,21 @@ var p = EventDispatcher.prototype;
 		if (!eventObj.bubbles || !this.parent) {
 			this._dispatchEvent(eventObj, 2);
 		} else {
-			var top=this, list=[top];
-			while (top.parent) { list.push(top = top.parent); }
-			var i, l=list.length;
+            var top=this;
+            var list=[top];
+            while (top.parent) { list.push(top = top.parent); }
+            var i;
+            var l=list.length;
 
-			// capture & atTarget
-			for (i=l-1; i>=0 && !eventObj.propagationStopped; i--) {
+            // capture & atTarget
+            for (i=l-1; i>=0 && !eventObj.propagationStopped; i--) {
 				list[i]._dispatchEvent(eventObj, 1+(i==0));
 			}
-			// bubbling
-			for (i=1; i<l && !eventObj.propagationStopped; i++) {
+            // bubbling
+            for (i=1; i<l && !eventObj.propagationStopped; i++) {
 				list[i]._dispatchEvent(eventObj, 3);
 			}
-		}
+        }
 		return eventObj.defaultPrevented;
 	};
 
@@ -619,9 +621,10 @@ var p = EventDispatcher.prototype;
 	 * @return {Boolean} Returns true if there is at least one listener for the specified event.
 	 **/
 	p.hasEventListener = function(type) {
-		var listeners = this._listeners, captureListeners = this._captureListeners;
-		return !!((listeners && listeners[type]) || (captureListeners && captureListeners[type]));
-	};
+        var listeners = this._listeners;
+        var captureListeners = this._captureListeners;
+        return !!((listeners && listeners[type]) || (captureListeners && captureListeners[type]));
+    };
 	
 	/**
 	 * Indicates whether there is at least one listener for the specified event type on this object or any of its
@@ -647,9 +650,7 @@ var p = EventDispatcher.prototype;
 	 * @method toString
 	 * @return {String} a string representation of the instance.
 	 **/
-	p.toString = function() {
-		return "[EventDispatcher]";
-	};
+	p.toString = () => "[EventDispatcher]";
 
 // private methods:
 	/**
@@ -659,8 +660,9 @@ var p = EventDispatcher.prototype;
 	 * @protected
 	 **/
 	p._dispatchEvent = function(eventObj, eventPhase) {
-		var l, listeners = (eventPhase==1) ? this._captureListeners : this._listeners;
-		if (eventObj && listeners) {
+        var l;
+        var listeners = (eventPhase==1) ? this._captureListeners : this._listeners;
+        if (eventObj && listeners) {
 			var arr = listeners[eventObj.type];
 			if (!arr||!(l=arr.length)) { return; }
 			eventObj.currentTarget = this;
@@ -677,11 +679,11 @@ var p = EventDispatcher.prototype;
 				}
 			}
 		}
-	};
+    };
 
 
 createjs.EventDispatcher = EventDispatcher;
-}());
+})());
 /*
 * IndexOf
 * Visit http://createjs.com/ for documentation, updates and examples.
@@ -720,7 +722,7 @@ this.createjs = this.createjs||{};
 /**
  * @class Utility Methods
  */
-(function() {
+((() => {
 	"use strict";
 
 	/*
@@ -770,7 +772,7 @@ this.createjs = this.createjs||{};
 	 * @param searchElement Element to find in array.
 	 * @return {Number} The first index of searchElement in array.
 	 */
-	createjs.indexOf = function (array, searchElement){
+	createjs.indexOf = (array, searchElement) => {
 		for (var i = 0,l=array.length; i < l; i++) {
 			if (searchElement === array[i]) {
 				return i;
@@ -779,7 +781,7 @@ this.createjs = this.createjs||{};
 		return -1;
 	}
 
-}());/*
+})());/*
 * Proxy
 * Visit http://createjs.com/ for documentation, updates and examples.
 *
@@ -825,7 +827,7 @@ this.createjs = this.createjs||{};
  * @main Utility Methods
  */
 
-(function() {
+((() => {
 	"use strict";
 
 	/**
@@ -851,12 +853,12 @@ this.createjs = this.createjs||{};
 	 */
 	createjs.proxy = function (method, scope) {
 		var aArgs = Array.prototype.slice.call(arguments, 2);
-		return function () {
-			return method.apply(scope, Array.prototype.slice.call(arguments, 0).concat(aArgs));
+		return function(...args) {
+			return method.apply(scope, Array.prototype.slice.call(args, 0).concat(aArgs));
 		};
 	}
 
-}());/*
+})());/*
 * AbstractLoader
 * Visit http://createjs.com/ for documentation, updates and examples.
 *
@@ -892,7 +894,7 @@ this.createjs = this.createjs||{};
 // namespace:
 this.createjs = this.createjs||{};
 
-(function() {
+((() => {
 	"use strict";
 	/**
 	 * The base loader, which defines all the generic callbacks and events. All loaders extend this class, including the
@@ -1070,7 +1072,7 @@ this.createjs = this.createjs||{};
 	 * @method init
 	 * @private
 	 */
-	p.init = function () {};
+	p.init = () => {};
 
 	/**
 	 * Begin loading the queued items. This method can be called when a {{#crossLink "LoadQueue"}}{{/crossLink}} is set
@@ -1082,7 +1084,7 @@ this.createjs = this.createjs||{};
 	 *      queue.load();
 	 * @method load
 	 */
-	p.load = function() {};
+	p.load = () => {};
 
 	/**
 	 * Close the active queue. Closing a queue completely empties the queue, and prevents any remaining items from
@@ -1091,7 +1093,7 @@ this.createjs = this.createjs||{};
 	 * To stop and restart a queue, use the {{#crossLink "LoadQueue/setPaused"}}{{/crossLink}} method instead.
 	 * @method close
 	 */
-	p.close = function() {};
+	p.close = () => {};
 
 
 //Callback proxies
@@ -1190,7 +1192,7 @@ this.createjs = this.createjs||{};
 	 * property, which is the lowercase extension.
 	 * @private
 	 */
-	p._parseURI = function(path) {
+	p._parseURI = path => {
 		var info = { absolute: false, relative:false };
 		if (path == null) { return info; };
 
@@ -1224,7 +1226,7 @@ this.createjs = this.createjs||{};
 	 * @param {Array} [query] Existing name/value pairs to append on to this query.
 	 * @private
 	 */
-	p._formatQueryString = function(data, query) {
+	p._formatQueryString = (data, query) => {
 		if (data == null) {
 			throw new Error('You must specify data.');
 		}
@@ -1274,7 +1276,7 @@ this.createjs = this.createjs||{};
 	 * @return {Boolean} If the load item is loading from a different domain than the current location.
 	 * @private
 	 */
-	p._isCrossDomain = function(item) {
+	p._isCrossDomain = item => {
 		var target = document.createElement("a");
 		target.href = item.src;
 
@@ -1295,7 +1297,7 @@ this.createjs = this.createjs||{};
 	 * well.
 	 * @private
 	 */
-	p._isLocal = function(item) {
+	p._isLocal = item => {
 		var target = document.createElement("a");
 		target.href = item.src;
 		return target.hostname == "" && target.protocol == "file:";
@@ -1305,13 +1307,11 @@ this.createjs = this.createjs||{};
 	 * @method toString
 	 * @return {String} a string representation of the instance.
 	 */
-	p.toString = function() {
-		return "[PreloadJS AbstractLoader]";
-	};
+	p.toString = () => "[PreloadJS AbstractLoader]";
 
 	createjs.AbstractLoader = AbstractLoader;
 
-}());
+})());
 /*
 * LoadQueue
 * Visit http://createjs.com/ for documentation, updates and examples.
@@ -1415,7 +1415,7 @@ TODO: WINDOWS ISSUES
 	* Reported issues with IE7/8
  */
 
-(function() {
+((() => {
 	"use strict";
 
 	/**
@@ -2188,7 +2188,7 @@ TODO: WINDOWS ISSUES
 	 * @return {Boolean} If the specified type is binary.
 	 * @private
 	 */
-	s.isBinary = function(type) {
+	s.isBinary = type => {
 		switch (type) {
 			case createjs.LoadQueue.IMAGE:
 			case createjs.LoadQueue.BINARY:
@@ -2206,7 +2206,7 @@ TODO: WINDOWS ISSUES
 	 * @return {Boolean} If the specified type is text.
 	 * @private
 	 */
-	s.isText = function(type) {
+	s.isText = type => {
 		switch (type) {
 			case createjs.LoadQueue.TEXT:
 			case createjs.LoadQueue.JSON:
@@ -3093,7 +3093,7 @@ TODO: WINDOWS ISSUES
 	 * determined by the extension.
 	 * @private
 	 */
-	p._getTypeByExtension = function(extension) {
+	p._getTypeByExtension = extension => {
 		if (extension == null) {
 			return createjs.LoadQueue.TEXT;
 		}
@@ -3196,9 +3196,7 @@ TODO: WINDOWS ISSUES
 	 * @deprecated In favour of the createjs.proxy method (see LoadQueue source).
 	 */
 
-	p.toString = function() {
-		return "[PreloadJS LoadQueue]";
-	};
+	p.toString = () => "[PreloadJS LoadQueue]";
 
 	createjs.LoadQueue = LoadQueue;
 
@@ -3206,9 +3204,9 @@ TODO: WINDOWS ISSUES
 // Helper methods
 
 	// An additional module to determine the current browser, version, operating system, and other environmental variables.
-	var BrowserDetect = function() {}
+	var BrowserDetect = () => {}
 
-	BrowserDetect.init = function() {
+	BrowserDetect.init = () => {
 		var agent = navigator.userAgent;
 		BrowserDetect.isFirefox = (agent.indexOf("Firefox") > -1);
 		BrowserDetect.isOpera = (window.opera != null);
@@ -3220,7 +3218,7 @@ TODO: WINDOWS ISSUES
 
 	createjs.LoadQueue.BrowserDetect = BrowserDetect;
 
-}());
+})());
 /*
 * TagLoader
 * Visit http://createjs.com/ for documentation, updates and examples.
@@ -3257,7 +3255,7 @@ TODO: WINDOWS ISSUES
 // namespace:
 this.createjs = this.createjs||{};
 
-(function() {
+((() => {
 	"use strict";
 	/**
 	 * A preloader that loads items using a tag-based approach. HTML audio and images can use this loader to load
@@ -3472,7 +3470,7 @@ this.createjs = this.createjs||{};
 	 * @method _handleStalled
 	 * @private
 	 */
-	p._handleStalled = function() {
+	p._handleStalled = () => {
 		//Ignore, let the timeout take care of it. Sometimes its not really stopped.
 	};
 
@@ -3579,13 +3577,11 @@ this.createjs = this.createjs||{};
 		}
 	};
 
-	p.toString = function() {
-		return "[PreloadJS TagLoader]";
-	};
+	p.toString = () => "[PreloadJS TagLoader]";
 
 	createjs.TagLoader = TagLoader;
 
-}());
+})());
 /*
  * XHRLoader
  * Visit http://createjs.com/ for documentation, updates and examples.
@@ -3622,7 +3618,7 @@ this.createjs = this.createjs||{};
 // namespace:
 this.createjs = this.createjs || {};
 
-(function () {
+((() => {
 	"use strict";
 
 	/**
@@ -4200,7 +4196,7 @@ this.createjs = this.createjs || {};
 	 * @return {XML} An XML document.
 	 * @private
 	 */
-	p._parseXML = function (text, type) {
+	p._parseXML = (text, type) => {
 		var xml = null;
 		try {
 			// CocoonJS does not support XML parsing with either method.
@@ -4228,13 +4224,11 @@ this.createjs = this.createjs || {};
 		this._sendComplete();
 	};
 
-	p.toString = function () {
-		return "[PreloadJS XHRLoader]";
-	};
+	p.toString = () => "[PreloadJS XHRLoader]";
 
 	createjs.XHRLoader = XHRLoader;
 
-}());
+})());
 
 /**
  * Include json2 here, to correctly parse json.
@@ -4267,15 +4261,15 @@ if (typeof JSON !== 'object') {
 	JSON = {};
 }
 
-(function () {
-	'use strict';
+((() => {
+    'use strict';
 
-	function f(n) {
+    function f(n) {
 		// Format integers to have at least two digits.
 		return n < 10 ? '0' + n : n;
 	}
 
-	if (typeof Date.prototype.toJSON !== 'function') {
+    if (typeof Date.prototype.toJSON !== 'function') {
 
 		Date.prototype.toJSON = function (key) {
 
@@ -4296,23 +4290,25 @@ if (typeof JSON !== 'object') {
 						};
 	}
 
-	var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-			escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-			gap,
-			indent,
-			meta = {    // table of character substitutions
-				'\b':'\\b',
-				'\t':'\\t',
-				'\n':'\\n',
-				'\f':'\\f',
-				'\r':'\\r',
-				'"':'\\"',
-				'\\':'\\\\'
-			},
-			rep;
+    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+    var escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+    var gap;
+    var indent;
+
+    var meta = {    // table of character substitutions
+        '\b':'\\b',
+        '\t':'\\t',
+        '\n':'\\n',
+        '\f':'\\f',
+        '\r':'\\r',
+        '"':'\\"',
+        '\\':'\\\\'
+    };
+
+    var rep;
 
 
-	function quote(string) {
+    function quote(string) {
 
 // If the string contains no control characters, no quote characters, and no
 // backslash characters, then we can safely slap some quotes around it.
@@ -4320,7 +4316,7 @@ if (typeof JSON !== 'object') {
 // sequences.
 
 		escapable.lastIndex = 0;
-		return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+		return escapable.test(string) ? '"' + string.replace(escapable, a => {
 			var c = meta[a];
 			return typeof c === 'string'
 					? c
@@ -4329,35 +4325,40 @@ if (typeof JSON !== 'object') {
 	}
 
 
-	function str(key, holder) {
+    function str(key, holder) {
+        // Produce a string from holder[key].
 
-// Produce a string from holder[key].
+        var i;
 
-		var i, // The loop counter.
-				k, // The member key.
-				v, // The member value.
-				length,
-				mind = gap,
-				partial,
-				value = holder[key];
+        var // The loop counter.
+        // The member key.
+        k;
 
-// If the value has a toJSON method, call it to obtain a replacement value.
+        var // The member value.
+        v;
 
-		if (value && typeof value === 'object' &&
+        var length;
+        var mind = gap;
+        var partial;
+        var value = holder[key];
+
+        // If the value has a toJSON method, call it to obtain a replacement value.
+
+        if (value && typeof value === 'object' &&
 				typeof value.toJSON === 'function') {
 			value = value.toJSON(key);
 		}
 
-// If we were called with a replacer function, then call the replacer to
-// obtain a replacement value.
+        // If we were called with a replacer function, then call the replacer to
+        // obtain a replacement value.
 
-		if (typeof rep === 'function') {
+        if (typeof rep === 'function') {
 			value = rep.call(holder, key, value);
 		}
 
-// What happens next depends on the value's type.
+        // What happens next depends on the value's type.
 
-		switch (typeof value) {
+        switch (typeof value) {
 			case 'string':
 				return quote(value);
 
@@ -4455,12 +4456,12 @@ if (typeof JSON !== 'object') {
 				gap = mind;
 				return v;
 		}
-	}
+    }
 
-// If the JSON object does not yet have a stringify method, give it one.
+    // If the JSON object does not yet have a stringify method, give it one.
 
-	if (typeof JSON.stringify !== 'function') {
-		JSON.stringify = function (value, replacer, space) {
+    if (typeof JSON.stringify !== 'function') {
+		JSON.stringify = (value, replacer, space) => {
 
 // The stringify method takes a value and an optional replacer, and an optional
 // space parameter, and returns a JSON text. The replacer can be a function
@@ -4504,10 +4505,10 @@ if (typeof JSON !== 'object') {
 	}
 
 
-// If the JSON object does not yet have a parse method, give it one.
+    // If the JSON object does not yet have a parse method, give it one.
 
-	if (typeof JSON.parse !== 'function') {
-		JSON.parse = function (text, reviver) {
+    if (typeof JSON.parse !== 'function') {
+		JSON.parse = (text, reviver) => {
 
 // The parse method takes a text and an optional reviver function, and returns
 // a JavaScript value if the text is a valid JSON text.
@@ -4515,12 +4516,14 @@ if (typeof JSON !== 'object') {
 			var j;
 
 			function walk(holder, key) {
+                // The walk method is used to recursively walk the resulting structure so
+                // that modifications can be made.
 
-// The walk method is used to recursively walk the resulting structure so
-// that modifications can be made.
+                var k;
 
-				var k, v, value = holder[key];
-				if (value && typeof value === 'object') {
+                var v;
+                var value = holder[key];
+                if (value && typeof value === 'object') {
 					for (k in value) {
 						if (Object.prototype.hasOwnProperty.call(value, k)) {
 							v = walk(value, k);
@@ -4532,8 +4535,8 @@ if (typeof JSON !== 'object') {
 						}
 					}
 				}
-				return reviver.call(holder, key, value);
-			}
+                return reviver.call(holder, key, value);
+            }
 
 
 // Parsing happens in four stages. In the first stage, we replace certain
@@ -4543,10 +4546,8 @@ if (typeof JSON !== 'object') {
 			text = String(text);
 			cx.lastIndex = 0;
 			if (cx.test(text)) {
-				text = text.replace(cx, function (a) {
-					return '\\u' +
-							('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-				});
+				text = text.replace(cx, a => '\\u' +
+                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4));
 			}
 
 // In the second stage, we run the text against regular expressions that look
@@ -4587,4 +4588,4 @@ if (typeof JSON !== 'object') {
 			throw new SyntaxError('JSON.parse');
 		};
 	}
-}());
+})());

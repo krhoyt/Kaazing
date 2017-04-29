@@ -6,7 +6,7 @@ var router = express.Router();
  */
 
 // GET
-router.get( '/', function( req, res, next ) {
+router.get( '/', (req, res, next) => {
   res.clearCookie( 'account' );
   res.send( 'OK' );
 } );

@@ -21,11 +21,9 @@ var collection = db.get( MONGO_COLLECTION );
 var client = new Stomp( BROKER_IP, BROKER_PORT, null, null );
 
 // Connection to broker
-client.connect( function( sessionId )
-{
+client.connect( sessionId => {
     // Subscribe to a topic
-    client.subscribe( TOPIC, function( body, headers )
-    {
+    client.subscribe( TOPIC, (body, headers) => {
         // Parse message content
         var line = body.toString().substring( 0, body.toString().length - 1 );
         var parts = line.split( "," );
@@ -45,7 +43,7 @@ client.connect( function( sessionId )
         // Add record to database
         collection.insert( {
             aircraft: parts[0],
-            stamp: stamp,
+            stamp,
             latitude: parseFloat( parts[1] ),
             longitude: parseFloat( parts[2] ),
             meters: parseFloat( parts[3] ),
@@ -61,7 +59,7 @@ client.connect( function( sessionId )
             celcius: parseFloat( parts[19] ),
             humidity: parseFloat( parts[20] ),
             flight: parts[21]
-        }, function( err, doc ) {
+        }, (err, doc) => {
             if( err )
             {
                 console.log( "Error adding record." );

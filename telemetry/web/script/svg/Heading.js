@@ -18,7 +18,7 @@ function Heading( selector, animate )
     result = {
         SOURCE_COMPASS: "C",
         SOURCE_GPS: "G",
-        animate: animate,
+        animate,
         gaugeRadius: 0,
         heading: 0,
         container: document.querySelector( selector ),
@@ -203,7 +203,7 @@ function Heading( selector, animate )
 
     // Degrees
     // Animation iterations
-    result.updateHeading = function() {
+    result.updateHeading = () => {
         result.current.textContent = Math.round( result.heading );
         result.gauge.setAttribute( "transform",
             "translate( 0, " + ( INDICATOR_HEIGHT / 2 ) + " ) " +
@@ -221,7 +221,7 @@ function Heading( selector, animate )
         if( this.animate )
         {
             TweenLite.to( this, 1, {
-                heading: heading,
+                heading,
                 onUpdate: this.updateHeading
             } );
         } else {
