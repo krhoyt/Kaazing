@@ -24,6 +24,8 @@ What does your heart rate look like when you are on stage presenting?
 
 Having presented at hundreds of events over the years, I always wondered how my body reacts to being on the stage.  I purchased an HRMI breakout some time ago, but never really put it to use.  With the growing interest in the Internet of Things (IoT), and wearable computing, I finally got around to putting the system together.  A heart rate sensor is worn, and the data is reported wireless in real time.  A browser client is provided to view the data from the audience perspective.  A flaw of wearables is that they capture the data in real time, but report it in batch.  In order to be truly useful, you need that data as it happens, and need to be alerted of critical changes.
 
+![HRMI](hrmi/hrmi.png)
+
 ## Internet of Things
 
 How does one Internet all teh things?
