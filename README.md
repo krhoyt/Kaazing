@@ -30,6 +30,8 @@ How does one Internet all teh things?
 
 A very broad exploration of IoT in three commercial settings - smart buildings, transportation and logistics, and retail.  The smart buildings example is based off a deployed commercial customer in the HVAC (heating, venting, air conditioning) vertical.  It allows you to see the difference real-time makes in IoT-based business decisions.  The logistics example is designed to emulate fleet tracking and mangement.  The retail example show integrating legacy equipment with modern point of sale workflows.  There is also a skeleton of basic IoT connectivity with Kaazing Gateway.  
 
+[![Real-Time Vehicle Telemetry](https://img.youtube.com/vi/VephhH4buCI/0.jpg)](https://www.youtube.com/watch?v=VephhH4buCI)
+
 ## PetrolPal
 
 Drive up and swipe your credit card? Go inside to pay? Or just fuel up with the real-time Web?
@@ -67,3 +69,5 @@ This is a generic port of the classic game of Tetris.  It uses the entire browse
 Will a physical Internet of Things (IoT) light encourage real-time audience participation?
 
 Presentations are always better when you can show real world, working examples.  This means the construction of a portable physical device that connects to cloud services and is accessible over the Internet.  Cloud services for this project showcase Kaazing Gateway deployed from AWS Marketplace onto Amazone EC2.  Run your own real-time cloud in minutes!  Hardware leveraged to build this IoT device include everyting from foam core board and glue, to an Arduino Yun communicating to the cloud via the STOMP protocol.  Audience participation is accomplished through a web-based user interface.
+
+[![Tic-Tac-Toe Light](tictactoe/tic.tac.toe.jpg)](https://www.kevinhoyt.com/2014/06/04/tic-tac-toe-light/)
