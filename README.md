@@ -66,6 +66,8 @@ Is Kaazing Gateway fast enough to use your phone as a game controller?
 
 This is a generic port of the classic game of Tetris.  It uses the entire browser screen for falling pieces, while the game board is managed entirely via the DOM (not Canvas).  A mock controller screen is available for smartphone screens.  It is designed to be held horizontally (landscape).  Once the controller has joined the game, it can move falling pieces in real-time.  Future features that would be nice to add include multiple players, hardware controller integration, and tracking of high score across all players.
 
+[![Web-Based Tetris](/tetris/assets/tetris-screens.png)](https://www.kevinhoyt.com/2015/06/09/tetris-with-virtual-controller/)
+
 ## Tic Tac Toe
 
 Will a physical Internet of Things (IoT) light encourage real-time audience participation?
