@@ -742,7 +742,7 @@ function doWindowLoad()
     video.element.appendChild( source );
 
     // Change indicator when fully loaded
-    video.element.addEventListener( 'canplaythrough', function( evt ) {
+    video.element.addEventListener( 'canplaythrough', evt => {
       console.log( 'Video loaded.' );
       video.ready.style.backgroundImage = 'url( \'img/video.svg\' )';
     } );

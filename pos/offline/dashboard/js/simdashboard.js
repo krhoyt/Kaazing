@@ -1,4 +1,4 @@
-	$(document).ready(function() {
+	$(document).ready(() => {
 
 		var WS_PROTOCOL = "ws"
 		var WS_SERVER_HOST = "wallet.kaazing.com";
@@ -94,12 +94,12 @@
 		var vendor = "Kaazing";
 		var client = {name : "John Doe"};
 
-		var doConnect = function() {
+		var doConnect = () => {
 			// Connect to JMS, create a session and start it.
 			var jmsConnectionFactory = new JmsConnectionFactory(WEBSOCKET_URL);
 			try {
 				//Creating connection
-				var connectionFuture = jmsConnectionFactory.createConnection(function() {
+				var connectionFuture = jmsConnectionFactory.createConnection(() => {
 					if (!connectionFuture.exception) {
 						try {
 							connection = connectionFuture.getValue();
@@ -108,7 +108,7 @@
 							consoleLog("Connected to " + WEBSOCKET_URL);
 							session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-							connection.start(function() {
+							connection.start(() => {
 								// Callback logic comes here.
 								//
 								consoleLog("JMS session created");
@@ -137,7 +137,7 @@
 		};
 
 		//Function invoked when a new message arrives
-		var handleTopicMessage = function(message) {
+		var handleTopicMessage = message => {
 			consoleLog("Message received: " + message.getText());
 
 			//Constructing a readable date/time format
@@ -170,7 +170,7 @@
 				}
 			};
 
-			var dashboardItem = function(msg) {
+			var dashboardItem = msg => {
 				if (msg.client.action == REGISTER_READ && dashboardRecords.indexOf(REGISTER_READ) > -1) {
 					vendor = msg.register.vendorName;
 				}
@@ -224,7 +224,7 @@
 			};
 
 			//If logging is on, writing the log message to the browser console
-			var consoleLog = function(text) {
+			var consoleLog = text => {
 				if (IN_DEBUG_MODE) {
 					console.log(text);
 				}
@@ -232,7 +232,7 @@
 
 			// When there's an exception, it should be logged
 			// (depending on the logging settings)
-			var handleException = function (e) {
+			var handleException = e => {
 				consoleLog("EXCEPTION: " + e);
 			};
 
@@ -251,7 +251,7 @@
 				"order" : [[1, 'desc']]
 			});
 
-			var format = function(d) {
+			var format = d => {
 				// `d` is the original data object for the row
 				consoleLog (d);
 				return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
@@ -261,11 +261,11 @@
 				'</table>';
 			};
 
-			var produceMessages = function() {
+			var produceMessages = () => {
 				var x = JSON.stringify (cannedMessages[Math.round(Math.random()*(cannedMessages.length-1))]);
 				// var x = JSON.stringify (cannedMessages[2]);
 				myMsg = session.createTextMessage (x);
-				topicProducer.send (myMsg, function () {
+				topicProducer.send (myMsg, () => {
 					// console.log ("Message sent!");
 					msgCnt++;
 					if (msgCnt < 200) {

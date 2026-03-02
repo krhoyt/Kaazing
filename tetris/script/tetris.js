@@ -31,10 +31,7 @@ var score = null;
 var user = null;
 
 // Fall rate in seconds
-Date.seconds = function()
-{
-  return Math.floor( Date.now() / 1000 );
-}  
+Date.seconds = () => Math.floor( Date.now() / 1000 )  
   
 // Correct modulo behavior in JavaScript
 Number.prototype.mod = function( n ) {
@@ -243,7 +240,7 @@ function get_new_piece()
   return {
     blocks: pieces[piece],
     color: colors[Math.floor( Math.random() * colors.length )],    
-    rotation: rotation,
+    rotation,
     x: Math.floor( ( board_width - BLOCK_SIZE ) / 2 ),
     y: 0
   };

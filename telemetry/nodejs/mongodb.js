@@ -29,7 +29,7 @@ collection.insert( {
     farenheit: 0,
     celcius: 0,
     humidity: 0
-}, function( err, doc ) {
+}, (err, doc) => {
     if( err )
     {
         console.log( "Error adding record." );

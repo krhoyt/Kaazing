@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(() => {
 
 	//Constructing WebSocket URL dynamically, based on the URL of the HTML page
 	// var DEFAULT_ENDPOINT =
@@ -76,12 +76,12 @@ $(document).ready(function() {
 	var vendor = "Kaazing";
 	var client = {name : "John Doe"};
 
-	var doConnect = function() {
+	var doConnect = () => {
 		// Connect to JMS, create a session and start it.
 		var jmsConnectionFactory = new JmsConnectionFactory(WEBSOCKET_URL);
 		try {
 			//Creating connection
-			var connectionFuture = jmsConnectionFactory.createConnection(function() {
+			var connectionFuture = jmsConnectionFactory.createConnection(() => {
 				if (!connectionFuture.exception) {
 					try {
 						connection = connectionFuture.getValue();
@@ -90,7 +90,7 @@ $(document).ready(function() {
 						consoleLog("Connected to " + WEBSOCKET_URL);
 						session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-						connection.start(function() {
+						connection.start(() => {
 							// Callback logic comes here.
 							//
 							consoleLog("JMS session created");
@@ -114,7 +114,7 @@ $(document).ready(function() {
 	};
 
 	//Function invoked when a new message arrives
-	var handleTopicMessage = function(message) {
+	var handleTopicMessage = message => {
 		consoleLog("Message received: " + message.getText());
 
 		//Constructing a readable date/time format
@@ -144,7 +144,7 @@ $(document).ready(function() {
 			}
 		};
 
-		var dashboardItem = function(msg) {
+		var dashboardItem = msg => {
 			if (msg.action == REGISTER_READ && dashboardRecords.indexOf(REGISTER_READ) > -1) {
 				vendor = msg.register.vendorName;
 			}
@@ -194,7 +194,7 @@ $(document).ready(function() {
 		};
 
 		//If logging is on, writing the log message to the browser console
-		var consoleLog = function(text) {
+		var consoleLog = text => {
 			if (IN_DEBUG_MODE) {
 				console.log(text);
 			}
@@ -202,7 +202,7 @@ $(document).ready(function() {
 
 		// When there's an exception, it should be logged
 		// (depending on the logging settings)
-		var handleException = function (e) {
+		var handleException = e => {
 			consoleLog("EXCEPTION: " + e);
 		};
 
@@ -221,7 +221,7 @@ $(document).ready(function() {
 			"order" : [[0, 'desc']]
 		});
 
-		var format = function(d) {
+		var format = d => {
 			// `d` is the original data object for the row
 			consoleLog (d);
 			return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
@@ -248,7 +248,7 @@ $(document).ready(function() {
 			}
 		} );
 
-		var loadHistory = function() {
+		var loadHistory = () => {
 			Parse.initialize( PARSE_APPLICATION, PARSE_KEY );
 			var query = null;
 
@@ -256,7 +256,7 @@ $(document).ready(function() {
 			query.include( "clerkId" );
 			query.include( "registerId" );
 			query.find( {
-				success: function( results ) {
+				success(results) {
 					consoleLog( "Transactions:" );
 					consoleLog( results );
 					history = results;
@@ -267,14 +267,14 @@ $(document).ready(function() {
 					// loadTransaction("DsOJ164k7m");
 
 				},
-				error: function( error ) {
+				error(error) {
 					consoleLog( "Error getting history." );
 					consoleLog( error );
 				}
 			} );
 		};
 
-		var loadTransaction = function (id) {
+		var loadTransaction = id => {
 
 			// var index = null;
 			var query = null;
@@ -293,7 +293,7 @@ $(document).ready(function() {
 			query.include( "productId" );
 			query.equalTo( "transactionId", random );
 			query.find( {
-				success: function( results ) {
+				success(results) {
 					var purchases = null;
 					var message = null;
 
@@ -329,7 +329,7 @@ $(document).ready(function() {
 						// 	doMessageSent
 						// );
 					},
-					error: function( error ) {
+					error(error) {
 						console.log( "Error getting random transaction." );
 						console.log( error );
 					}

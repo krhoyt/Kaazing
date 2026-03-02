@@ -15,8 +15,8 @@ function Switch( selector, label, enabled )
         on: 30,
         off: 0,
         current: 0,
-        enabled: enabled,
-        label: label,
+        enabled,
+        label,
         container: document.querySelector( selector ),
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
     };
@@ -170,7 +170,7 @@ function Switch( selector, label, enabled )
     result.slider.appendChild( element );
 
     // Animation iterations
-    result.updateAltitude = function() {
+    result.updateAltitude = () => {
         result.slider.setAttribute( "transform", "translate( " + result.current + ", 0 )" );
     }
 

@@ -1,4 +1,4 @@
-var GatewayCE = (function () {
+var GatewayCE = ((() => {
   
   /*
    * Private properties
@@ -344,7 +344,7 @@ var GatewayCE = (function () {
     
     // Acknowledge is synchronous
     // Schedule idependently
-    setTimeout( function() {
+    setTimeout( () => {
       amqp_consume.ackBasic( config );
     }, 0 );        
   }
@@ -606,12 +606,12 @@ var GatewayCE = (function () {
         
     return {
       clientId: client_id,
-      close: close,
-      connect: connect,
-      on: on,
-      publish: publish,
-      subscribe: subscribe,
-      unsubscribe: unsubscribe
+      close,
+      connect,
+      on,
+      publish,
+      subscribe,
+      unsubscribe
     };
   }
   
@@ -638,8 +638,8 @@ var GatewayCE = (function () {
     if( !found )
     {
       event_listeners.push( {
-        event: event,
-        callback: callback
+        event,
+        callback
       } );          
     }
   }
@@ -653,7 +653,7 @@ var GatewayCE = (function () {
     body = stringToArrayBuffer( message.toString() );
 
     amqp_publish.publishBasic( {
-      body: body,
+      body,
       properties: null,
       exchange: AMQP_EXCHANGE_PREFIX + account_information.id,
       routingKey: topic
@@ -711,30 +711,29 @@ var GatewayCE = (function () {
     }
   }
   
-  function verbose()
-  {
+  function verbose(...args) {
     if( debug_messages == null )
     {
       debug_messages = false;
     }
     
-    if( arguments.length == 0 )
+    if( args.length == 0 )
     {
         return debug_messages;
     }
     
-    debug_messages = arguments[0];
+    debug_messages = args[0];
   }
   
   return {
-    EVENT_CONNECT: EVENT_CONNECT,
+    EVENT_CONNECT,
     EVENT_ERROR: "error",
-    EVENT_DISCONNECT: EVENT_DISCONNECT,
-    EVENT_MESSAGE: EVENT_MESSAGE,
-    EVENT_SUBSCRIBE: EVENT_SUBSCRIBE,
-    EVENT_UNSUBSCRIBE: EVENT_UNSUBSCRIBE,
-    chat: chat,
-    connect: connect,
-    verbose: verbose
+    EVENT_DISCONNECT,
+    EVENT_MESSAGE,
+    EVENT_SUBSCRIBE,
+    EVENT_UNSUBSCRIBE,
+    chat,
+    connect,
+    verbose
   };
-}());
+})());

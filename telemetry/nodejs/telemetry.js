@@ -27,11 +27,9 @@ var sensor = db.get( MONGO_DATA );
 var client = new Stomp( BROKER_IP, BROKER_PORT, null, null );
 
 // Connection to broker
-client.connect( function( sessionId )
-{
+client.connect( sessionId => {
     // Subscribe to sensor telemetry data
-    client.subscribe( TOPIC_DATA, function( body, headers )
-    {
+    client.subscribe( TOPIC_DATA, (body, headers) => {
         // Parse message content
         var line = body.toString().substring( 0, body.toString().length - 1 );
         var parts = line.split( "," );
@@ -51,7 +49,7 @@ client.connect( function( sessionId )
         // Add record to database
         sensor.insert( {
             aircraft: parts[0],
-            stamp: stamp,
+            stamp,
             latitude: parseFloat( parts[1] ),
             longitude: parseFloat( parts[2] ),
             meters: parseFloat( parts[3] ),
@@ -67,7 +65,7 @@ client.connect( function( sessionId )
             celcius: parseFloat( parts[20] ),
             humidity: parseFloat( parts[21] ),
             flight: parts[22]
-        }, function( err, doc ) {
+        }, (err, doc) => {
             if( err )
             {
                 console.log( "Error adding record." );
@@ -80,8 +78,7 @@ client.connect( function( sessionId )
 
     // Subscribe to commands going to sensor array
     // Lighting control
-    client.subscribe( TOPIC_COMMAND, function( body, headers )
-    {
+    client.subscribe( TOPIC_COMMAND, (body, headers) => {
         // Get message content
         var line = body.toString();
         var parts = line.split( "," );
@@ -99,8 +96,8 @@ client.connect( function( sessionId )
         command.insert( {
             stamp: new Date(),
             flight: parts[0],
-            lights: lights
-        }, function( err, doc ) {
+            lights
+        }, (err, doc) => {
             if( err )
             {
                 console.log( "Error adding record." );

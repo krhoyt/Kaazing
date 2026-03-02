@@ -196,7 +196,7 @@ function get_new_piece()
   shape = PIECES[Math.floor( Math.random() * PIECES.length )];
   
   return {
-    shape: shape,
+    shape,
     rotation: Math.floor( Math.random() * shape.length ),
     x: Math.round( BOARD_WIDTH / 2 ) - Math.round( TEMPLATE_WIDTH / 2 ),
     y: -2,

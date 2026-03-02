@@ -16,7 +16,7 @@ var encryptedPw;
 // Connecting to Parse
 Parse.initialize(APPLICATION_ID, JAVASCRIPT_KEY);
 
-$(function() {
+$(() => {
   // Debugging
   // Optional "debug" parameter on the query string
   if( !URLParser( window.location.href ).hasParam( "debug" ) )
@@ -31,7 +31,7 @@ $(function() {
   Account = Parse.Object.extend("Account");
 
   // Registration form submit event handler
-  $('#registerForm').on('submit', function(e) {
+  $('#registerForm').on('submit', e => {
     e.preventDefault();
 
     // Make sure that the passwords match
@@ -55,25 +55,25 @@ $(function() {
   });
 
   // Login form submit event handler
-  $('#loginForm').on('submit', function(e) {
+  $('#loginForm').on('submit', e => {
     e.preventDefault();
     checkCredentials ($("#loginEmail").val(), $("#loginPassword").val());
   });
 
   // Login link click event handler
-  $('#loginLink').click(function() {
+  $('#loginLink').click(() => {
     $("#loginDiv").removeClass("collapse");
     $("#registerDiv").addClass("collapse");
   });
 
   // Register link click event handler
-  $('#registerLink').click(function() {
+  $('#registerLink').click(() => {
     $("#loginDiv").addClass("collapse");
     $("#registerDiv").removeClass("collapse");
   });
   
   // Profile menu selection click event handler
-  $('#mnuProfile').click(function() {
+  $('#mnuProfile').click(() => {
     $("#tokenDiv").addClass("collapse");
     $("#profileDiv").removeClass("collapse");
   });  
@@ -85,14 +85,14 @@ $(function() {
   // Two global variables are used to ensure that we register the account only
   // after their password has been encrypted and their email address was
   // checked against the database.
-  var doRegister = function() {
+  var doRegister = () => {
     if (pwChecked && emailChecked) {
       saveAccount ();
     }
   };
 
   // Housekeeping in the UI after successful login: hiding and showing stuff
-  var loginSuccess = function(token) {
+  var loginSuccess = token => {
     $("#loginDiv").addClass("collapse");
     $("#tokenCol").html(token);
     $("#tokenDiv").removeClass("collapse");
@@ -104,7 +104,7 @@ $(function() {
   };
 
   // Password encryption. Refer to: https://code.google.com/p/javascript-bcrypt/
-  var crypt = function(pw, callback) {
+  var crypt = (pw, callback) => {
     var bcrypt = new bCrypt();
     var salt;
 
@@ -126,7 +126,7 @@ $(function() {
 
   // Callback invoked by crypt during the registration process
   // after successful password encryption
-  var registerCryptCallback = function (hash) {
+  var registerCryptCallback = hash => {
     if (debug) {
       console.log ("Password encrypted.");
     }
@@ -136,9 +136,9 @@ $(function() {
   };
 
   // Generate a UUID for email verification
-  var generateUUID = function () {
+  var generateUUID = () => {
     var d = Date.now();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
         var r = (d + Math.random()*16)%16 | 0;
         d = Math.floor(d/16);
         return (c=='x' ? r : (r&0x3|0x8)).toString(16);
@@ -147,7 +147,7 @@ $(function() {
   };  
   
   // Persisting the registration data
-  var saveAccount = function () {
+  var saveAccount = () => {
     var uuid = generateUUID();
     var account = new Account();
     account.set ({name: $("#registrationName").val()});
@@ -157,7 +157,7 @@ $(function() {
     account.set ({verification: uuid});    
 
     account.save( null, {
-      success: function(object) {
+      success(object) {
         $(".success").show();
         // Switching from registration dialog to Login dialog
         $("#loginDiv").removeClass("collapse");
@@ -172,21 +172,21 @@ $(function() {
         // Send verification email
         Parse.Cloud.run('verify', {
             email: $("#registrationEmail").val(),
-            uuid: uuid
+            uuid
           }, {
-          success: function(result) {
+          success(result) {
             if (debug) {
               console.log('Account verification email sent.');  
             }
           },
-          error: function(error) {
+          error(error) {
             if (debug) {
               alert("Error: " + error.code + " " + error.message);
             }            
           }
         });        
       },
-      error: function(model, error) {
+      error(model, error) {
         $(".error").show();
       }
     });
@@ -194,11 +194,11 @@ $(function() {
 
   // Function that checks that credentials entered through the login form
   // match the ones in the database.
-  var checkCredentials = function(email, password) {
+  var checkCredentials = (email, password) => {
     var query = new Parse.Query(Account);
     query.equalTo("email", email);
     query.find({
-      success: function(results) {
+      success(results) {
         if (debug) {
           console.log("Successfully retrieved " + results.length + (results.length === 1 ? " account." : " accounts."));
         }
@@ -213,7 +213,7 @@ $(function() {
             return;
           }
           
-          crypt (password, function(hash) {
+          crypt (password, hash => {
             if (results[0].get('password') === hash) {
               if (debug) {
                 console.log ('Account ' + email + ' successfully authenticated.')
@@ -234,7 +234,7 @@ $(function() {
           $('#account-error').removeClass('collapse');          
         }
       },
-      error: function(error) {
+      error(error) {
         alert("Error: " + error.code + " " + error.message);
       }
     });
@@ -242,14 +242,14 @@ $(function() {
 
   // Function that checks that the email address provided during registration
   // hasn't been used before.
-  var checkEmailUniqueness = function (email) {
+  var checkEmailUniqueness = email => {
     if (debug) {
       console.log ("Checking uniqueness of email in DB: " + email);
     }
     var query = new Parse.Query(Account);
     query.equalTo("email", email);
     query.find({
-      success: function(results) {
+      success(results) {
         if (results.length > 0) {
           emailChecked = false;
           $("#email-error").removeClass("collapse");
@@ -265,7 +265,7 @@ $(function() {
           }
         }
       },
-      error: function(error) {
+      error(error) {
         alert("Error: " + error.code + " " + error.message);
       }
     });

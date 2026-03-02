@@ -22,10 +22,7 @@ var moving_left = null;
 var moving_right = null;
 var score = null;
 
-Date.seconds = function()
-{
-  return Math.floor( Date.now() / 1000 );
-}
+Date.seconds = () => Math.floor( Date.now() / 1000 )
   
 function build_blank_board()
 {
@@ -84,8 +81,8 @@ function convert_pixel_coordinates( box_x, box_y )
   pixel_y = box_y * box_size;
   
   return {
-    pixel_x: pixel_x,
-    pixel_y: pixel_y
+    pixel_x,
+    pixel_y
   };
 }
   
@@ -182,12 +179,12 @@ function get_new_piece()
   shape = pieces[index];
 
   result = {
-    shape: shape,
+    shape,
     rotation: Math.floor( Math.random() * shape.length ),
     x: Math.floor( board_width / 2 ) - Math.floor( TEMPLATE_WIDTH / 2 ),
     y: -2,
     color: Math.floor( Math.random() * colors.length ),
-    index: index
+    index
   };
   
   return result;

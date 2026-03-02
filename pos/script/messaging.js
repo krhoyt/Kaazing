@@ -40,7 +40,7 @@ function clerkArrived( clerk )
     login.set( "registerId", register );
     login.set( "clerkId", clerk );
     login.save( null, {
-        success: function( result ) {
+        success(result) {
             var message = null;
 
             // Debug
@@ -58,7 +58,7 @@ function clerkArrived( clerk )
                 doMessageSent
             );
         },
-        error: function( error ) {
+        error(error) {
             // Debug
             logMessage( "Error logging into system." );
         }
@@ -120,7 +120,7 @@ function loginArrived( login )
     query.equalTo( "registerId", register );
     query.include( "productId" );
     query.find( {
-        success: function( results ) {
+        success(results) {
             var message = null;
 
             // Debug
@@ -154,7 +154,7 @@ function loginArrived( login )
                 doMessageSent
             );
         },
-        error: function( error ) {
+        error(error) {
             logMessage( "Error getting layout." );
         }
     } );
@@ -361,10 +361,10 @@ function transactionArrived( transaction )
             transaction: pin,
             send: model.register.notification
         }, {
-            success: function( result ) {
+            success(result) {
                 logMessage( result );
             },
-            error: function( error ) {
+            error(error) {
                 logMessage( error );
             }
         } );
@@ -436,7 +436,7 @@ function transactionReadArrived( transaction, register )
     query.equalTo( "transactionId", transaction );
     query.include( "productId" );
     query.find( {
-        success: function( results ) {
+        success(results) {
             var item = null;
             var message = null;
 
@@ -470,7 +470,7 @@ function transactionReadArrived( transaction, register )
                 doMessageSent
             );
         },
-        error: function( error ) {
+        error(error) {
             // Debug
             logMessage( "Problem loading transactions." );
         }

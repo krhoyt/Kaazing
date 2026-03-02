@@ -16,7 +16,7 @@ function doWindowLoad()
     Cookies.expire( COOKIE_VERIFY );
     element.innerHTML = MESSAGE_VERIFY_COMPLETE;
     
-    setTimeout( function() {
+    setTimeout( () => {
       location.href = '/';  
     }, FORWARD_DELAY );
   }

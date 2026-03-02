@@ -185,7 +185,7 @@ function doRemoveClick()
   // Remove displays
   kaazing.publish( TOPIC, JSON.stringify( {
     action: ACTION_REMOVE,
-    upc: upc
+    upc
   } ) );
 }
 
@@ -233,7 +233,7 @@ function doWindowLoad()
   
   // Easter egg for Peter
   button = document.querySelector( 'button' );
-  button.addEventListener( 'click', function() {
+  button.addEventListener( 'click', () => {
     kaazing.publish( TOPIC, JSON.stringify( {
       action: ACTION_SHOW,
       image: 'img/dobos-torta.jpg',

@@ -11,9 +11,9 @@ function Dial( selector, label, minimum, maximum, animate )
     var result = null;
 
     result = {
-        animate: animate,
-        maximum: maximum,
-        minimum: minimum,
+        animate,
+        maximum,
+        minimum,
         value: minimum,
         container: document.querySelector( selector ),
         document: document.createElementNS( SVG_NAMESPACE, "svg" )
@@ -213,7 +213,7 @@ function Dial( selector, label, minimum, maximum, animate )
 
     // Forty (40) pixels per one hundred (100) feet
     // Animation iterations
-    result.updateValue = function() {
+    result.updateValue = () => {
         var adjusted = -120 + ( ( result.value - minimum ) * ( 240 / ( result.maximum - result.minimum ) ) )
 
         result.current.textContent = result.value.toFixed( 2 );
@@ -240,7 +240,7 @@ function Dial( selector, label, minimum, maximum, animate )
         if( this.animate )
         {
             TweenLite.to( this, 1, {
-                value: value,
+                value,
                 onUpdate: this.updateValue
             } );
         } else {

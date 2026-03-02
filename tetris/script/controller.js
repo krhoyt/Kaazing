@@ -165,7 +165,7 @@ function do_window_load()
   
   // Gateway communication
   kaazing = Gateway.connect( KAAZING_ID );
-  kaazing.on( Gateway.EVENT_CONNECT, function() {
+  kaazing.on( Gateway.EVENT_CONNECT, () => {
     console.log( 'Connected.' );  
     
     // Join game

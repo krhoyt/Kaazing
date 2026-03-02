@@ -10,11 +10,9 @@ var TOPIC = "/topic/telemetry";
 var client = new Stomp( BROKER_IP, BROKER_PORT, null, null );
 
 // Connection to broker
-client.connect( function( sessionId )
-{
+client.connect( sessionId => {
     // Subscribe to topic
-	client.subscribe( TOPIC, function( body, headers )
-    {
+	client.subscribe( TOPIC, (body, headers) => {
         // Display incoming messages
         console.log( "Message arrived:", body );
     } );

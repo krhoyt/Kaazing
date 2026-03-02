@@ -20,10 +20,7 @@ var piece_next = null;
 var score = null;
   
 // Fall rate in seconds
-Date.seconds = function()
-{
-  return Math.floor( Date.now() / 1000 );
-}
+Date.seconds = () => Math.floor( Date.now() / 1000 )
 
 // Add to logical board
 // Piece landed and placed
@@ -202,7 +199,7 @@ function get_new_piece()
   // Vertically off top of board
   // Random fill style
   result = {
-    shape: shape,
+    shape,
     rotation: Math.floor( Math.random() * shape.length ),
     x: Math.floor( board_width / 2 ) - Math.floor( TEMPLATE_WIDTH / 2 ),
     y: -2,

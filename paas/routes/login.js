@@ -9,14 +9,14 @@ parse.initialize( 'ZBzdcXEpxqTcaig69vOIHhjw5OQ36SLzsWpOHhK8', 'Xt3X8AETCP7thbIjP
  */
 
 // GET
-router.get( '/', function( req, res, next ) {
+router.get( '/', (req, res, next) => {
   var Account = parse.Object.extend( 'Account' );    
   var query = null;
   
   query = new parse.Query( Account );
   query.equalTo( 'email', req.query.email );
   query.first( {
-    success: function( result ) {
+    success(result) {
       if( result == undefined )
       {
         res.send( 'ACCOUNT' );  
@@ -43,7 +43,7 @@ router.get( '/', function( req, res, next ) {
         }
       }
     },
-    error: function( error ) {
+    error(error) {
       res.send( 'ERROR:' + error.message );
     }
   } );
